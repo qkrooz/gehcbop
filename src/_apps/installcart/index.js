@@ -12,6 +12,8 @@ const InstallCartIndex = React.memo(() => {
   const [, setMainProgress] = mainProgressState;
   const [currentApplication] = currentApplicationState;
   const [orders, setOrders] = useState([]);
+  const [statusList, setStatusList] = useState([]);
+  const [devicesList, setDevicesList] = useState([]);
   const ic_getData = () => {
     setMainProgress(15);
     axios
@@ -29,6 +31,14 @@ const InstallCartIndex = React.memo(() => {
         console.log(error);
       });
   };
+  const ic_Configuration = () => {
+    function getStatusList() {
+      return axios.get("");
+    }
+    function getDevicesList() {
+      return axios.get("");
+    }
+  };
   const AddOrder = () => {};
   const EditOrder = () => {};
   const DeleteOrder = () => {};
@@ -37,7 +47,18 @@ const InstallCartIndex = React.memo(() => {
     // eslint-disable-next-line
   }, []);
   return (
-    <InstallCartContext.Provider value={{ ordersState: [orders, setOrders] }}>
+    <InstallCartContext.Provider
+      value={{
+        // states
+        ordersState: [orders, setOrders],
+        statusListState: [statusList, setStatusList],
+        devicesListState: [devicesList, setDevicesList],
+        // functions
+        AddOrder: AddOrder,
+        EditOrder: EditOrder,
+        DeleteOrder: DeleteOrder,
+      }}
+    >
       <Tabs />
     </InstallCartContext.Provider>
   );

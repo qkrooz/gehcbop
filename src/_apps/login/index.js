@@ -10,7 +10,7 @@ import Wallpaper5 from "../../_img/wallpapers/5.jpg";
 import GELogo from "../../_img/gelogocolor.png";
 import "./styles/login.css";
 const Index = React.memo(() => {
-  const { BASE_URL, getUserData } = useContext(Context);
+  const { USELPUTIL02, getUserData } = useContext(Context);
   const [wallpaper, setWallpaper] = useState();
   const [checkingInfoLoader, setCheckingInfoLoader] = useState(false);
   const openNotificationWithIcon = (type, title, message) => {
@@ -22,7 +22,7 @@ const Index = React.memo(() => {
   const onFinish = (values) => {
     setCheckingInfoLoader(true);
     function checkUserExists() {
-      return axios.post(`${BASE_URL}/loginscreen/userExists.php`, values);
+      return axios.post(`${USELPUTIL02}/loginscreen/userExists.php`, values);
     }
     Promise.all([checkUserExists()])
       .then((results) => {
