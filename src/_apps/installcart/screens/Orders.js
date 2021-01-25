@@ -1,6 +1,11 @@
 import React, { useContext, useState } from "react";
 import { InstallCartContext } from "../resources/InstallCartContext";
-import { Menu, Button } from "antd";
+import { Menu, Button, Tooltip } from "antd";
+import {
+  EditOutlined,
+  FileTextOutlined,
+  DeleteOutlined,
+} from "@ant-design/icons";
 import "../styles/orders.css";
 const Orders = React.memo(() => {
   const { ordersState } = useContext(InstallCartContext);
@@ -24,23 +29,13 @@ const OrderElement = ({ data }) => {
   const ellipsisMenu = (
     <Menu>
       <Menu.Item key="0">
-        <Button
-          type="text"
-          onClick={() => {
-            PreEdit({ id: data.ID });
-          }}
-        >
+        <Button type="text" onClick={() => {}}>
           <EditOutlined />
           Edit
         </Button>
       </Menu.Item>
       <Menu.Item key="1">
-        <Button
-          type="text"
-          onClick={() => {
-            ConfirmModal({ DeleteItem: DeleteItem, id: data.ID });
-          }}
-        >
+        <Button type="text" onClick={() => {}}>
           <DeleteOutlined />
           Delete
         </Button>
