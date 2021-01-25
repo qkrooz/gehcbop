@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import useLocalStorage from "./_resources/useLocalStorage";
 import { Context } from "./_context/MainContext";
-import { MXCJSWEB03, USELPUTIL02 } from "./_resources/serverRoutes";
+import { USELPUTIL02 } from "./_resources/serverRoutes";
 import {
   HashRouter as Router,
   Switch,
@@ -28,7 +28,7 @@ const App = React.memo(() => {
   );
   const getUserData = (ID, event) => {
     axios
-      .post(`${MXCJSWEB03}/getUserDataByID.php`, { userID: ID })
+      .post(`${USELPUTIL02}/gehcbop/getUserDataByID.php`, { userID: ID })
       .then((response) => {
         if (response.data.code === 200) {
           setUserData(response.data.userData[0]);
@@ -60,7 +60,7 @@ const App = React.memo(() => {
   };
   const changeUserActivity = (status, ID) => {
     axios
-      .post(`${MXCJSWEB03}/changeStatus.php`, {
+      .post(`${USELPUTIL02}/gehcbop/changeStatus.php`, {
         userID: ID ? ID : userID,
         status: status,
       })
@@ -90,7 +90,7 @@ const App = React.memo(() => {
         appPoolState: [appPool, setAppPool],
         mainProgressState: [mainProgress, setMainProgress],
         currentApplicationState: [currentApplication, setCurrentApplication],
-        MXCJSWEB03: MXCJSWEB03,
+        USELPUTIL02: USELPUTIL02,
         USELPUTIL02: USELPUTIL02,
         // functions
         getUserData: getUserData,
