@@ -1,0 +1,20 @@
+.ordersMainContainer {
+  display: flex;
+  height: 100%;
+  width: 100%;
+}
+.ordersContainer {
+  flex-grow: 1;
+  padding: 1em 0.5em 1em 1em;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+.chartsContainer {
+  min-width: 25em;
+  max-width: 25em;
+  padding: 1em 1em 1em 0.5em;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}

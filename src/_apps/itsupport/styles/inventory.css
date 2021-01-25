@@ -1,0 +1,28 @@
+.inventoryContainer {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.MuiBox-root {
+  padding: 0 !important;
+  width: 100%;
+}
+.MuiTypography-root {
+  height: 100%;
+}
+.MuiTabs-flexContainer {
+  background-color: black;
+}
+.controls {
+  padding: 1em 0 1em 1em;
+}
+.button-active {
+  background-color: black !important;
+}
+.its_inventory_tableContainer {
+  flex-grow: 1;
+  height: 0px;
+  overflow-y: auto;
+  padding: 0 1em 1em 1em;
+}

@@ -1,0 +1,32 @@
+* {
+  font-family: "Heebo", sans-serif !important;
+}
+.main-layout {
+  min-width: 100vw;
+  min-height: 100vh;
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  background: rgb(242, 245, 248);
+  background: linear-gradient(
+    180deg,
+    rgba(242, 245, 248, 1) 0%,
+    rgba(247, 249, 252, 1) 18%,
+    rgba(247, 249, 252, 1) 100%
+  );
+  overflow: hidden;
+}
+.selectAppPageContainer {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.selectAppPageContainer > h1 {
+  color: gray;
+}
+.MuiLinearProgress-root {
+  position: absolute !important;
+  z-index: 99999;
+  width: 100%;
+}
