@@ -91,7 +91,6 @@ const App = React.memo(() => {
         mainProgressState: [mainProgress, setMainProgress],
         currentApplicationState: [currentApplication, setCurrentApplication],
         USELPUTIL02: USELPUTIL02,
-        USELPUTIL02: USELPUTIL02,
         // functions
         getUserData: getUserData,
         clearUserData: clearUserData,

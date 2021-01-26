@@ -67,7 +67,7 @@ export default function SimpleTabs() {
       </TabPanel>
       <TabPanel
         value={value}
-        style={{ flexGrow: 1, display: "flex" }}
+        style={{ flexGrow: 1, display: "flex", height: 0 }}
         index={1}
       >
         <Orders />
