@@ -8,6 +8,12 @@ import {
   Dropdown,
   Descriptions,
   Steps,
+  Form,
+  Input,
+  Checkbox,
+  Space,
+  DatePicker,
+  Select,
 } from "antd";
 import {
   EditOutlined,
@@ -17,6 +23,8 @@ import {
   EllipsisOutlined,
   CaretUpOutlined,
   CaretDownOutlined,
+  MinusCircleOutlined,
+  PlusOutlined,
 } from "@ant-design/icons";
 import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
@@ -28,6 +36,8 @@ import AddIcon from "@material-ui/icons/Add";
 import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogActions from "@material-ui/core/DialogActions";
+import { useFormik } from "formik";
+import * as Yup from "yup";
 import "../styles/orders.css";
 const { Step } = Steps;
 const Orders = React.memo(() => {
@@ -464,14 +474,104 @@ const OrderElement = ({ data }) => {
     </div>
   );
 };
+
 const AddDialog = (props) => {
   const { AddOrder } = useContext(InstallCartContext);
   const { open, onClose } = props;
+  const { Option } = Select;
+  const onFinish = (values) => {
+    console.log("Received values of form:", values);
+  };
+  const formik = useFormik({
+    initialValues: {
+      gon: "",
+      projectName: "",
+      rosd: "",
+      shipDate: "",
+      deviceCount: "",
+      projectManager: "",
+      wrd: "",
+      configurationInformation: "",
+      status: "",
+    },
+    validationSchema: Yup.object({
+      rosd: Yup.date().required("Required"),
+      shipDate: Yup.date().required("Required"),
+      projectName: Yup.string().required("Required"),
+    }),
+  });
   return (
-    <Dialog open={open} onClose={onClose} style={{ zIndex: 2 }}>
-      <DialogTitle id="simple-dialog-title">Add new order</DialogTitle>
-      <div className="addFormContainer"></div>
+    <Dialog
+      open={open}
+      onClose={onClose}
+      style={{ zIndex: 2 }}
+      onSubmit={formik.handleSubmit}
+    >
+            <DialogTitle id="simple-dialog-title">Add new order</DialogTitle>
+            
+      <div className="addFormContainer">
+        <form
+          onSubmit={formik.handleSubmit}
+          name="dynamic_form_nest_item"
+          onFinish={onFinish}
+          autoComplete="off"
+        >
+           <label htmlFor="gon">General Order Number</label>
+          <DatePicker id="gon" name="gon" />
+                  
+          {formik.touched.gon && formik.errors.gon ? (
+            <div>{formik.errors.gon}</div>
+          ) : null}
+                  <label htmlFor="projectName">Project Name</label>
+                  
+          <Input id="projectName" name="projectName" type="text" />
+                  
+          {formik.touched.projectName && formik.errors.projectName ? (
+            <div>{formik.errors.projectName}</div>
+          ) : null}
+                  <label htmlFor="rosd">Requested On-Site Date</label>
+                  
+          <DatePicker id="rosd" name="rosd" />
+                  <label htmlFor="shipDate">Shipping Date</label>
+                  
+          <DatePicker id="shipDate" name="shipDate" />
+                  
+          {formik.touched.shipDate && formik.errors.shipDate ? (
+            <div>{formik.errors.shipDate}</div>
+          ) : null}
+                  <label htmlFor="deviceCount">Device Count</label>
+                  
+          <Input id="deviceCount" name="deviceCount" />
+                  <label htmlFor="projectManager">Project Manager</label>
+                  
+          <Input id="projectManager" name="projectManager" />
+                  <label htmlFor="wrd">Warehouse Requested Date</label>
+                  
+          <DatePicker id="wrd" name="wrd" />
+                  
+          <label htmlFor="cfgInformation">Configuration Information</label>
+                  
+          <Input id="cfgInformation" name="cfgInformation" />
+                  <label htmlFor="status">Status</label>
+                  
+          <Select id="status" name="status">
+                      <Option value="underReview">Under Review</Option>
+                      <Option value="projectQueded">Project Queded</Option>
+                      <Option value="mip">Mfg in Process</Option>
+                      <Option value="sisp">Secure in Staging Space</Option>
+                      <Option value="icc">Install Cart Config</Option>
+                      <Option value="crts">Cart Ready to Ship</Option>
+                      <Option value="arrivedOnSite">Arrived on Site</Option>
+                      <Option value="inTransit">In Transit</Option>
+                      <Option value="complete">Order Completed</Option>
+                    
+          </Select>
+        </form>
+                      
+      </div>
+            
       <DialogActions>
+                
         <MaterialButton
           autoFocus
           variant="contained"
@@ -479,12 +579,20 @@ const AddDialog = (props) => {
             onClose();
           }}
         >
-          Cancel
+                    Cancel         
         </MaterialButton>
-        <MaterialButton color="primary" variant="contained" onClick={AddOrder}>
-          Confirm
+                
+        <MaterialButton
+          type="submit"
+          color="primary"
+          variant="contained"
+          onClick={onFinish}
+        >
+                    Confirm         
         </MaterialButton>
+              
       </DialogActions>
+          
     </Dialog>
   );
 };
