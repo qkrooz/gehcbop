@@ -27,6 +27,7 @@ import MaterialButton from "@material-ui/core/Button";
 import AddIcon from "@material-ui/icons/Add";
 import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
+import DialogActions from "@material-ui/core/DialogActions";
 import "../styles/orders.css";
 const { Step } = Steps;
 const Orders = React.memo(() => {
@@ -464,11 +465,26 @@ const OrderElement = ({ data }) => {
   );
 };
 const AddDialog = (props) => {
+  const { AddOrder } = useContext(InstallCartContext);
   const { open, onClose } = props;
   return (
     <Dialog open={open} onClose={onClose} style={{ zIndex: 2 }}>
       <DialogTitle id="simple-dialog-title">Add new order</DialogTitle>
       <div className="addFormContainer"></div>
+      <DialogActions>
+        <MaterialButton
+          autoFocus
+          variant="contained"
+          onClick={() => {
+            onClose();
+          }}
+        >
+          Cancel
+        </MaterialButton>
+        <MaterialButton color="primary" variant="contained" onClick={AddOrder}>
+          Confirm
+        </MaterialButton>
+      </DialogActions>
     </Dialog>
   );
 };
