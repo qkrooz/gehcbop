@@ -526,6 +526,20 @@ const AddDialog = () => {
   const onFinish = (values) => {
     console.log("Received values of form:", values);
   };
+
+  const [form] = Form.useForm();
+  const products = ["B450", "B650", "B850"];
+  const status = [
+    "Under review",
+    "Project Queded",
+    "Mfg in progress",
+    "Secure in Staging Space",
+    "Install Cart Config",
+    "Cart Ready to Ship",
+    "Arrived on Site",
+    "In Transit",
+    "Order Completed",
+  ];
   const formik = useFormik({
     initialValues: {
       gon: "",
@@ -568,48 +582,135 @@ const AddDialog = () => {
           {formik.touched.gon && formik.errors.gon ? (
             <div>{formik.errors.gon}</div>
           ) : null}
-                  <label htmlFor="projectName">Project Name</label>
+                  
+          <label htmlFor="projectName">Project Name</label>
                   
           <Input id="projectName" name="projectName" type="text" />
                   
           {formik.touched.projectName && formik.errors.projectName ? (
             <div>{formik.errors.projectName}</div>
           ) : null}
-                  <label htmlFor="rosd">Requested On-Site Date</label>
                   
-          <DatePicker id="rosd" name="rosd" />
-                  <label htmlFor="shipDate">Shipping Date</label>
+          <label htmlFor="rosd" class="modal-add-item">
+            Requested On-Site Date
+          </label>
                   
-          <DatePicker id="shipDate" name="shipDate" />
+          <DatePicker id="rosd" name="rosd" class="modal-add-item" />
+                  
+          <label htmlFor="shipDate" class="modal-add-item">
+            Shipping Date
+          </label>
+                  
+          <DatePicker id="shipDate" name="shipDate" class="modal-add-item" />
                   
           {formik.touched.shipDate && formik.errors.shipDate ? (
             <div>{formik.errors.shipDate}</div>
           ) : null}
-                  <label htmlFor="deviceCount">Device Count</label>
                   
-          <Input id="deviceCount" name="deviceCount" />
-                  <label htmlFor="projectManager">Project Manager</label>
+          <label htmlFor="deviceCount" class="modal-add-item device-count">
+            Device Count
+          </label>
                   
-          <Input id="projectManager" name="projectManager" />
-                  <label htmlFor="wrd">Warehouse Requested Date</label>
+          <Form name="dynamic_form_nest_item" autoComplete="off">
+            <Form.List name="products">
+              {(fields, { add, remove }) => (
+                <>
+                  {fields.map((field) => (
+                    <Space key={field.key} align="baseline">
+                      <Form.Item
+                        noStyle
+                        shouldUpdate={(prevValues, curValues) =>
+                          prevValues.products !== curValues.products
+                        }
+                      >
+                        {() => (
+                          <Form.Item
+                            {...field}
+                            label="Product"
+                            name={[field.name, "product"]}
+                            fieldKey={[field.fieldKey, "product"]}
+                            rules={[
+                              { required: true, message: "Missing product" },
+                            ]}
+                          >
+                            <Select style={{ width: 130 }}>
+                              {products.map((item) => (
+                                <Option key={item} value={item}>
+                                  {item}
+                                </Option>
+                              ))}
+                            </Select>
+                          </Form.Item>
+                        )}
+                      </Form.Item>
+                      <Form.Item
+                        {...field}
+                        label="Qty"
+                        name={[field.name, "qty"]}
+                        fieldKey={[field.fieldKey, "qty"]}
+                        rules={[
+                          { required: true, message: "Missing Quantity" },
+                        ]}
+                      >
+                        <Input />
+                      </Form.Item>
+
+                      <MinusCircleOutlined onClick={() => remove(field.name)} />
+                    </Space>
+                  ))}
+
+                  <Form.Item>
+                    <Button
+                      type="dashed"
+                      onClick={() => add()}
+                      block
+                      icon={<PlusOutlined />}
+                    >
+                      Add product
+                    </Button>
+                  </Form.Item>
+                </>
+              )}
+            </Form.List>
+          </Form>
                   
-          <DatePicker id="wrd" name="wrd" />
+          <label htmlFor="projectManager" class="modal-add-item">
+            Project Manager
+          </label>
                   
-          <label htmlFor="cfgInformation">Configuration Information</label>
+          <Input
+            id="projectManager"
+            name="projectManager"
+            class="modal-add-item"
+          />
                   
-          <Input id="cfgInformation" name="cfgInformation" />
-                  <label htmlFor="status">Status</label>
+          <label htmlFor="wrd" class="modal-add-item">
+            Warehouse Requested Date
+          </label>
                   
-          <Select id="status" name="status">
-                      <Option value="underReview">Under Review</Option>
-                      <Option value="projectQueded">Project Queded</Option>
-                      <Option value="mip">Mfg in Process</Option>
-                      <Option value="sisp">Secure in Staging Space</Option>
-                      <Option value="icc">Install Cart Config</Option>
-                      <Option value="crts">Cart Ready to Ship</Option>
-                      <Option value="arrivedOnSite">Arrived on Site</Option>
-                      <Option value="inTransit">In Transit</Option>
-                      <Option value="complete">Order Completed</Option>
+          <DatePicker id="wrd" name="wrd" class="modal-add-item" />
+                  
+          <label htmlFor="cfgInformation" class="modal-add-item">
+            Configuration Information
+          </label>
+                  
+          <Input
+            id="cfgInformation"
+            name="cfgInformation"
+            class="modal-add-item"
+          />
+                  
+          <label htmlFor="status" class="modal-add-item">
+            Status
+          </label>
+                  
+          <Select id="status" name="status" class="modal-add-item">
+                    
+            {status.map((item) => (
+              <Option key={item} value={item}>
+                {item}
+              </Option>
+            ))}
                     
           </Select>
         </form>
