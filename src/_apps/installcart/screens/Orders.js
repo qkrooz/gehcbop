@@ -28,6 +28,12 @@ import AddIcon from "@material-ui/icons/Add";
 import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogActions from "@material-ui/core/DialogActions";
+import Checkbox from "@material-ui/core/Checkbox";
+import SortIcon from "@material-ui/icons/Sort";
+// Components
+import OrdersChart from "../components/OrdersChart";
+import CartsChart from "../components/CartsChart";
+import OrdersTotalChart from "../components/OrdersTotalChart";
 import "../styles/orders.css";
 const { Step } = Steps;
 const Orders = React.memo(() => {
@@ -35,9 +41,12 @@ const Orders = React.memo(() => {
     ordersState,
     SwitchOrders,
     ordersSwitchState,
+    ordersCheckboxState,
     SearchOrders,
+    ToggleComplete,
   } = useContext(InstallCartContext);
   const [orders] = ordersState;
+  const [ordersCheckbox] = ordersCheckboxState;
   const [ordersSwitch] = ordersSwitchState;
   const [searchText_temp, setSearchText_temp] = useState("");
   const [addDialogVisibility, setAddDialogVisibility] = useState(false);
@@ -64,17 +73,34 @@ const Orders = React.memo(() => {
                 </Grid>
               </Grid>
             </div>
+            <MaterialButton className="filterButton" startIcon={<SortIcon />}>
+              Filters
+            </MaterialButton>
             <div className="switchContainer">
-              <span>Show complete</span>
-              <Switch
-                checked={ordersSwitch}
-                onChange={(event) => {
-                  SwitchOrders(event, searchText_temp);
-                }}
-                color="primary"
-                name="checkedB"
-                inputProps={{ "aria-label": "primary checkbox" }}
-              />
+              <div className="inner">
+                <span>Show complete</span>
+                <Switch
+                  size="small"
+                  disabled={ordersCheckbox}
+                  checked={ordersSwitch}
+                  onChange={(event) => {
+                    SwitchOrders(event, searchText_temp);
+                  }}
+                  color="primary"
+                  name="checkedB"
+                  inputProps={{ "aria-label": "primary checkbox" }}
+                />
+              </div>
+              <div className="inner">
+                <span>Only completed</span>
+                <Switch
+                  size="small"
+                  checked={ordersCheckbox}
+                  onChange={(event) => ToggleComplete(event.target.checked)}
+                  color="primary"
+                  inputProps={{ "aria-label": "secondary checkbox" }}
+                />
+              </div>
             </div>
             <MaterialButton
               variant="contained"
@@ -93,7 +119,11 @@ const Orders = React.memo(() => {
           ))}
         </div>
       </div>
-      <div className="chartsContainer"></div>
+      <div className="chartsContainer">
+        <OrdersChart />
+        <CartsChart />
+        <OrdersTotalChart />
+      </div>
       <AddDialog
         open={addDialogVisibility}
         onClose={() => {
