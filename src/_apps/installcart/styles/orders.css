@@ -151,6 +151,7 @@
   margin-right: 1em;
 }
 .controls {
+  padding: 0 !important;
   align-self: stretch;
   display: flex;
   justify-content: space-between;
@@ -303,4 +304,7 @@ td {
 }
 .ant-upload {
   height: 13em !important;
+}
+.MuiDialogContent-root {
+  overflow: hidden !important;
 }

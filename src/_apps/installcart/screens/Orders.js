@@ -8,10 +8,7 @@ import {
   Dropdown,
   Descriptions,
   Steps,
-  Form,
   Input,
-  Checkbox,
-  Space,
   DatePicker,
   Select,
 } from "antd";
@@ -23,8 +20,6 @@ import {
   EllipsisOutlined,
   CaretUpOutlined,
   CaretDownOutlined,
-  MinusCircleOutlined,
-  PlusOutlined,
 } from "@ant-design/icons";
 import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
@@ -38,8 +33,10 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogActions from "@material-ui/core/DialogActions";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import MaterialCheckbox from "@material-ui/core/Checkbox";
+import CircularProgress from "@material-ui/core/CircularProgress";
 import SortIcon from "@material-ui/icons/Sort";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
 // Components
 import OrdersChart from "../components/OrdersChart";
 import CartsChart from "../components/CartsChart";
@@ -54,12 +51,13 @@ const Orders = React.memo(() => {
     ordersCheckboxState,
     SearchOrders,
     ToggleComplete,
+    addDialogVisibilityState,
   } = useContext(InstallCartContext);
   const [orders] = ordersState;
   const [ordersCheckbox] = ordersCheckboxState;
   const [ordersSwitch] = ordersSwitchState;
   const [searchText_temp, setSearchText_temp] = useState("");
-  const [addDialogVisibility, setAddDialogVisibility] = useState(false);
+  const [, setAddDialogVisibility] = addDialogVisibilityState;
   return (
     <div className="ordersMainContainer">
       <div className="ordersContainer">
@@ -134,17 +132,19 @@ const Orders = React.memo(() => {
         <CartsChart />
         <OrdersTotalChart />
       </div>
-      <AddDialog
-        open={addDialogVisibility}
-        onClose={() => {
-          setAddDialogVisibility(false);
-        }}
-      />
+      <AddDialog />
+      <DeleteConfirmDialog />
     </div>
   );
 });
 const OrderElement = ({ data }) => {
-  const { statusListState } = useContext(InstallCartContext);
+  const {
+    statusListState,
+    workingOrderState,
+    deleteDialogVisibilityState,
+  } = useContext(InstallCartContext);
+  const [, setDeleteDialogVisibility] = deleteDialogVisibilityState;
+  const [, setWorkingOrder] = workingOrderState;
   const [statusList] = statusListState;
   const [detailsCollapse, setDetailsCollapse] = useState(false);
   const [coninfCollapse, setConinfCollapse] = useState(false);
@@ -157,7 +157,13 @@ const OrderElement = ({ data }) => {
         </Button>
       </Menu.Item>
       <Menu.Item key="1">
-        <Button type="text" onClick={() => {}}>
+        <Button
+          type="text"
+          onClick={() => {
+            setDeleteDialogVisibility(true);
+            setWorkingOrder(data);
+          }}
+        >
           <DeleteOutlined />
           Delete
         </Button>
@@ -283,14 +289,19 @@ const OrderElement = ({ data }) => {
           ) : null}
         </div>
         <div className="controls">
-          <Dropdown trigger={["click"]} overlay={ellipsisMenu}>
-            <Button type="text" className="order-icon">
-              <EllipsisOutlined className="button-icon" />
-            </Button>
-          </Dropdown>
+          {data.STATUS === "order completed" ? null : (
+            <Dropdown trigger={["click"]} overlay={ellipsisMenu}>
+              <Button type="text" className="order-icon">
+                <EllipsisOutlined className="button-icon" />
+              </Button>
+            </Dropdown>
+          )}
           <Button
             type="text"
             className="order-icon"
+            style={
+              data.STATUS === "order completed" ? { marginTop: "auto" } : null
+            }
             onClick={() => {
               setDetailsCollapse(!detailsCollapse);
             }}
@@ -505,9 +516,12 @@ const OrderElement = ({ data }) => {
   );
 };
 
-const AddDialog = (props) => {
-  const { AddOrder } = useContext(InstallCartContext);
-  const { open, onClose } = props;
+const AddDialog = () => {
+  const { AddOrder, addDialogVisibilityState } = useContext(InstallCartContext);
+  const [
+    addDialogVisibility,
+    setAddDialogVisibility,
+  ] = addDialogVisibilityState;
   const { Option } = Select;
   const onFinish = (values) => {
     console.log("Received values of form:", values);
@@ -532,8 +546,10 @@ const AddDialog = (props) => {
   });
   return (
     <Dialog
-      open={open}
-      onClose={onClose}
+      open={addDialogVisibility}
+      onClose={() => {
+        setAddDialogVisibility(false);
+      }}
       style={{ zIndex: 2 }}
       onSubmit={formik.handleSubmit}
     >
@@ -606,7 +622,7 @@ const AddDialog = (props) => {
           autoFocus
           variant="contained"
           onClick={() => {
-            onClose();
+            setAddDialogVisibility(false);
           }}
         >
                     Cancel         
@@ -623,6 +639,68 @@ const AddDialog = (props) => {
               
       </DialogActions>
           
+    </Dialog>
+  );
+};
+const DeleteConfirmDialog = () => {
+  const {
+    DeleteOrder,
+    workingOrderState,
+    genericLoaderState,
+    deleteDialogVisibilityState,
+  } = useContext(InstallCartContext);
+  const [workingOrder, setWorkingOrder] = workingOrderState;
+  const [
+    deleteDialogVisibility,
+    setDeleteDialogVisibility,
+  ] = deleteDialogVisibilityState;
+  const [genericLoader] = genericLoaderState;
+  return (
+    <Dialog
+      open={deleteDialogVisibility}
+      onClose={() => {
+        setDeleteDialogVisibility(false);
+      }}
+      aria-labelledby="alert-dialog-title"
+      aria-describedby="alert-dialog-description"
+    >
+      <DialogTitle id="alert-dialog-title">
+        {"Are you sure to delete this item?"}
+      </DialogTitle>
+      <DialogContent>
+        <DialogContentText
+          id="alert-dialog-description"
+          style={{ overflow: "hidden" }}
+        >
+          This action can't be undone.
+        </DialogContentText>
+      </DialogContent>
+      <DialogActions>
+        <MaterialButton
+          onClick={() => {
+            setDeleteDialogVisibility(false);
+            setWorkingOrder({});
+          }}
+          color="primary"
+        >
+          Cancel
+        </MaterialButton>
+        <MaterialButton
+          startIcon={
+            genericLoader ? (
+              <CircularProgress size={20} color="inherit" />
+            ) : null
+          }
+          onClick={() => {
+            DeleteOrder(workingOrder);
+          }}
+          color="primary"
+          autoFocus
+          variant="contained"
+        >
+          Ok
+        </MaterialButton>
+      </DialogActions>
     </Dialog>
   );
 };

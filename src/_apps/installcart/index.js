@@ -9,17 +9,26 @@ const InstallCartIndex = React.memo(() => {
     USELPUTIL02,
     currentApplicationState,
   } = useContext(Context);
-  const [, setMainProgress] = mainProgressState;
+  // states
   const [currentApplication] = currentApplicationState;
   const [completeOrders, setCompleteOrders] = useState([]);
   const [orders, setOrders] = useState([]);
+  const [workingOrder, setWorkingOrder] = useState({});
   const [filteredOrders, setFilteredOrders] = useState([]);
   const [statusList, setStatusList] = useState([]);
   const [devicesList, setDevicesList] = useState([]);
   const [ordersSwitch, setOrdersSwitch] = useState(false);
   const [ordersCheckbox, setOrdersCheckbox] = useState(false);
-  const [isSearching, setIsSearching] = useState(false);
   const [carts, setCarts] = useState([]);
+  // progress
+  const [, setMainProgress] = mainProgressState;
+  const [genericLoader, setGenericLoader] = useState(false);
+  // modals
+  const [addDialogVisibility, setAddDialogVisibility] = useState(false);
+  const [
+    deleteConfirmDialogVisibility,
+    setDeleteConfirmDialogVisibility,
+  ] = useState(false);
   const ic_getDatanConfiguration = () => {
     setMainProgress(15);
     function getStatusList() {
@@ -65,7 +74,38 @@ const InstallCartIndex = React.memo(() => {
   };
   const AddOrder = () => {};
   const EditOrder = () => {};
-  const DeleteOrder = () => {};
+  const DeleteOrder = (order) => {
+    setGenericLoader(true);
+    axios
+      .post(`${USELPUTIL02}/${currentApplication}/deleteItem.php`, {
+        id: order.ID,
+      })
+      .then((response) => {
+        if (response.data.code === 200) {
+          // set up orders
+          let newCompleteOrders = completeOrders.filter(
+            (item) => item.ID !== order.ID
+          );
+          let newFilteredOrders = newCompleteOrders.filter(
+            (item) => item.STATUS !== "order completed"
+          );
+          setCompleteOrders(newCompleteOrders);
+          setFilteredOrders(newFilteredOrders);
+          if (ordersSwitch) {
+            setOrders(newCompleteOrders);
+          } else {
+            setOrders(newFilteredOrders);
+          }
+          setGenericLoader(false);
+          setDeleteConfirmDialogVisibility(false);
+        } else {
+          console.log("ocurrio un error");
+          setGenericLoader(false);
+          setDeleteConfirmDialogVisibility(false);
+        }
+      })
+      .catch((error) => console.log(error));
+  };
   const SearchOrders = (event) => {
     const searchText = event.target.value.toLowerCase();
     if (event.target.value === "") {
@@ -75,16 +115,17 @@ const InstallCartIndex = React.memo(() => {
         setOrders(filteredOrders);
       }
     } else {
-      const search = completeOrders.filter(
-        (element) =>
-          element.PROJECT_NAME.toLowerCase().includes(searchText) ||
-          element.GON.toLowerCase().includes(searchText) ||
-          element.FW.toString().toLowerCase().includes(searchText) ||
-          element.OWNER.toLowerCase().includes(searchText) ||
-          element.PROJECT_MANAGER.toLowerCase().includes(searchText) ||
-          element.STATUS.toLowerCase().includes(searchText)
+      setOrders(
+        completeOrders.filter(
+          (element) =>
+            element.PROJECT_NAME.toLowerCase().includes(searchText) ||
+            element.GON.toLowerCase().includes(searchText) ||
+            element.FW.toString().toLowerCase().includes(searchText) ||
+            element.OWNER.toLowerCase().includes(searchText) ||
+            element.PROJECT_MANAGER.toLowerCase().includes(searchText) ||
+            element.STATUS.toLowerCase().includes(searchText)
+        )
       );
-      setOrders(search);
     }
   };
   const SwitchOrders = (event, text) => {
@@ -149,12 +190,19 @@ const InstallCartIndex = React.memo(() => {
         ordersState: [orders, setOrders],
         completeOrdersState: [completeOrders, setCompleteOrders],
         filteredOrdersState: [filteredOrders, setFilteredOrders],
+        workingOrderState: [workingOrder, setWorkingOrder],
         statusListState: [statusList, setStatusList],
         devicesListState: [devicesList, setDevicesList],
         ordersSwitchState: [ordersSwitch, setOrdersSwitch],
         ordersCheckboxState: [ordersCheckbox, setOrdersCheckbox],
-        isSearchingState: [isSearching, setIsSearching],
         cartsState: [carts, setCarts],
+        genericLoaderState: [genericLoader, setGenericLoader],
+        // progress
+        addDialogVisibilityState: [addDialogVisibility, setAddDialogVisibility],
+        deleteDialogVisibilityState: [
+          deleteConfirmDialogVisibility,
+          setDeleteConfirmDialogVisibility,
+        ],
         // functions
         AddOrder: AddOrder,
         EditOrder: EditOrder,
