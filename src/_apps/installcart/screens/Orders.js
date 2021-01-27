@@ -25,6 +25,7 @@ import {
   MinusCircleOutlined,
   PlusOutlined,
 } from "@ant-design/icons";
+import { Formik } from "formik";
 import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
 import SearchIcon from "@material-ui/icons/Search";
@@ -46,6 +47,7 @@ import OrdersChart from "../components/OrdersChart";
 import CartsChart from "../components/CartsChart";
 import OrdersTotalChart from "../components/OrdersTotalChart";
 import "../styles/orders.css";
+import "../styles/addForm.css";
 const { Step } = Steps;
 const Orders = React.memo(() => {
   const {
@@ -521,11 +523,18 @@ const OrderElement = ({ data }) => {
 };
 
 const AddDialog = () => {
-  const { AddOrder, addDialogVisibilityState } = useContext(InstallCartContext);
+  const {
+    AddOrder,
+    addDialogVisibilityState,
+    statusListState,
+    devicesListState,
+  } = useContext(InstallCartContext);
   const [
     addDialogVisibility,
     setAddDialogVisibility,
   ] = addDialogVisibilityState;
+  const [statusList] = statusListState;
+  const [devicesList] = devicesListState;
   const { Option } = Select;
   const onFinish = (values) => {
     console.log("Received values of form:", values);
@@ -533,218 +542,348 @@ const AddDialog = () => {
 
   const [form] = Form.useForm();
   const products = ["B450", "B650", "B850"];
-  const status = [
-    "Under review",
-    "Project Queded",
-    "Mfg in progress",
-    "Secure in Staging Space",
-    "Install Cart Config",
-    "Cart Ready to Ship",
-    "Arrived on Site",
-    "In Transit",
-    "Order Completed",
-  ];
-  const formik = useFormik({
-    initialValues: {
-      gon: "",
-      projectName: "",
-      rosd: "",
-      shipDate: "",
-      deviceCount: "",
-      projectManager: "",
-      wrd: "",
-      configurationInformation: "",
-      status: "",
-    },
-    validationSchema: Yup.object({
-      rosd: Yup.date().required("Required"),
-      shipDate: Yup.date().required("Required"),
-      projectName: Yup.string().required("Required"),
-    }),
-  });
+  const formik = useFormik({});
   return (
-    <Dialog
-      open={addDialogVisibility}
-      onClose={() => {
-        setAddDialogVisibility(false);
+    <Formik
+      initialValues={{
+        gon: "",
+        projectName: "",
+        rosd: "",
+        shipDate: "",
+        deviceCount: "",
+        projectManager: "",
+        wrd: "",
+        configurationInformation: "",
+        status: "",
       }}
-      style={{ zIndex: 2 }}
-      onSubmit={formik.handleSubmit}
     >
-            <DialogTitle id="simple-dialog-title">Add new order</DialogTitle>
-            
-      <div className="addFormContainer">
-        <form
-          onSubmit={formik.handleSubmit}
-          name="dynamic_form_nest_item"
-          onFinish={onFinish}
-          autoComplete="off"
-        >
-           <label htmlFor="gon">General Order Number</label>
-          <DatePicker id="gon" name="gon" />
-                  
-          {formik.touched.gon && formik.errors.gon ? (
-            <div>{formik.errors.gon}</div>
-          ) : null}
-                  
-          <label htmlFor="projectName">Project Name</label>
-                  
-          <Input id="projectName" name="projectName" type="text" />
-                  
-          {formik.touched.projectName && formik.errors.projectName ? (
-            <div>{formik.errors.projectName}</div>
-          ) : null}
-                  
-          <label htmlFor="rosd" class="modal-add-item">
-            Requested On-Site Date
-          </label>
-                  
-          <DatePicker id="rosd" name="rosd" class="modal-add-item" />
-                  
-          <label htmlFor="shipDate" class="modal-add-item">
-            Shipping Date
-          </label>
-                  
-          <DatePicker id="shipDate" name="shipDate" class="modal-add-item" />
-                  
-          {formik.touched.shipDate && formik.errors.shipDate ? (
-            <div>{formik.errors.shipDate}</div>
-          ) : null}
-                  
-          <label htmlFor="deviceCount" class="modal-add-item device-count">
-            Device Count
-          </label>
-                  
-          <Form name="dynamic_form_nest_item" autoComplete="off">
-            <Form.List name="products">
-              {(fields, { add, remove }) => (
-                <>
-                  {fields.map((field) => (
-                    <Space key={field.key} align="baseline">
-                      <Form.Item
-                        noStyle
-                        shouldUpdate={(prevValues, curValues) =>
-                          prevValues.products !== curValues.products
-                        }
-                      >
-                        {() => (
-                          <Form.Item
-                            {...field}
-                            label="Product"
-                            name={[field.name, "product"]}
-                            fieldKey={[field.fieldKey, "product"]}
-                            rules={[
-                              { required: true, message: "Missing product" },
-                            ]}
-                          >
-                            <Select style={{ width: 130 }}>
-                              {products.map((item) => (
-                                <Option key={item} value={item}>
-                                  {item}
-                                </Option>
-                              ))}
-                            </Select>
-                          </Form.Item>
-                        )}
-                      </Form.Item>
-                      <Form.Item
-                        {...field}
-                        label="Qty"
-                        name={[field.name, "qty"]}
-                        fieldKey={[field.fieldKey, "qty"]}
-                        rules={[
-                          { required: true, message: "Missing Quantity" },
-                        ]}
-                      >
-                        <Input />
-                      </Form.Item>
+      <Dialog
+        open={addDialogVisibility}
+        scroll="paper"
+        onClose={() => {
+          setAddDialogVisibility(false);
+        }}
+        style={{ zIndex: 2 }}
+        onSubmit={formik.handleSubmit}
+      >
+        <DialogTitle id="simple-dialog-title">Add new order</DialogTitle>
+        <DialogContent dividers className="addFormContainer">
+          <form>
+             <label htmlFor="gon">General Order Number</label>
+            <DatePicker id="gon" name="gon" />
+            {formik.touched.gon && formik.errors.gon ? (
+              <div>{formik.errors.gon}</div>
+            ) : null}
+            <label htmlFor="projectName">Project Name</label>
+            <Input id="projectName" name="projectName" type="text" />
+            {formik.touched.projectName && formik.errors.projectName ? (
+              <div>{formik.errors.projectName}</div>
+            ) : null}
+            <label htmlFor="rosd" class="modal-add-item">
+              Requested On-Site Date
+            </label>
+            <DatePicker id="rosd" name="rosd" class="modal-add-item" />
+            <label htmlFor="shipDate" class="modal-add-item">
+              Shipping Date
+            </label>
+            <DatePicker id="shipDate" name="shipDate" class="modal-add-item" />
+            {formik.touched.shipDate && formik.errors.shipDate ? (
+              <div>{formik.errors.shipDate}</div>
+            ) : null}
+            <label htmlFor="deviceCount" class="modal-add-item device-count">
+              Device Count
+            </label>
+            <Form name="dynamic_form_nest_item" autoComplete="off">
+              <Form.List name="products">
+                {(fields, { add, remove }) => (
+                  <>
+                    {fields.map((field) => (
+                      <Space key={field.key} align="baseline">
+                        <Form.Item
+                          noStyle
+                          shouldUpdate={(prevValues, curValues) =>
+                            prevValues.products !== curValues.products
+                          }
+                        >
+                          {() => (
+                            <Form.Item
+                              {...field}
+                              label="Product"
+                              name={[field.name, "product"]}
+                              fieldKey={[field.fieldKey, "product"]}
+                              rules={[
+                                { required: true, message: "Missing product" },
+                              ]}
+                            >
+                              <Select style={{ width: 130 }}>
+                                {products.map((item) => (
+                                  <Option key={item} value={item}>
+                                    {item}
+                                  </Option>
+                                ))}
+                              </Select>
+                            </Form.Item>
+                          )}
+                        </Form.Item>
+                        <Form.Item
+                          {...field}
+                          label="Qty"
+                          name={[field.name, "qty"]}
+                          fieldKey={[field.fieldKey, "qty"]}
+                          rules={[
+                            { required: true, message: "Missing Quantity" },
+                          ]}
+                        >
+                          <Input />
+                        </Form.Item>
 
-                      <MinusCircleOutlined onClick={() => remove(field.name)} />
-                    </Space>
-                  ))}
+                        <MinusCircleOutlined
+                          onClick={() => remove(field.name)}
+                        />
+                      </Space>
+                    ))}
 
-                  <Form.Item>
-                    <Button
-                      type="dashed"
-                      onClick={() => add()}
-                      block
-                      icon={<PlusOutlined />}
-                    >
-                      Add product
-                    </Button>
-                  </Form.Item>
-                </>
-              )}
-            </Form.List>
-          </Form>
-                  
-          <label htmlFor="projectManager" class="modal-add-item">
-            Project Manager
-          </label>
-                  
-          <Input
-            id="projectManager"
-            name="projectManager"
-            class="modal-add-item"
-          />
-                  
-          <label htmlFor="wrd" class="modal-add-item">
-            Warehouse Requested Date
-          </label>
-                  
-          <DatePicker id="wrd" name="wrd" class="modal-add-item" />
-                  
-          <label htmlFor="cfgInformation" class="modal-add-item">
-            Configuration Information
-          </label>
-                  
-          <Input
-            id="cfgInformation"
-            name="cfgInformation"
-            class="modal-add-item"
-          />
-                  
-          <label htmlFor="status" class="modal-add-item">
-            Status
-          </label>
-                  
-          <Select id="status" name="status" class="modal-add-item">
-                    
-            {status.map((item) => (
-              <Option key={item} value={item}>
-                {item}
-              </Option>
-            ))}
-                    
-          </Select>
-        </form>
-                      
-      </div>
-            
-      <DialogActions>
-                
-        <MaterialButton
-          autoFocus
-          variant="contained"
-          onClick={() => {
-            setAddDialogVisibility(false);
-          }}
-        >
-                    Cancel         
-        </MaterialButton>
-                
-        <MaterialButton
-          type="submit"
-          color="primary"
-          variant="contained"
-          onClick={onFinish}
-        >
-                    Confirm         
-        </MaterialButton>
-              
-      </DialogActions>
-          
-    </Dialog>
+                    <Form.Item>
+                      <Button
+                        type="dashed"
+                        onClick={() => add()}
+                        block
+                        icon={<PlusOutlined />}
+                      >
+                        Add product
+                      </Button>
+                    </Form.Item>
+                  </>
+                )}
+              </Form.List>
+            </Form>
+            <label htmlFor="projectManager" class="modal-add-item">
+              Project Manager
+            </label>
+            <Input
+              id="projectManager"
+              name="projectManager"
+              class="modal-add-item"
+            />
+            <label htmlFor="wrd" class="modal-add-item">
+              Warehouse Requested Date
+            </label>
+            <DatePicker id="wrd" name="wrd" class="modal-add-item" />
+            <label htmlFor="cfgInformation" class="modal-add-item">
+              Configuration Information
+            </label>
+            <Input
+              id="cfgInformation"
+              name="cfgInformation"
+              class="modal-add-item"
+            />
+            <label htmlFor="status" class="modal-add-item">
+              Status
+            </label>
+            <Select id="status" name="status" class="modal-add-item">
+              {statusList.map((item) => (
+                <Option key={item} value={item}>
+                  {item}
+                </Option>
+              ))}
+            </Select>
+          </form>
+        </DialogContent>
+        <DialogActions>
+          <MaterialButton disableElevation>Cancel</MaterialButton>
+          <MaterialButton disableElevation variant="contained" color="primary">
+            Add
+          </MaterialButton>
+        </DialogActions>
+      </Dialog>
+    </Formik>
+
+    // <Dialog
+    // open={addDialogVisibility}
+    // onClose={() => {
+    //     setAddDialogVisibility(false);
+    //   }}
+    //   style={{ zIndex: 2 }}
+    //   onSubmit={formik.handleSubmit}
+    // >
+    //         <DialogTitle id="simple-dialog-title">Add new order</DialogTitle>
+    //
+    //   <DialogContent>
+    //     <div className="addFormContainer">
+    //       <form
+    //         onSubmit={formik.handleSubmit}
+    //         name="dynamic_form_nest_item"
+    //         onFinish={onFinish}
+    //         autoComplete="off"
+    //       >
+    //          <label htmlFor="gon">General Order Number</label>
+    //         <DatePicker id="gon" name="gon" />
+    //
+    //         {formik.touched.gon && formik.errors.gon ? (
+    //           <div>{formik.errors.gon}</div>
+    //         ) : null}
+    //
+    //         <label htmlFor="projectName">Project Name</label>
+    //
+    //         <Input id="projectName" name="projectName" type="text" />
+    //
+    //         {formik.touched.projectName && formik.errors.projectName ? (
+    //           <div>{formik.errors.projectName}</div>
+    //         ) : null}
+    //
+    //         <label htmlFor="rosd" class="modal-add-item">
+    //           Requested On-Site Date
+    //         </label>
+    //
+    //         <DatePicker id="rosd" name="rosd" class="modal-add-item" />
+    //
+    //         <label htmlFor="shipDate" class="modal-add-item">
+    //           Shipping Date
+    //         </label>
+    //
+    //         <DatePicker id="shipDate" name="shipDate" class="modal-add-item" />
+    //
+    //         {formik.touched.shipDate && formik.errors.shipDate ? (
+    //           <div>{formik.errors.shipDate}</div>
+    //         ) : null}
+    //
+    //         <label htmlFor="deviceCount" class="modal-add-item device-count">
+    //           Device Count
+    //         </label>
+    //
+    //         <Form name="dynamic_form_nest_item" autoComplete="off">
+    //           <Form.List name="products">
+    //             {(fields, { add, remove }) => (
+    //               <>
+    //                 {fields.map((field) => (
+    //                   <Space key={field.key} align="baseline">
+    //                     <Form.Item
+    //                       noStyle
+    //                       shouldUpdate={(prevValues, curValues) =>
+    //                         prevValues.products !== curValues.products
+    //                       }
+    //                     >
+    //                       {() => (
+    //                         <Form.Item
+    //                           {...field}
+    //                           label="Product"
+    //                           name={[field.name, "product"]}
+    //                           fieldKey={[field.fieldKey, "product"]}
+    //                           rules={[
+    //                             { required: true, message: "Missing product" },
+    //                           ]}
+    //                         >
+    //                           <Select style={{ width: 130 }}>
+    //                             {products.map((item) => (
+    //                               <Option key={item} value={item}>
+    //                                 {item}
+    //                               </Option>
+    //                             ))}
+    //                           </Select>
+    //                         </Form.Item>
+    //                       )}
+    //                     </Form.Item>
+    //                     <Form.Item
+    //                       {...field}
+    //                       label="Qty"
+    //                       name={[field.name, "qty"]}
+    //                       fieldKey={[field.fieldKey, "qty"]}
+    //                       rules={[
+    //                         { required: true, message: "Missing Quantity" },
+    //                       ]}
+    //                     >
+    //                       <Input />
+    //                     </Form.Item>
+
+    //                     <MinusCircleOutlined
+    //                       onClick={() => remove(field.name)}
+    //                     />
+    //                   </Space>
+    //                 ))}
+
+    //                 <Form.Item>
+    //                   <Button
+    //                     type="dashed"
+    //                     onClick={() => add()}
+    //                     block
+    //                     icon={<PlusOutlined />}
+    //                   >
+    //                     Add product
+    //                   </Button>
+    //                 </Form.Item>
+    //               </>
+    //             )}
+    //           </Form.List>
+    //         </Form>
+    //
+    //         <label htmlFor="projectManager" class="modal-add-item">
+    //           Project Manager
+    //         </label>
+    //
+    //         <Input
+    //           id="projectManager"
+    //           name="projectManager"
+    //           class="modal-add-item"
+    //         />
+    //
+    //         <label htmlFor="wrd" class="modal-add-item">
+    //           Warehouse Requested Date
+    //         </label>
+    //
+    //         <DatePicker id="wrd" name="wrd" class="modal-add-item" />
+    //
+    //         <label htmlFor="cfgInformation" class="modal-add-item">
+    //           Configuration Information
+    //         </label>
+    //
+    //         <Input
+    //           id="cfgInformation"
+    //           name="cfgInformation"
+    //           class="modal-add-item"
+    //         />
+    //
+    //         <label htmlFor="status" class="modal-add-item">
+    //           Status
+    //         </label>
+    //
+    //         <Select id="status" name="status" class="modal-add-item">
+    //
+    //           {statusList.map((item) => (
+    //             <Option key={item} value={item}>
+    //               {item}
+    //             </Option>
+    //           ))}
+    //
+    //         </Select>
+    //       </form>
+    //
+    //     </div>
+    //
+    //   </DialogContent>
+    //   <DialogActions>
+    //
+    //     <MaterialButton
+    //       autoFocus
+    //       variant="contained"
+    //       onClick={() => {
+    //         setAddDialogVisibility(false);
+    //       }}
+    //     >
+    //                 Cancel
+    //     </MaterialButton>
+    //
+    //     <MaterialButton
+    //       type="submit"
+    //       color="primary"
+    //       variant="contained"
+    //       onClick={onFinish}
+    //     >
+    //                 Confirm
+    //     </MaterialButton>
+    //
+    //   </DialogActions>
+    //
+    // </Dialog>
   );
 };
 const DeleteConfirmDialog = () => {
