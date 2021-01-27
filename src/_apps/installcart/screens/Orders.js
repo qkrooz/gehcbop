@@ -25,6 +25,7 @@ import {
   MinusCircleOutlined,
   PlusOutlined,
 } from "@ant-design/icons";
+import { Formik } from "formik";
 import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
 import SearchIcon from "@material-ui/icons/Search";
@@ -46,6 +47,7 @@ import OrdersChart from "../components/OrdersChart";
 import CartsChart from "../components/CartsChart";
 import OrdersTotalChart from "../components/OrdersTotalChart";
 import "../styles/orders.css";
+import "../styles/addForm.css";
 const { Step } = Steps;
 const Orders = React.memo(() => {
   const {
@@ -521,11 +523,18 @@ const OrderElement = ({ data }) => {
 };
 
 const AddDialog = () => {
-  const { AddOrder, addDialogVisibilityState } = useContext(InstallCartContext);
+  const {
+    AddOrder,
+    addDialogVisibilityState,
+    statusListState,
+    devicesListState,
+  } = useContext(InstallCartContext);
   const [
     addDialogVisibility,
     setAddDialogVisibility,
   ] = addDialogVisibilityState;
+  const [statusList] = statusListState;
+  const [devicesList] = devicesListState;
   const { Option } = Select;
 
   const [form] = Form.useForm();
@@ -545,6 +554,7 @@ const AddDialog = () => {
   return (
     <Dialog
       open={addDialogVisibility}
+      scroll="paper"
       onClose={() => {
         setAddDialogVisibility(false);
       }}
