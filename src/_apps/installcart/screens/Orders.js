@@ -537,7 +537,7 @@ const AddDialog = () => {
   const [devicesList] = devicesListState;
   const { Option } = Select;
 
-  const [form] = Form.useForm();
+  const [addForm] = Form.useForm();
   const products = ["B450", "B650", "B850"];
   const status = [
     "Under review",
@@ -550,7 +550,10 @@ const AddDialog = () => {
     "In Transit",
     "Order Completed",
   ];
-
+  // const submit = (values) => {
+  //   console.log(values);
+  //   addForm.resetFieldsValue();
+  // };
   return (
     <Dialog
       open={addDialogVisibility}
@@ -560,10 +563,9 @@ const AddDialog = () => {
       }}
       style={{ zIndex: 2 }}
     >
-            <DialogTitle id="simple-dialog-title">Add new order</DialogTitle>
-            
-      <div className="addFormContainer">
-        <Form name="dynamic_form_nest_item" autoComplete="off">
+      <DialogTitle id="simple-dialog-title">Add new order</DialogTitle>      
+      <DialogContent dividers className="addFormContainer">
+        <Form form={addForm} name="dynamic_form_nest_item" autoComplete="off">
           <Form.Item label="General Order Number" name="gon">
             <DatePicker />
           </Form.Item>
@@ -670,31 +672,30 @@ const AddDialog = () => {
               ))}
             </Select>
           </Form.Item>
-          <DialogActions>
-                          
-            <MaterialButton
-              autoFocus
-              variant="contained"
-              onClick={() => {
-                setAddDialogVisibility(false);
-              }}
-            >
-              CANCEL
-            </MaterialButton>
-            <MaterialButton
-              type="submit"
-              color="primary"
-              variant="contained"
-              htmlType="submit"
-            >
-              CONFIRM
-            </MaterialButton>
-             
-          </DialogActions>
         </Form>
                       
-      </div>
-                 
+      </DialogContent>
+                 {" "}
+      <DialogActions>
+                      
+        <MaterialButton
+          autoFocus
+          variant="contained"
+          onClick={() => {
+            setAddDialogVisibility(false);
+          }}
+        >
+          CANCEL
+        </MaterialButton>
+        <MaterialButton
+          color="primary"
+          variant="contained"
+          // onClick={submit}
+        >
+          CONFIRM
+        </MaterialButton>
+         
+      </DialogActions>
     </Dialog>
   );
 };
