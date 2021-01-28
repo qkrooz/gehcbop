@@ -1,4 +1,4 @@
-import React, { useContext, useState, useLayoutEffect } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { InstallCartContext } from "../resources/InstallCartContext";
 import {
   Menu,
@@ -136,7 +136,7 @@ const Orders = React.memo(() => {
       </div>
       <div className="chartsContainer">
         <OrdersChart />
-        <CartsChart />
+        <CartsChart style={{ marginBottom: "1em" }} />
         <OrdersTotalChart />
       </div>
       <AddDialog />
@@ -146,21 +146,19 @@ const Orders = React.memo(() => {
 });
 const OrderElement = ({ data }) => {
   const {
+    ordersState,
     statusListState,
     workingOrderState,
     deleteDialogVisibilityState,
-    ordersSwitchState,
-    ordersCheckboxState,
   } = useContext(InstallCartContext);
+  const [orders] = ordersState;
   const [, setDeleteDialogVisibility] = deleteDialogVisibilityState;
   const [, setWorkingOrder] = workingOrderState;
   const [statusList] = statusListState;
   const [detailsCollapse, setDetailsCollapse] = useState(false);
   const [coninfCollapse, setConinfCollapse] = useState(false);
-  const [ordersSwitch] = ordersSwitchState;
-  const [ordersCheckbox] = ordersCheckboxState;
   const [statusProgress, setStatusProgress] = useState(0);
-  useLayoutEffect(() => {
+  useEffect(() => {
     const progressPerSegment = (100 / statusList.length).toFixed(2);
     statusList.forEach((item, i) => {
       if (data.STATUS === "order completed") {
@@ -175,8 +173,7 @@ const OrderElement = ({ data }) => {
         }
       }
     });
-  }, [ordersSwitch || ordersCheckbox]);
-
+  }, [orders]);
   const ellipsisMenu = (
     <Menu>
       <Menu.Item key="0">
@@ -469,35 +466,15 @@ const OrderElement = ({ data }) => {
         <div className="order-trace">
           <Steps
             progressDot
-            current={
-              data.STATUS === "under review"
-                ? 1
-                : data.STATUS === "project queue"
-                ? 2
-                : data.STATUS === "mfg in process"
-                ? 3
-                : data.STATUS === "secure in staging space"
-                ? 4
-                : data.STATUS === "install cart config"
-                ? 5
-                : data.STATUS === "cart ready to ship"
-                ? 6
-                : data.STATUS === "arrived on site"
-                ? 7
-                : data.STATUS === "in transit"
-                ? 8
-                : data.STATUS === "order completed"
-                ? 9
-                : null
-            }
+            current={statusList.findIndex((item) => item === data.STATUS)}
             direction="vertical"
             size="small"
             status={
-              data.STATUS === "issue needs review"
+              data.STATUS === "cancelled"
                 ? "error"
                 : data.STATUS === "order completed"
                 ? "finish"
-                : null
+                : "process"
             }
           >
             {Object.values(statusList).map((key, i) => (

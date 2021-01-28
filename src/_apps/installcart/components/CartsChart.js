@@ -4,7 +4,7 @@ import * as am4core from "@amcharts/amcharts4/core";
 import * as am4charts from "@amcharts/amcharts4/charts";
 import am4themes_animated from "@amcharts/amcharts4/themes/animated";
 import "../styles/charts.css";
-const CartsChart = React.memo(() => {
+const CartsChart = React.memo((props) => {
   const { cartsState } = useContext(InstallCartContext);
   const [carts] = cartsState;
   useLayoutEffect(() => {
@@ -57,7 +57,7 @@ const CartsChart = React.memo(() => {
     columnTemplate.strokeOpacity = 1;
   }, [carts]);
   return (
-    <div className="cartsChartContainer">
+    <div className="cartsChartContainer" {...props}>
       <div
         className="deco-fix"
         style={{

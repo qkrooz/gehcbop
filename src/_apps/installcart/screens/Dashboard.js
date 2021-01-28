@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useContext } from "react";
+import React, { useLayoutEffect, useContext, useState } from "react";
 import { InstallCartContext } from "../resources/InstallCartContext";
 import * as am4core from "@amcharts/amcharts4/core";
 import * as am4charts from "@amcharts/amcharts4/charts";
@@ -6,6 +6,7 @@ import am4themes_animated from "@amcharts/amcharts4/themes/animated";
 import "../styles/dashboard.css";
 import CartsChart from "../components/CartsChart";
 import OrdersChart from "../components/OrdersChart";
+import ArrowUpwardIcon from "@material-ui/icons/ArrowUpward";
 const Dashboard = React.memo(() => {
   return (
     <div className="dashboardMainContainer">
@@ -21,8 +22,9 @@ const Dashboard = React.memo(() => {
       <div className="lowerCharts">
         <div className="leftChartContainer2">
           <Dash2 />
-          <Dash3 />
           <Dash4 />
+          <Dash3 />
+          <Dash6 />
         </div>
         <div className="rightChartContainer2">
           <Dash5 />
@@ -114,12 +116,95 @@ const Dash1 = () => {
   );
 };
 const Dash2 = () => {
-  return <div className="dash2Container"></div>;
+  const { completeOrdersState } = useContext(InstallCartContext);
+  const [completeOrders] = completeOrdersState;
+  return (
+    <div className="dash2Container">
+      <span style={{ color: "gray", fontSize: "0.8em", marginBottom: "1em" }}>
+        Orders completed:
+      </span>
+      <span style={{ fontSize: "3em" }}>
+        {
+          completeOrders.filter((item) => item.STATUS === "order completed")
+            .length
+        }
+      </span>
+    </div>
+  );
 };
 const Dash3 = () => {
-  return <div className="dash2Container"></div>;
+  const { completeOrdersState } = useContext(InstallCartContext);
+  const [completeOrders] = completeOrdersState;
+  const [value, setValue] = useState();
+  useLayoutEffect(() => {
+    if (completeOrders.length !== 0) {
+      let tempValue = 0;
+      let temporalCompleteOrders = completeOrders.filter(
+        (item) => item.STATUS === "order completed"
+      );
+      temporalCompleteOrders.forEach((item) => {
+        if (item.DEVICE_COUNT !== "") {
+          let value = JSON.parse(item.DEVICE_COUNT).reduce(
+            (accum, item) => accum + parseInt(item.quantity),
+            0
+          );
+          tempValue += value;
+        }
+      });
+      setValue(tempValue);
+    }
+  }, [completeOrders]);
+  return (
+    <div className="dash2Container">
+      <span style={{ color: "gray", fontSize: "0.8em", marginBottom: "1em" }}>
+        Total delivered devices:
+      </span>
+      <span style={{ fontSize: "3em" }}>{value ? value : " "}</span>
+    </div>
+  );
 };
 const Dash4 = () => {
+  const { completeOrdersState } = useContext(InstallCartContext);
+  const [completeOrders] = completeOrdersState;
+  return (
+    <div className="dash2Container">
+      <span style={{ color: "gray", fontSize: "0.8em", marginBottom: "1em" }}>
+        Orders on course:
+      </span>
+      <span style={{ fontSize: "3em" }}>
+        {
+          completeOrders.filter(
+            (item) =>
+              item.STATUS !== "order completed" && item.STAUTS !== "cancelled"
+          ).length
+        }
+      </span>
+    </div>
+  );
+};
+const Dash6 = () => {
+  const { completeOrdersState } = useContext(InstallCartContext);
+  const [completeOrders] = completeOrdersState;
+  return (
+    <div className="dash2Container">
+      <span style={{ color: "gray", fontSize: "0.8em", marginBottom: "1em" }}>
+        Completion average:
+      </span>
+      <div>
+        <span style={{ fontSize: "3em", color: "green" }}>
+          {(
+            (completeOrders.filter((item) => item.STATUS === "order completed")
+              .length *
+              100) /
+            completeOrders.filter((item) => item.STATUS !== "cancelled").length
+          ).toFixed(2) + "%"}
+        </span>
+        <ArrowUpwardIcon style={{ fontSize: "2em", color: "green" }} />
+      </div>
+    </div>
+  );
+};
+const Dash7 = () => {
   return <div className="dash2Container"></div>;
 };
 const Dash5 = () => {

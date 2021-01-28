@@ -15,10 +15,10 @@
   min-width: 23.5em;
   max-width: 23.5em;
   padding: 0.5em 0.5em 1em 0.5em;
-  margin-right: 1.5em;
+  margin-right: 1em;
   display: flex;
   flex-direction: column;
-  justify-content: space-around;
+  justify-content: flex-start;
   overflow-y: auto;
   position: fixed;
   right: 0;

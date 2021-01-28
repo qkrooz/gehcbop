@@ -81,7 +81,8 @@ const OrdersChart = React.memo(() => {
     }
     chart.legend = new am4charts.Legend();
     chart.legend.useDefaultMarker = true;
-    chart.legend.fontSize = 12;
+    chart.legend.height = 350;
+    chart.legend.fontSize = 11;
     var marker = chart.legend.markers.template.children.getIndex(0);
     marker.cornerRadius(12, 12, 12, 12);
     marker.strokeWidth = 2;
@@ -111,7 +112,7 @@ const OrdersChart = React.memo(() => {
       ></div>
       <div
         id="chartdiv"
-        style={{ width: "500px", height: "550px", alignSelf: "center" }}
+        style={{ width: "500px", height: "500px", alignSelf: "center" }}
       ></div>
     </div>
   );
