@@ -13,6 +13,8 @@ import {
   Select,
   Form,
   Space,
+  Row,
+  Col,
 } from "antd";
 import {
   EditOutlined,
@@ -25,6 +27,7 @@ import {
   MinusCircleOutlined,
   PlusOutlined,
 } from "@ant-design/icons";
+import moment from "moment";
 import { Formik } from "formik";
 import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
@@ -48,6 +51,7 @@ import CartsChart from "../components/CartsChart";
 import OrdersTotalChart from "../components/OrdersTotalChart";
 import "../styles/orders.css";
 import "../styles/addForm.css";
+import { ModeComment } from "@material-ui/icons";
 const { Step } = Steps;
 const Orders = React.memo(() => {
   const {
@@ -520,10 +524,14 @@ const AddDialog = () => {
     "In Transit",
     "Order Completed",
   ];
-  // const submit = (values) => {
-  //   console.log(values);
-  //   addForm.resetFieldsValue();
-  // };
+  const dateFormat = "MM/DD/YYYY";
+  const onChange = (value, stringDate) => {
+    console.log(stringDate);
+  };
+  const onFinish = (values) => {
+    values.rosd = moment(values.rosd).format(dateFormat);
+    console.log(values);
+  };
   return (
     <Dialog
       open={addDialogVisibility}
@@ -535,31 +543,58 @@ const AddDialog = () => {
     >
       <DialogTitle id="simple-dialog-title">Add new order</DialogTitle>      
       <DialogContent dividers className="addFormContainer">
-        <Form form={addForm} name="dynamic_form_nest_item" autoComplete="off">
-          <Form.Item label="General Order Number" name="gon">
-            <DatePicker />
-          </Form.Item>
-                           
-          <Form.Item label="Project Name" name="projectName">
-            <Input />
-          </Form.Item>
-                                    
-          <Form.Item
-            label="Requested On-Site Date"
-            name="rosd"
-            rules={[{ required: true, message: "Please fill this field" }]}
-          >
-            <DatePicker />
-          </Form.Item>
-            
-          <Form.Item
-            label="Shipping Date"
-            name="shipDate"
-            rules={[{ required: true, message: "Please fill this field" }]}
-          >
-            <DatePicker />
-          </Form.Item>
-                 <label htmlFor="deviceCount">Device Count</label>
+        <Form
+          form={addForm}
+          name="dynamic_form_nest_item"
+          autoComplete="off"
+          form={addForm}
+          onFinish={onFinish}
+        >
+          <div style={{ display: "flex", justifyContent: "center" }}>
+            <Form.Item name="gon">
+              <span>General Order Number:</span>
+              <Input type="number" />
+            </Form.Item>
+                             
+            <Form.Item name="projectName">
+              <span>Project Name:</span>
+              <Input />
+            </Form.Item>
+          </div>
+          <div style={{ display: "flex", justifyContent: "space-around" }}>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                flexDirection: "column",
+              }}
+            >
+              <span>Requested On-Site Date:</span>                    
+              <Form.Item
+                name="rosd"
+                rules={[{ required: true, message: "Please fill this field" }]}
+              >
+                <DatePicker format={dateFormat} onChange={onChange} />
+              </Form.Item>
+                
+            </div>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                flexDirection: "column",
+              }}
+            >
+                <span>Shipping Date:</span>
+              <Form.Item
+                name="shipDate"
+                rules={[{ required: true, message: "Please fill this field" }]}
+              >
+                <DatePicker />
+              </Form.Item>
+            </div>
+          </div>
+                 <label>Device Count</label>
                   
           <Form.List name="products">
             {(fields, { add, remove }) => (
@@ -619,22 +654,25 @@ const AddDialog = () => {
               </>
             )}
           </Form.List>
-          <Form.Item
-            label="Project Manager"
-            name="projectManager"
-            rules={[{ required: true, message: "Please fill this field" }]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item label="Warehouse Requested Date" name="wrd">
-            <DatePicker />
-          </Form.Item>
+          <div style={{ display: "flex", justifyContent: "center" }}>
+            <Form.Item
+              name="projectManager"
+              rules={[{ required: true, message: "Please fill this field" }]}
+            >
+              <span>Project Manager:</span>
+              <Input />
+            </Form.Item>
+            <Form.Item name="wrd">
+              <span>Warehouse Requested Date:</span>
+              <DatePicker />
+            </Form.Item>
+          </div>
                   
           <Form.Item label="Configuration Information" name="cfgInformation">
-            <Input />
+            <Input style={{ width: "100%" }} />
           </Form.Item>
           <Form.Item label="Status" name="status">
-            <Select style={{ width: 130 }}>
+            <Select style={{ width: 498 }}>
               {status.map((item) => (
                 <Option key={item} value={item}>
                   {item}
@@ -660,7 +698,7 @@ const AddDialog = () => {
         <MaterialButton
           color="primary"
           variant="contained"
-          // onClick={submit}
+          onClick={addForm.submit}
         >
           CONFIRM
         </MaterialButton>
