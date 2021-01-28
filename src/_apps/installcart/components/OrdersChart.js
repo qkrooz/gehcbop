@@ -14,6 +14,10 @@ const OrdersChart = React.memo(() => {
     chart.paddingBottom = 50;
     let data = [
       {
+        status: "Cancelled",
+        value: orders.filter((item) => item.STATUS === "cancelled").length,
+      },
+      {
         status: "Under Review",
         value: orders.filter((item) => item.STATUS === "under review").length,
       },
@@ -30,6 +34,10 @@ const OrdersChart = React.memo(() => {
         value: orders.filter(
           (item) => item.STATUS === "secure in staging space"
         ).length,
+      },
+      {
+        status: "Cart Loaded",
+        value: orders.filter((item) => item.STATUS === "cart loaded").length,
       },
       {
         status: "Install cart config",

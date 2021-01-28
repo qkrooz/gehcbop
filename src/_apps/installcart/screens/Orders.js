@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useLayoutEffect } from "react";
 import { InstallCartContext } from "../resources/InstallCartContext";
 import {
   Menu,
@@ -109,6 +109,7 @@ const Orders = React.memo(() => {
                 <span>Only completed</span>
                 <Switch
                   size="small"
+                  disabled={ordersSwitch}
                   checked={ordersCheckbox}
                   onChange={(event) => ToggleComplete(event.target.checked)}
                   color="primary"
@@ -148,12 +149,34 @@ const OrderElement = ({ data }) => {
     statusListState,
     workingOrderState,
     deleteDialogVisibilityState,
+    ordersSwitchState,
+    ordersCheckboxState,
   } = useContext(InstallCartContext);
   const [, setDeleteDialogVisibility] = deleteDialogVisibilityState;
   const [, setWorkingOrder] = workingOrderState;
   const [statusList] = statusListState;
   const [detailsCollapse, setDetailsCollapse] = useState(false);
   const [coninfCollapse, setConinfCollapse] = useState(false);
+  const [ordersSwitch] = ordersSwitchState;
+  const [ordersCheckbox] = ordersCheckboxState;
+  const [statusProgress, setStatusProgress] = useState(0);
+  useLayoutEffect(() => {
+    const progressPerSegment = (100 / statusList.length).toFixed(2);
+    statusList.forEach((item, i) => {
+      if (data.STATUS === "order completed") {
+        setStatusProgress(100);
+      } else {
+        switch (item) {
+          case data.STATUS:
+            setStatusProgress(progressPerSegment * (i + 1));
+            break;
+          default:
+            break;
+        }
+      }
+    });
+  }, [ordersSwitch || ordersCheckbox]);
+
   const ellipsisMenu = (
     <Menu>
       <Menu.Item key="0">
@@ -251,43 +274,13 @@ const OrderElement = ({ data }) => {
         </div>
         <div className="progress">
           <Progress
-            type="circle"
-            percent={
-              data.STATUS === "under review"
-                ? 1
-                : data.STATUS === "project queued"
-                ? 12.5
-                : data.STATUS === "mfg in process"
-                ? 25
-                : data.STATUS === "secure in staging space"
-                ? 37.5
-                : data.STATUS === "install cart config"
-                ? 50
-                : data.STATUS === "cart ready to ship"
-                ? 62.5
-                : data.STATUS === "arrived on site"
-                ? 75
-                : data.STATUS === "in transit"
-                ? 87.5
-                : data.STATUS === "order completed"
-                ? 100
-                : data.STATUS === "issue needs review"
-                ? 100
-                : data.STATUS === ""
-                ? 0
-                : null
-            }
-            status={
-              data.STATUS === "issue needs review"
-                ? "exception"
-                : data.STATUS === "order completed"
-                ? "success"
-                : null
-            }
+            status={data.STATUS === "cancelled" ? "exception" : null}
+            type="dashboard"
             width={70}
             strokeLinecap="square"
             style={{ marginBottom: 10 }}
-          ></Progress>
+            percent={data.STAUTS === "order completed" ? 100 : statusProgress}
+          />
           {data.STATUS ? (
             <Tooltip title="Status" placement="right">
               <span className="status-label">{data.STATUS}</span>

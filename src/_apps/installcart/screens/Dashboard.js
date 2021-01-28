@@ -7,7 +7,6 @@ import "../styles/dashboard.css";
 import CartsChart from "../components/CartsChart";
 import OrdersChart from "../components/OrdersChart";
 const Dashboard = React.memo(() => {
-  const { completeOrdersState } = useContext(InstallCartContext);
   return (
     <div className="dashboardMainContainer">
       <div className="upperCharts">
@@ -103,7 +102,7 @@ const Dash1 = () => {
       chart.scrollbarX = new am4charts.XYChartScrollbar();
       chart.scrollbarX.series.push(series);
       chart.scrollbarX.parent = chart.bottomAxesContainer;
-      dateAxis.start = 0;
+      dateAxis.start = 0.9;
       dateAxis.keepSelection = true;
     }
   }, [completeOrders]);
