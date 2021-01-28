@@ -1,0 +1,13 @@
+.inventoryMainContainer {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.dataNavigatorContainer {
+  padding: 1em;
+}
+.tableContainer {
+  flex-grow: 1;
+  padding: 0 1em 1em 1em;
+  height: 0px;
+}

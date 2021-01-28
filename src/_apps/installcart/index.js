@@ -20,6 +20,7 @@ const InstallCartIndex = React.memo(() => {
   const [ordersSwitch, setOrdersSwitch] = useState(false);
   const [ordersCheckbox, setOrdersCheckbox] = useState(false);
   const [carts, setCarts] = useState([]);
+  const [inserts, setInserts] = useState([]);
   // progress
   const [, setMainProgress] = mainProgressState;
   const [genericLoader, setGenericLoader] = useState(false);
@@ -47,7 +48,16 @@ const InstallCartIndex = React.memo(() => {
     function getCarts() {
       return axios.get(`${USELPUTIL02}/${currentApplication}/fetchCarts.php`);
     }
-    Promise.all([getStatusList(), getDevicesList(), getOrders(), getCarts()])
+    function getInserts() {
+      return axios.get(`${USELPUTIL02}/${currentApplication}/fetchInserts.php`);
+    }
+    Promise.all([
+      getStatusList(),
+      getDevicesList(),
+      getOrders(),
+      getCarts(),
+      getInserts(),
+    ])
       .then((results) => {
         setMainProgress(50);
         setStatusList(results[0].data);
@@ -64,6 +74,7 @@ const InstallCartIndex = React.memo(() => {
           )
         );
         setCarts(results[3].data);
+        setInserts(results[4].data);
         setMainProgress(99);
         setTimeout(() => {
           setMainProgress(100);
@@ -196,6 +207,7 @@ const InstallCartIndex = React.memo(() => {
         ordersSwitchState: [ordersSwitch, setOrdersSwitch],
         ordersCheckboxState: [ordersCheckbox, setOrdersCheckbox],
         cartsState: [carts, setCarts],
+        insertsState: [inserts, setInserts],
         genericLoaderState: [genericLoader, setGenericLoader],
         // progress
         addDialogVisibilityState: [addDialogVisibility, setAddDialogVisibility],

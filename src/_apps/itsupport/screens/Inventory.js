@@ -17,7 +17,7 @@ const Inventory = () => {
   const [currentApplication] = currentApplicationState;
   const [height, setHeight] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
-  const [rowData_action, setRowData_action] = useState({});
+  // const [rowData_action, setRowData_action] = useState({});
   const [rowMenu_visibility, setRowMenu_visibility] = useState(false);
   const [its_inventory_section, set_its_inventory_section] = useLocalStorage(
     "its_inventory_section",

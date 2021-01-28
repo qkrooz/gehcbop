@@ -289,12 +289,10 @@
   height: 10px;
   background-color: gray;
 }
-th,
+/* th,
 td {
-  /* white-space: nowrap; */
-  /* text-align: center; */
   width: 1% !important;
-}
+} */
 .ant-table-row-level-0:last-child {
   /* display: none; */
   margin-bottom: 0;
