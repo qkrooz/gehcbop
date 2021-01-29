@@ -510,9 +510,9 @@ const AddDialog = () => {
   const [statusList] = statusListState;
   const [devicesList] = devicesListState;
   const { Option } = Select;
-
+  const { TextArea } = Input;
   const [addForm] = Form.useForm();
-  const products = ["B450", "B650", "B850"];
+  const devices = ["B450", "B650", "B850"];
   const status = [
     "Under review",
     "Project Queded",
@@ -525,11 +525,10 @@ const AddDialog = () => {
     "Order Completed",
   ];
   const dateFormat = "MM/DD/YYYY";
-  const onChange = (value, stringDate) => {
-    console.log(stringDate);
-  };
   const onFinish = (values) => {
     values.rosd = moment(values.rosd).format(dateFormat);
+    values.shipDate = moment(values.shipDate).format(dateFormat);
+    values.wrd = moment(values.wrd).format(dateFormat);
     console.log(values);
   };
   return (
@@ -541,7 +540,7 @@ const AddDialog = () => {
       }}
       style={{ zIndex: 2 }}
     >
-      <DialogTitle id="simple-dialog-title">Add new order</DialogTitle>      
+      <DialogTitle id="simple-dialog-title">Add new order</DialogTitle>
       <DialogContent dividers className="addFormContainer">
         <Form
           form={addForm}
@@ -550,16 +549,31 @@ const AddDialog = () => {
           form={addForm}
           onFinish={onFinish}
         >
-          <div style={{ display: "flex", justifyContent: "center" }}>
-            <Form.Item name="gon">
+          <div style={{ display: "flex", justifyContent: "space-around" }}>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                flexDirection: "column",
+              }}
+            >
               <span>General Order Number:</span>
-              <Input type="number" />
-            </Form.Item>
-                             
-            <Form.Item name="projectName">
+              <Form.Item name="gon">
+                <Input type="number" />
+              </Form.Item>
+            </div>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                flexDirection: "column",
+              }}
+            >
               <span>Project Name:</span>
-              <Input />
-            </Form.Item>
+              <Form.Item name="projectName">
+                <Input />
+              </Form.Item>
+            </div>
           </div>
           <div style={{ display: "flex", justifyContent: "space-around" }}>
             <div
@@ -569,14 +583,13 @@ const AddDialog = () => {
                 flexDirection: "column",
               }}
             >
-              <span>Requested On-Site Date:</span>                    
+              <span>Requested On-Site Date:</span>
               <Form.Item
                 name="rosd"
                 rules={[{ required: true, message: "Please fill this field" }]}
               >
-                <DatePicker format={dateFormat} onChange={onChange} />
+                <DatePicker format={dateFormat} />
               </Form.Item>
-                
             </div>
             <div
               style={{
@@ -585,7 +598,7 @@ const AddDialog = () => {
                 flexDirection: "column",
               }}
             >
-                <span>Shipping Date:</span>
+              <span>Shipping Date:</span>
               <Form.Item
                 name="shipDate"
                 rules={[{ required: true, message: "Please fill this field" }]}
@@ -594,9 +607,10 @@ const AddDialog = () => {
               </Form.Item>
             </div>
           </div>
-                 <label>Device Count</label>
-                  
-          <Form.List name="products">
+          <div style={{ display: "flex", justifyContent: "center" }}>
+            <label>Device Count</label>
+          </div>
+          <Form.List name="devices">
             {(fields, { add, remove }) => (
               <>
                 {fields.map((field) => (
@@ -604,21 +618,21 @@ const AddDialog = () => {
                     <Form.Item
                       noStyle
                       shouldUpdate={(prevValues, curValues) =>
-                        prevValues.products !== curValues.products
+                        prevValues.devices !== curValues.devices
                       }
                     >
                       {() => (
                         <Form.Item
                           {...field}
-                          label="Product"
-                          name={[field.name, "product"]}
-                          fieldKey={[field.fieldKey, "product"]}
+                          label="Device"
+                          name={[field.name, "device"]}
+                          fieldKey={[field.fieldKey, "device"]}
                           rules={[
-                            { required: true, message: "Missing product" },
+                            { required: true, message: "Missing device" },
                           ]}
                         >
                           <Select style={{ width: 130 }}>
-                            {products.map((item) => (
+                            {devices.map((item) => (
                               <Option key={item} value={item}>
                                 {item}
                               </Option>
@@ -636,11 +650,9 @@ const AddDialog = () => {
                     >
                       <Input />
                     </Form.Item>
-
                     <MinusCircleOutlined onClick={() => remove(field.name)} />
                   </Space>
                 ))}
-
                 <Form.Item>
                   <Button
                     type="dashed"
@@ -654,38 +666,63 @@ const AddDialog = () => {
               </>
             )}
           </Form.List>
-          <div style={{ display: "flex", justifyContent: "center" }}>
-            <Form.Item
-              name="projectManager"
-              rules={[{ required: true, message: "Please fill this field" }]}
+          <div style={{ display: "flex", justifyContent: "space-around" }}>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                flexDirection: "column",
+              }}
             >
               <span>Project Manager:</span>
-              <Input />
-            </Form.Item>
-            <Form.Item name="wrd">
+              <Form.Item
+                name="projectManager"
+                rules={[{ required: true, message: "Please fill this field" }]}
+              >
+                <Input />
+              </Form.Item>
+            </div>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                flexDirection: "column",
+              }}
+            >
               <span>Warehouse Requested Date:</span>
-              <DatePicker />
+              <Form.Item name="wrd">
+                <DatePicker />
+              </Form.Item>
+            </div>
+          </div>
+          <div style={{ display: "flex", justifyContent: "center" }}>
+            <label>Configuration Information:</label>
+          </div>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              flexDirection: "column",
+            }}
+          >
+            <Form.Item name="cfgInformation">
+              <TextArea autoSize={{ minRows: 2 }} />
             </Form.Item>
           </div>
-                  
-          <Form.Item label="Configuration Information" name="cfgInformation">
-            <Input style={{ width: "100%" }} />
-          </Form.Item>
-          <Form.Item label="Status" name="status">
-            <Select style={{ width: 498 }}>
-              {status.map((item) => (
-                <Option key={item} value={item}>
-                  {item}
-                </Option>
-              ))}
-            </Select>
-          </Form.Item>
+          <div style={{ display: "flex", justifyContent: "center" }}>
+            <Form.Item label="Status" name="status">
+              <Select style={{ width: 400 }}>
+                {status.map((item) => (
+                  <Option key={item} value={item}>
+                    {item}
+                  </Option>
+                ))}
+              </Select>
+            </Form.Item>
+          </div>
         </Form>
-                      
       </DialogContent>
-                 {" "}
       <DialogActions>
-                      
         <MaterialButton
           autoFocus
           variant="contained"
@@ -702,7 +739,6 @@ const AddDialog = () => {
         >
           CONFIRM
         </MaterialButton>
-         
       </DialogActions>
     </Dialog>
   );
