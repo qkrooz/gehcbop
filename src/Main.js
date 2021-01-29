@@ -194,6 +194,7 @@ const SiderBar = React.memo(() => {
                 onClick={() => {
                   setCurrentPage(`/${app.appName}`);
                   setCurrentApplication(app.appName);
+                  console.log(app.appName);
                 }}
               >
                 <Link to={`/${app.appName}`} />

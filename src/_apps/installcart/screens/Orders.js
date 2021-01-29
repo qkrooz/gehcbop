@@ -534,7 +534,7 @@ const AddDialog = () => {
   return (
     <Dialog
       open={addDialogVisibility}
-      scroll="paper"
+      scroll="body"
       onClose={() => {
         setAddDialogVisibility(false);
       }}
