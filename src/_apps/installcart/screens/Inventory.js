@@ -8,6 +8,7 @@ import ButtonGroup from "@material-ui/core/ButtonGroup";
 import "../styles/inventory.css";
 import { tableIcons } from "../../itsupport/resources/tableIcons";
 import AddCircleIcon from "@material-ui/icons/AddCircle";
+import { render } from "@testing-library/react";
 const Inventory = React.memo(() => {
   const { completeOrdersState, cartsState, insertsState } = useContext(
     InstallCartContext
@@ -60,31 +61,35 @@ const Inventory = React.memo(() => {
       title: "DEVICE COUNT",
       field: "DEVICE_COUNT",
       render: (rowData) => {
-        const deviceCountMenu = (
-          <Menu>
-            {JSON.parse(rowData.DEVICE_COUNT).map((key, i) => {
-              return (
-                <Menu.Item key={i}>
-                  <div style={{ display: "flex" }}>
-                    <span>{key.device + ": "}</span>
-                    <span>{key.quantity}</span>
-                  </div>
-                </Menu.Item>
-              );
-            })}
-          </Menu>
-        );
-        return (
-          <Dropdown
-            overlay={deviceCountMenu}
-            trigger={["click"]}
-            placement={"topRight"}
-          >
-            <Button onClick={(e) => e.preventDefault()}>
-              <AddCircleIcon color="primary" />
-            </Button>
-          </Dropdown>
-        );
+        if (rowData.DEVICE_COUNT !== "") {
+          const deviceCountMenu = (
+            <Menu>
+              {JSON.parse(rowData.DEVICE_COUNT).map((key, i) => {
+                return (
+                  <Menu.Item key={i}>
+                    <div style={{ display: "flex" }}>
+                      <span>{key.device + ": "}</span>
+                      <span>{key.quantity}</span>
+                    </div>
+                  </Menu.Item>
+                );
+              })}
+            </Menu>
+          );
+          return (
+            <Dropdown
+              overlay={deviceCountMenu}
+              trigger={["click"]}
+              placement={"topRight"}
+            >
+              <Button onClick={(e) => e.preventDefault()}>
+                <AddCircleIcon color="primary" />
+              </Button>
+            </Dropdown>
+          );
+        } else {
+          return <></>;
+        }
       },
     },
     {
@@ -110,6 +115,37 @@ const Inventory = React.memo(() => {
     {
       title: "CART USAGE",
       field: "CART_USAGE",
+      // render: (rowData) => {
+      //   if (rowData.DEVICE_USAGE !== "") {
+      //     const deviceCountMenu = (
+      //       <Menu>
+      //         {JSON.parse(rowData.DEVICE_COUNT).map((key, i) => {
+      //           return (
+      //             <Menu.Item key={i}>
+      //               <div style={{ display: "flex" }}>
+      //                 <span>{key.device + ": "}</span>
+      //                 <span>{key.quantity}</span>
+      //               </div>
+      //             </Menu.Item>
+      //           );
+      //         })}
+      //       </Menu>
+      //     );
+      //     return (
+      //       <Dropdown
+      //         overlay={deviceCountMenu}
+      //         trigger={["click"]}
+      //         placement={"topRight"}
+      //       >
+      //         <Button onClick={(e) => e.preventDefault()}>
+      //           <AddCircleIcon color="primary" />
+      //         </Button>
+      //       </Dropdown>
+      //     );
+      //   } else {
+      //     return <></>;
+      //   }
+      // },
     },
   ];
   const cartsColumns = [

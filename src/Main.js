@@ -192,6 +192,7 @@ const SiderBar = React.memo(() => {
                 key={app.appName}
                 icon={appIcons[app.appName]}
                 onClick={() => {
+                  console.log(app.appName);
                   setCurrentPage(`/${app.appName}`);
                   setCurrentApplication(app.appName);
                   console.log(app.appName);
