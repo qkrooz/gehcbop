@@ -49,11 +49,11 @@ import "../styles/addForm.css";
 const { Step } = Steps;
 const { TextArea } = Input;
 const { Option } = Select;
-let formValues = "";
-const SetEditFields = (values) => {
-  formValues = values;
-  console.log(formValues);
-};
+// let formValues = "";
+// const SetEditFields = (values) => {
+//   formValues = values;
+//   console.log(formValues);
+// };
 const Orders = React.memo(() => {
   const {
     ordersState,
@@ -190,7 +190,7 @@ const OrderElement = ({ data }) => {
           type="text"
           onClick={() => {
             setEditDialogVisibility(true);
-            SetEditFields(data);
+            setWorkingOrder(data);
           }}
         >
           <EditOutlined />
@@ -777,9 +777,12 @@ const DeleteConfirmDialog = () => {
   );
 };
 const EditDialog = () => {
-  const { editDialogVisibilityState, statusListState } = useContext(
-    InstallCartContext
-  );
+  const {
+    editDialogVisibilityState,
+    statusListState,
+    workingOrderState,
+  } = useContext(InstallCartContext);
+  const [workingOrder] = workingOrderState;
   const [editForm] = Form.useForm();
   editForm.resetFields();
   const dateFormat = "MM/DD/YYYY";
@@ -803,7 +806,11 @@ const EditDialog = () => {
           <div className="formRow">
             <div className="formItem">
               <span>General Order Number:</span>
-              <Form.Item name="gon" noStyle initialValue={formValues.GON}>
+              <Form.Item
+                name="gon"
+                noStyle
+                initialValue={parseInt(workingOrder.GON)}
+              >
                 <Input type="number" allowClear />
               </Form.Item>
             </div>
@@ -812,7 +819,7 @@ const EditDialog = () => {
               <Form.Item
                 name="projectName"
                 noStyle
-                initialValue={formValues.PROJECT_NAME}
+                initialValue={workingOrder.PROJECT_NAME}
               >
                 <Input allowClear />
               </Form.Item>
@@ -824,7 +831,7 @@ const EditDialog = () => {
               <Form.Item name="shipDate" noStyle>
                 <DatePicker
                   allowClear
-                  defaultValue={moment(formValues.SHIP_DATE, dateFormat)}
+                  defaultValue={moment(workingOrder.SHIP_DATE, dateFormat)}
                   format={dateFormat}
                 />
               </Form.Item>
@@ -834,7 +841,7 @@ const EditDialog = () => {
               <Form.Item name="rosd" noStyle>
                 <DatePicker
                   allowClear
-                  defaultValue={moment(formValues.ROSD, dateFormat)}
+                  defaultValue={moment(workingOrder.ROSD, dateFormat)}
                   format={dateFormat}
                 />
               </Form.Item>
@@ -846,7 +853,7 @@ const EditDialog = () => {
               <Form.Item
                 name="projectManager"
                 noStyle
-                initialValue={formValues.PROJECT_MANAGER}
+                initialValue={workingOrder.PROJECT_MANAGER}
               >
                 <Input allowClear />
               </Form.Item>
@@ -856,7 +863,7 @@ const EditDialog = () => {
               <Form.Item
                 name="warehouseRequestedDate"
                 noStyle
-                defaultValue={moment(formValues.WRD, dateFormat)}
+                defaultValue={moment(workingOrder.WRD, dateFormat)}
                 format={dateFormat}
               >
                 <DatePicker allowClear />
@@ -870,7 +877,7 @@ const EditDialog = () => {
               <Form.Item
                 name="configurationInformation"
                 noStyle
-                initialValue={formValues.CONFIGURATION_INFORMATION}
+                initialValue={workingOrder.CONFIGURATION_INFORMATION}
               >
                 <TextArea rows={3} allowClear />
               </Form.Item>
@@ -880,7 +887,7 @@ const EditDialog = () => {
             <div className="formItem" style={{ marginRight: 0, width: "100%" }}>
               <span>Status:</span>
               <Form.Item name="status" noStyle>
-                <Select defaultValue={formValues.STATUS}>
+                <Select defaultValue={workingOrder.STATUS}>
                   {statusList.map((key, i) => {
                     return (
                       <Option key={i} value={key}>
