@@ -306,3 +306,25 @@ td {
 .MuiDialogContent-root {
   overflow: hidden !important;
 }
+
+/* Formulario */
+.formRow {
+  display: flex;
+  margin-bottom: 2em;
+}
+.formRow:last-child {
+  margin-bottom: 0;
+}
+.formItem {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+}
+.formItem:first-child {
+  margin-right: 1em;
+}
+.formItem > span {
+  font-size: 0.8em;
+  color: gray;
+  font-weight: bold;
+}

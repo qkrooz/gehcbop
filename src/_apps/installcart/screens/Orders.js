@@ -13,8 +13,6 @@ import {
   Select,
   Form,
   Space,
-  Row,
-  Col,
 } from "antd";
 import {
   EditOutlined,
@@ -28,7 +26,6 @@ import {
   PlusOutlined,
 } from "@ant-design/icons";
 import moment from "moment";
-import { Formik } from "formik";
 import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
 import SearchIcon from "@material-ui/icons/Search";
@@ -39,8 +36,6 @@ import AddIcon from "@material-ui/icons/Add";
 import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogActions from "@material-ui/core/DialogActions";
-import { useFormik } from "formik";
-import * as Yup from "yup";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import SortIcon from "@material-ui/icons/Sort";
 import DialogContent from "@material-ui/core/DialogContent";
@@ -51,8 +46,9 @@ import CartsChart from "../components/CartsChart";
 import OrdersTotalChart from "../components/OrdersTotalChart";
 import "../styles/orders.css";
 import "../styles/addForm.css";
-import { ModeComment } from "@material-ui/icons";
 const { Step } = Steps;
+const { TextArea } = Input;
+const { Option } = Select;
 const Orders = React.memo(() => {
   const {
     ordersState,
@@ -145,6 +141,7 @@ const Orders = React.memo(() => {
       </div>
       <AddDialog />
       <DeleteConfirmDialog />
+      <EditDialog />
     </div>
   );
 });
@@ -154,6 +151,7 @@ const OrderElement = ({ data }) => {
     statusListState,
     workingOrderState,
     deleteDialogVisibilityState,
+    editDialogVisibilityState,
   } = useContext(InstallCartContext);
   const [orders] = ordersState;
   const [, setDeleteDialogVisibility] = deleteDialogVisibilityState;
@@ -162,6 +160,10 @@ const OrderElement = ({ data }) => {
   const [detailsCollapse, setDetailsCollapse] = useState(false);
   const [coninfCollapse, setConinfCollapse] = useState(false);
   const [statusProgress, setStatusProgress] = useState(0);
+  const [, setEditDialogVisibility] = editDialogVisibilityState;
+  const setEditFields = (values) => {
+    console.log(values);
+  };
   useEffect(() => {
     const progressPerSegment = (100 / statusList.length).toFixed(2);
     statusList.forEach((item, i) => {
@@ -181,7 +183,13 @@ const OrderElement = ({ data }) => {
   const ellipsisMenu = (
     <Menu>
       <Menu.Item key="0">
-        <Button type="text" onClick={() => {}}>
+        <Button
+          type="text"
+          onClick={() => {
+            setEditDialogVisibility(true);
+            setEditFields(data);
+          }}
+        >
           <EditOutlined />
           Edit
         </Button>
@@ -767,7 +775,7 @@ const DeleteConfirmDialog = () => {
       aria-describedby="alert-dialog-description"
     >
       <DialogTitle id="alert-dialog-title">
-        {"Are you sure to delete this item?"}
+        Are you sure to delete this item?
       </DialogTitle>
       <DialogContent>
         <DialogContentText
@@ -801,6 +809,108 @@ const DeleteConfirmDialog = () => {
           variant="contained"
         >
           Ok
+        </MaterialButton>
+      </DialogActions>
+    </Dialog>
+  );
+};
+const EditDialog = () => {
+  const { editDialogVisibilityState, statusListState } = useContext(
+    InstallCartContext
+  );
+  const [editForm] = Form.useForm();
+  const [statusList] = statusListState;
+  const [
+    editDialogVisibility,
+    setEditDialogVisibility,
+  ] = editDialogVisibilityState;
+  return (
+    <Dialog
+      open={editDialogVisibility}
+      scroll="body"
+      onClose={() => {
+        setEditDialogVisibility(false);
+      }}
+      style={{ zIndex: 2 }}
+    >
+      <DialogTitle>Edit Item</DialogTitle>
+      <DialogContent>
+        <Form form={editForm}>
+          <div className="formRow">
+            <div className="formItem">
+              <span>General Order Number:</span>
+              <Form.Item name="gon" noStyle>
+                <Input type="number" allowClear />
+              </Form.Item>
+            </div>
+            <div className="formItem">
+              <span>Project Name:</span>
+              <Form.Item name="projectName" noStyle>
+                <Input type="number" allowClear />
+              </Form.Item>
+            </div>
+          </div>
+          <div className="formRow">
+            <div className="formItem">
+              <span>Ship Date:</span>
+              <Form.Item name="shipDate" noStyle>
+                <DatePicker allowClear />
+              </Form.Item>
+            </div>
+            <div className="formItem">
+              <span>Project Name:</span>
+              <Form.Item name="rosd" noStyle>
+                <DatePicker allowClear />
+              </Form.Item>
+            </div>
+          </div>
+          <div className="formRow">
+            <div className="formItem">
+              <span>Project Manager:</span>
+              <Form.Item name="projectManager" noStyle>
+                <Input allowClear />
+              </Form.Item>
+            </div>
+            <div className="formItem">
+              <span>Project Name:</span>
+              <Form.Item name="warehouseRequestedDate" noStyle>
+                <DatePicker allowClear />
+              </Form.Item>
+            </div>
+          </div>
+          <div className="formRow">{/* Aqui iteramos el Form Item */}</div>
+          <div className="formRow">
+            <div className="formItem" style={{ width: "100%", marginRight: 0 }}>
+              <span>Configuration information:</span>
+              <Form.Item name="configurationInformation" noStyle>
+                <TextArea rows={3} allowClear />
+              </Form.Item>
+            </div>
+          </div>
+          <div className="formRow">
+            <div className="formItem" style={{ marginRight: 0, width: "100%" }}>
+              <span>Status:</span>
+              <Form.Item name="status" noStyle>
+                <Select>
+                  {statusList.map((key, i) => {
+                    return (
+                      <Option key={i} value={key}>
+                        {key.charAt(0).toUpperCase() + key.slice(1)}
+                      </Option>
+                    );
+                  })}
+                </Select>
+              </Form.Item>
+            </div>
+          </div>
+        </Form>
+      </DialogContent>
+      <DialogActions>
+        <MaterialButton variant="container" color="default" onClick>
+          Cancel
+        </MaterialButton>
+        <MaterialButton variant="contained" color="primary">
+          Update
         </MaterialButton>
       </DialogActions>
     </Dialog>

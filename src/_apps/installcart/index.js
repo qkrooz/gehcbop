@@ -30,6 +30,7 @@ const InstallCartIndex = React.memo(() => {
     deleteConfirmDialogVisibility,
     setDeleteConfirmDialogVisibility,
   ] = useState(false);
+  const [editDialogVisibility, setEditDialogVisibility] = useState(false);
   const ic_getDatanConfiguration = () => {
     setMainProgress(15);
     function getStatusList() {
@@ -214,6 +215,10 @@ const InstallCartIndex = React.memo(() => {
         deleteDialogVisibilityState: [
           deleteConfirmDialogVisibility,
           setDeleteConfirmDialogVisibility,
+        ],
+        editDialogVisibilityState: [
+          editDialogVisibility,
+          setEditDialogVisibility,
         ],
         // functions
         AddOrder: AddOrder,
