@@ -49,6 +49,11 @@ import "../styles/addForm.css";
 const { Step } = Steps;
 const { TextArea } = Input;
 const { Option } = Select;
+let formValues = "";
+const SetEditFields = (values) => {
+  formValues = values;
+  console.log(formValues);
+};
 const Orders = React.memo(() => {
   const {
     ordersState,
@@ -161,9 +166,6 @@ const OrderElement = ({ data }) => {
   const [coninfCollapse, setConinfCollapse] = useState(false);
   const [statusProgress, setStatusProgress] = useState(0);
   const [, setEditDialogVisibility] = editDialogVisibilityState;
-  const setEditFields = (values) => {
-    console.log(values);
-  };
   useEffect(() => {
     const progressPerSegment = (100 / statusList.length).toFixed(2);
     statusList.forEach((item, i) => {
@@ -188,7 +190,7 @@ const OrderElement = ({ data }) => {
           type="text"
           onClick={() => {
             setEditDialogVisibility(true);
-            setEditFields(data);
+            SetEditFields(data);
           }}
         >
           <EditOutlined />
@@ -521,6 +523,7 @@ const AddDialog = () => {
   const { Option } = Select;
   const { TextArea } = Input;
   const [addForm] = Form.useForm();
+
   const dateFormat = "MM/DD/YYYY";
   const onFinish = (values) => {
     values.rosd = moment(values.rosd).format(dateFormat);
@@ -778,6 +781,8 @@ const EditDialog = () => {
     InstallCartContext
   );
   const [editForm] = Form.useForm();
+  editForm.resetFields();
+  const dateFormat = "MM/DD/YYYY";
   const [statusList] = statusListState;
   const [
     editDialogVisibility,
@@ -798,14 +803,18 @@ const EditDialog = () => {
           <div className="formRow">
             <div className="formItem">
               <span>General Order Number:</span>
-              <Form.Item name="gon" noStyle>
+              <Form.Item name="gon" noStyle initialValue={formValues.GON}>
                 <Input type="number" allowClear />
               </Form.Item>
             </div>
             <div className="formItem">
               <span>Project Name:</span>
-              <Form.Item name="projectName" noStyle>
-                <Input type="number" allowClear />
+              <Form.Item
+                name="projectName"
+                noStyle
+                initialValue={formValues.PROJECT_NAME}
+              >
+                <Input allowClear />
               </Form.Item>
             </div>
           </div>
@@ -813,26 +822,43 @@ const EditDialog = () => {
             <div className="formItem">
               <span>Ship Date:</span>
               <Form.Item name="shipDate" noStyle>
-                <DatePicker allowClear />
+                <DatePicker
+                  allowClear
+                  defaultValue={moment(formValues.SHIP_DATE, dateFormat)}
+                  format={dateFormat}
+                />
               </Form.Item>
             </div>
             <div className="formItem">
-              <span>Project Name:</span>
+              <span>Requested On-Site Date:</span>
               <Form.Item name="rosd" noStyle>
-                <DatePicker allowClear />
+                <DatePicker
+                  allowClear
+                  defaultValue={moment(formValues.ROSD, dateFormat)}
+                  format={dateFormat}
+                />
               </Form.Item>
             </div>
           </div>
           <div className="formRow">
             <div className="formItem">
               <span>Project Manager:</span>
-              <Form.Item name="projectManager" noStyle>
+              <Form.Item
+                name="projectManager"
+                noStyle
+                initialValue={formValues.PROJECT_MANAGER}
+              >
                 <Input allowClear />
               </Form.Item>
             </div>
             <div className="formItem">
-              <span>Project Name:</span>
-              <Form.Item name="warehouseRequestedDate" noStyle>
+              <span>Warehouse Requested Date:</span>
+              <Form.Item
+                name="warehouseRequestedDate"
+                noStyle
+                defaultValue={moment(formValues.WRD, dateFormat)}
+                format={dateFormat}
+              >
                 <DatePicker allowClear />
               </Form.Item>
             </div>
@@ -841,7 +867,11 @@ const EditDialog = () => {
           <div className="formRow">
             <div className="formItem" style={{ width: "100%", marginRight: 0 }}>
               <span>Configuration information:</span>
-              <Form.Item name="configurationInformation" noStyle>
+              <Form.Item
+                name="configurationInformation"
+                noStyle
+                initialValue={formValues.CONFIGURATION_INFORMATION}
+              >
                 <TextArea rows={3} allowClear />
               </Form.Item>
             </div>
@@ -850,7 +880,7 @@ const EditDialog = () => {
             <div className="formItem" style={{ marginRight: 0, width: "100%" }}>
               <span>Status:</span>
               <Form.Item name="status" noStyle>
-                <Select>
+                <Select defaultValue={formValues.STATUS}>
                   {statusList.map((key, i) => {
                     return (
                       <Option key={i} value={key}>
