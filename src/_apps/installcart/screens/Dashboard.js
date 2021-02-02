@@ -68,7 +68,7 @@ const Dash1 = () => {
       chart.dateFormatter.inputDateFormat = "MM/dd/yyyy";
       // Create axes
       var dateAxis = chart.xAxes.push(new am4charts.DateAxis());
-      var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+      chart.yAxes.push(new am4charts.ValueAxis());
       // Create series
       var series = chart.series.push(new am4charts.LineSeries());
       series.dataFields.valueY = "value";
@@ -204,9 +204,7 @@ const Dash6 = () => {
     </div>
   );
 };
-const Dash7 = () => {
-  return <div className="dash2Container"></div>;
-};
+
 const Dash5 = () => {
   return <div className="dash3Container"></div>;
 };

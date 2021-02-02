@@ -2,7 +2,7 @@ import React, { useContext, useLayoutEffect } from "react";
 import { InstallCartContext } from "../resources/InstallCartContext";
 import * as am4core from "@amcharts/amcharts4/core";
 import * as am4charts from "@amcharts/amcharts4/charts";
-import am4themes_animated from "@amcharts/amcharts4/themes/animated";
+// import am4themes_animated from "@amcharts/amcharts4/themes/animated";
 import "../styles/charts.css";
 const CartsChart = React.memo((props) => {
   const { cartsState } = useContext(InstallCartContext);
@@ -33,17 +33,17 @@ const CartsChart = React.memo((props) => {
     categoryAxis.renderer.grid.template.location = 0;
     categoryAxis.renderer.minGridDistance = 30;
 
-    categoryAxis.renderer.labels.template.adapter.add(
-      "dy",
-      function (dy, target) {
-        if (target.dataItem && target.dataItem.index & (2 == 2)) {
-          return dy + 25;
-        }
-        return dy;
-      }
-    );
+    // categoryAxis.renderer.labels.template.adapter.add(
+    //   "dy",
+    //   function (dy, target) {
+    //     if (target.dataItem && target.dataItem.index & (2 == 2)) {
+    //       return dy + 25;
+    //     }
+    //     return dy;
+    //   }
+    // );
 
-    var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+    chart.yAxes.push(new am4charts.ValueAxis());
 
     // Create series
     var series = chart.series.push(new am4charts.ColumnSeries());

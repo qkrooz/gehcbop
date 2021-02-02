@@ -8,17 +8,17 @@ import axios from "axios";
 import { tableIcons } from "../resources/tableIcons";
 import MaterialTable from "material-table";
 import MoreVert from "@material-ui/icons/MoreVert";
-import Menu from "@material-ui/core/Menu";
-import MenuItem from "@material-ui/core/MenuItem";
+// import Menu from "@material-ui/core/Menu";
+// import MenuItem from "@material-ui/core/MenuItem";
 const Inventory = () => {
   const { BASE_URL, currentApplicationState } = useContext(Context);
   const [dataLoading, setDataLoading] = useState(true);
   const [columns, setColumns] = useState([]);
   const [currentApplication] = currentApplicationState;
   const [height, setHeight] = useState(null);
-  const [anchorEl, setAnchorEl] = useState(null);
+  // const [anchorEl, setAnchorEl] = useState(null);
   // const [rowData_action, setRowData_action] = useState({});
-  const [rowMenu_visibility, setRowMenu_visibility] = useState(false);
+  // const [rowMenu_visibility, setRowMenu_visibility] = useState(false);
   const [its_inventory_section, set_its_inventory_section] = useLocalStorage(
     "its_inventory_section",
     "desktops"
@@ -51,9 +51,9 @@ const Inventory = () => {
       });
   };
   const openMenu = (event, rowData) => {
-    let anchorElement = event.currentTarget;
-    setAnchorEl(anchorElement);
-    setRowMenu_visibility(true);
+    // let anchorElement = event.currentTarget;
+    // setAnchorEl(anchorElement);
+    // setRowMenu_visibility(true);
   };
   const heightdiv = useCallback((node) => {
     if (node !== null) {
@@ -64,19 +64,19 @@ const Inventory = () => {
     getData(its_inventory_section);
     // eslint-disable-next-line
   }, [its_inventory_section]);
-  const rowMenuRender = (
-    <Menu
-      id="simple-menu"
-      anchorEl={anchorEl}
-      keepMounted
-      open={rowMenu_visibility}
-      onClose={() => {
-        setAnchorEl(null);
-      }}
-    >
-      <MenuItem>Edit</MenuItem>
-    </Menu>
-  );
+  // const rowMenuRender = (
+  //   <Menu
+  //     id="simple-menu"
+  //     anchorEl={anchorEl}
+  //     keepMounted
+  //     open={rowMenu_visibility}
+  //     onClose={() => {
+  //       setAnchorEl(null);
+  //     }}
+  //   >
+  //     <MenuItem>Edit</MenuItem>
+  //   </Menu>
+  // );
   return (
     <div className="inventoryContainer">
       <div className="controls">

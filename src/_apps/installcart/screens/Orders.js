@@ -179,6 +179,7 @@ const OrderElement = ({ data }) => {
         }
       }
     });
+    // eslint-disable-next-line
   }, [orders]);
   const ellipsisMenu = (
     <Menu>
@@ -506,7 +507,7 @@ const OrderElement = ({ data }) => {
 
 const AddDialog = () => {
   const {
-    AddOrder,
+    // AddOrder,
     addDialogVisibilityState,
     statusListState,
     devicesListState,
@@ -520,24 +521,11 @@ const AddDialog = () => {
   const { Option } = Select;
   const { TextArea } = Input;
   const [addForm] = Form.useForm();
-  const devices = ["B450", "B650", "B850"];
-  const status = [
-    "Under review",
-    "Project Queded",
-    "Mfg in progress",
-    "Secure in Staging Space",
-    "Install Cart Config",
-    "Cart Ready to Ship",
-    "Arrived on Site",
-    "In Transit",
-    "Order Completed",
-  ];
   const dateFormat = "MM/DD/YYYY";
   const onFinish = (values) => {
     values.rosd = moment(values.rosd).format(dateFormat);
     values.shipDate = moment(values.shipDate).format(dateFormat);
     values.wrd = moment(values.wrd).format(dateFormat);
-    console.log(values);
   };
   return (
     <Dialog
@@ -554,179 +542,150 @@ const AddDialog = () => {
           form={addForm}
           name="dynamic_form_nest_item"
           autoComplete="off"
-          form={addForm}
           onFinish={onFinish}
         >
-          <div style={{ display: "flex", justifyContent: "space-around" }}>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                flexDirection: "column",
-              }}
-            >
+          <div className="formRow">
+            <div className="formItem">
               <span>General Order Number:</span>
-              <Form.Item name="gon">
-                <Input type="number" />
+              <Form.Item name="gon" noStyle>
+                <Input type="number" allowClear />
               </Form.Item>
             </div>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                flexDirection: "column",
-              }}
-            >
+            <div className="formItem">
               <span>Project Name:</span>
-              <Form.Item name="projectName">
-                <Input />
+              <Form.Item name="projectName" noStyle>
+                <Input allowClear />
               </Form.Item>
             </div>
           </div>
-          <div style={{ display: "flex", justifyContent: "space-around" }}>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                flexDirection: "column",
-              }}
-            >
+          <div className="formRow">
+            <div className="formItem">
+              <span>Ship Date:</span>
+              <Form.Item
+                name="shipDate"
+                noStyle
+                rules={[{ required: true, message: "Please fill this field" }]}
+              >
+                <DatePicker />
+              </Form.Item>
+            </div>
+            <div className="formItem">
               <span>Requested On-Site Date:</span>
               <Form.Item
+                noStyle
                 name="rosd"
                 rules={[{ required: true, message: "Please fill this field" }]}
               >
                 <DatePicker format={dateFormat} />
               </Form.Item>
             </div>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                flexDirection: "column",
-              }}
-            >
-              <span>Shipping Date:</span>
-              <Form.Item
-                name="shipDate"
-                rules={[{ required: true, message: "Please fill this field" }]}
-              >
-                <DatePicker />
-              </Form.Item>
-            </div>
           </div>
-          <div style={{ display: "flex", justifyContent: "center" }}>
-            <label>Device Count</label>
-          </div>
-          <Form.List name="devices">
-            {(fields, { add, remove }) => (
-              <>
-                {fields.map((field) => (
-                  <Space key={field.key} align="baseline">
-                    <Form.Item
-                      noStyle
-                      shouldUpdate={(prevValues, curValues) =>
-                        prevValues.devices !== curValues.devices
-                      }
-                    >
-                      {() => (
-                        <Form.Item
-                          {...field}
-                          label="Device"
-                          name={[field.name, "device"]}
-                          fieldKey={[field.fieldKey, "device"]}
-                          rules={[
-                            { required: true, message: "Missing device" },
-                          ]}
-                        >
-                          <Select style={{ width: 130 }}>
-                            {devices.map((item) => (
-                              <Option key={item} value={item}>
-                                {item}
-                              </Option>
-                            ))}
-                          </Select>
-                        </Form.Item>
-                      )}
-                    </Form.Item>
-                    <Form.Item
-                      {...field}
-                      label="Qty"
-                      name={[field.name, "qty"]}
-                      fieldKey={[field.fieldKey, "qty"]}
-                      rules={[{ required: true, message: "Missing Quantity" }]}
-                    >
-                      <Input />
-                    </Form.Item>
-                    <MinusCircleOutlined onClick={() => remove(field.name)} />
-                  </Space>
-                ))}
-                <Form.Item>
-                  <Button
-                    type="dashed"
-                    onClick={() => add()}
-                    block
-                    icon={<PlusOutlined />}
-                  >
-                    Add product
-                  </Button>
-                </Form.Item>
-              </>
-            )}
-          </Form.List>
-          <div style={{ display: "flex", justifyContent: "space-around" }}>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                flexDirection: "column",
-              }}
-            >
+          <div className="formRow">
+            <div className="formItem">
               <span>Project Manager:</span>
               <Form.Item
+                noStyle
                 name="projectManager"
                 rules={[{ required: true, message: "Please fill this field" }]}
               >
-                <Input />
+                <Input allowClear />
               </Form.Item>
             </div>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                flexDirection: "column",
-              }}
-            >
+            <div className="formItem">
               <span>Warehouse Requested Date:</span>
-              <Form.Item name="wrd">
-                <DatePicker />
+              <Form.Item name="wrd" noStyle>
+                <DatePicker allowClear />
               </Form.Item>
             </div>
           </div>
-          <div style={{ display: "flex", justifyContent: "center" }}>
-            <label>Configuration Information:</label>
+          <div className="formRow">
+            <div className="formItem" style={{ width: "100%", marginRight: 0 }}>
+              <span>Device Count:</span>
+              <Form.List name="devices">
+                {(fields, { add, remove }) => (
+                  <>
+                    {fields.map((field) => (
+                      <Space key={field.key} align="baseline">
+                        <Form.Item
+                          noStyle
+                          shouldUpdate={(prevValues, curValues) =>
+                            prevValues.devices !== curValues.devices
+                          }
+                        >
+                          {() => (
+                            <Form.Item
+                              {...field}
+                              label="Device"
+                              name={[field.name, "device"]}
+                              fieldKey={[field.fieldKey, "device"]}
+                              rules={[
+                                { required: true, message: "Missing device" },
+                              ]}
+                            >
+                              <Select style={{ width: 130 }}>
+                                {devicesList.map((item) => (
+                                  <Option key={item} value={item}>
+                                    {item}
+                                  </Option>
+                                ))}
+                              </Select>
+                            </Form.Item>
+                          )}
+                        </Form.Item>
+                        <Form.Item
+                          {...field}
+                          label="Qty"
+                          name={[field.name, "qty"]}
+                          fieldKey={[field.fieldKey, "qty"]}
+                          rules={[
+                            { required: true, message: "Missing Quantity" },
+                          ]}
+                        >
+                          <Input />
+                        </Form.Item>
+                        <MinusCircleOutlined
+                          onClick={() => remove(field.name)}
+                        />
+                      </Space>
+                    ))}
+                    <Form.Item noStyle>
+                      <Button
+                        type="dashed"
+                        onClick={() => add()}
+                        block
+                        icon={<PlusOutlined />}
+                      >
+                        Add product
+                      </Button>
+                    </Form.Item>
+                  </>
+                )}
+              </Form.List>
+            </div>
           </div>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              flexDirection: "column",
-            }}
-          >
-            <Form.Item name="cfgInformation">
-              <TextArea autoSize={{ minRows: 2 }} />
-            </Form.Item>
+          <div className="formRow">
+            <div className="formItem" style={{ width: "100%", marginRight: 0 }}>
+              <span>Configuration Information:</span>
+              <Form.Item noStyle name="configurationInformation">
+                <TextArea rows={3} allowClear />
+              </Form.Item>
+            </div>
           </div>
-          <div style={{ display: "flex", justifyContent: "center" }}>
-            <Form.Item label="Status" name="status">
-              <Select style={{ width: 400 }}>
-                {status.map((item) => (
-                  <Option key={item} value={item}>
-                    {item}
-                  </Option>
-                ))}
-              </Select>
-            </Form.Item>
+          <div className="formRow">
+            <div className="formItem" style={{ width: "100%", marginRight: 0 }}>
+              <span>Status:</span>
+              <Form.Item name="status" noStyle>
+                <Select>
+                  {statusList.map((key, i) => {
+                    return (
+                      <Option key={i} value={key}>
+                        {key.charAt(0).toUpperCase() + key.slice(1)}
+                      </Option>
+                    );
+                  })}
+                </Select>
+              </Form.Item>
+            </div>
           </div>
         </Form>
       </DialogContent>

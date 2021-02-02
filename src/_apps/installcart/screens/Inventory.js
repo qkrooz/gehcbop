@@ -8,7 +8,6 @@ import ButtonGroup from "@material-ui/core/ButtonGroup";
 import "../styles/inventory.css";
 import { tableIcons } from "../../itsupport/resources/tableIcons";
 import AddCircleIcon from "@material-ui/icons/AddCircle";
-import { render } from "@testing-library/react";
 const Inventory = React.memo(() => {
   const { completeOrdersState, cartsState, insertsState } = useContext(
     InstallCartContext
@@ -239,6 +238,7 @@ const Inventory = React.memo(() => {
           break;
       }
     }
+    // eslint-disable-next-line
   }, [ic_inventory_section]);
   return (
     <div className="inventoryMainContainer">

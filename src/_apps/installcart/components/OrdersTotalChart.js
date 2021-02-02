@@ -15,11 +15,13 @@ const OrdersTotalChart = () => {
     },
   });
   const classes = useStyles();
-  const { ordersState, completeOrdersState, filteredOrdersState } = useContext(
-    InstallCartContext
-  );
+  const {
+    ordersState,
+    completeOrdersState,
+    // filteredOrdersState
+  } = useContext(InstallCartContext);
   const [orders] = ordersState;
-  const [filteredOrders] = filteredOrdersState;
+  // const [filteredOrders] = filteredOrdersState;
   const [completeOrders] = completeOrdersState;
   function createData(label, quantity) {
     return { label, quantity };
