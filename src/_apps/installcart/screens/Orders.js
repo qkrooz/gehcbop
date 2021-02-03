@@ -516,8 +516,10 @@ const AddDialog = () => {
     addDialogVisibilityState,
     statusListState,
     devicesListState,
+    genericLoaderState,
   } = useContext(InstallCartContext);
   const [userData] = userDataState;
+  const [genericLoader] = genericLoaderState;
   const [
     addDialogVisibility,
     setAddDialogVisibility,
@@ -531,7 +533,20 @@ const AddDialog = () => {
   const onFinish = (values) => {
     values.rosd = moment(values.rosd).format(dateFormat);
     values.shipDate = moment(values.shipDate).format(dateFormat);
-    values.wrd = moment(values.wrd).format(dateFormat);
+    values.recommendedBuild
+      ? (values.recommendedBuild = true)
+      : (values.recommendedBuild = false);
+    values.projectManager
+      ? (values.projectManager = values.projectManager)
+      : (values.projectManager = "");
+    values.wrd
+      ? (values.wrd = moment(values.wrd).format(dateFormat))
+      : (values.wrd = "");
+    values.configurationInformation
+      ? (values.configurationInformation = values.configurationInformation)
+      : (values.configurationInformation = "");
+    values.status ? (values.status = values.status) : (values.status = "");
+    values.devices ? (values.devices = values.devices) : (values.devices = []);
     values["owner"] = userData.USER_NAME;
     AddOrder(values);
   };
@@ -582,7 +597,7 @@ const AddDialog = () => {
                 noStyle
                 rules={[{ required: true, message: "Please fill this field" }]}
               >
-                <DatePicker />
+                <DatePicker format={dateFormat} />
               </Form.Item>
             </div>
             <div className="formItem">
@@ -606,7 +621,7 @@ const AddDialog = () => {
             <div className="formItem">
               <span>Warehouse Requested Date:</span>
               <Form.Item name="wrd" noStyle>
-                <DatePicker allowClear />
+                <DatePicker allowClear format={dateFormat} />
               </Form.Item>
             </div>
           </div>
@@ -717,6 +732,11 @@ const AddDialog = () => {
           CANCEL
         </MaterialButton>
         <MaterialButton
+          startIcon={
+            genericLoader ? (
+              <CircularProgress size={15} color="inherit" />
+            ) : null
+          }
           color="primary"
           variant="contained"
           onClick={addForm.submit}

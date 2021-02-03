@@ -86,10 +86,34 @@ const InstallCartIndex = React.memo(() => {
   };
   const AddOrder = (values) => {
     console.log(values);
+    setGenericLoader(true);
     axios
       .post(`${USELPUTIL02}/${currentApplication}/addNewOrder.php`, values)
-      .then((response) => console.log(response.data))
-      .catch((error) => console.log(error));
+      .then((response) => {
+        console.log(response.data);
+        if (response.data.code === 200) {
+          let temporalAddedItem = response.data.lastItem[0];
+          if (temporalAddedItem.STATUS === "order completed") {
+            setFilteredOrders((filteredOrders) => [
+              temporalAddedItem,
+              ...filteredOrders,
+            ]);
+          }
+          setOrders((orders) => [temporalAddedItem, ...orders]);
+          setCompleteOrders((completeOrders) => [
+            temporalAddedItem,
+            ...completeOrders,
+          ]);
+          setTimeout(() => {
+            setGenericLoader(false);
+          }, 1000);
+        } else {
+          setGenericLoader(false);
+        }
+      })
+      .catch((error) => {
+        setGenericLoader(false);
+      });
   };
   const EditOrder = () => {};
   const DeleteOrder = (order) => {
@@ -114,7 +138,9 @@ const InstallCartIndex = React.memo(() => {
           } else {
             setOrders(newFilteredOrders);
           }
-          setGenericLoader(false);
+          setTimeout(() => {
+            setGenericLoader(false);
+          }, 1000);
           setDeleteConfirmDialogVisibility(false);
         } else {
           console.log("ocurrio un error");
