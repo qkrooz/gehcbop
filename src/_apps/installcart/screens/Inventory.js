@@ -8,6 +8,9 @@ import ButtonGroup from "@material-ui/core/ButtonGroup";
 import "../styles/inventory.css";
 import { tableIcons } from "../../itsupport/resources/tableIcons";
 import AddCircleIcon from "@material-ui/icons/AddCircle";
+import Chip from "@material-ui/core/Chip";
+import ErrorOutlineIcon from "@material-ui/icons/ErrorOutline";
+import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 const Inventory = React.memo(() => {
   const { completeOrdersState, cartsState, insertsState } = useContext(
     InstallCartContext
@@ -31,43 +34,84 @@ const Inventory = React.memo(() => {
     {
       title: "ID",
       field: "ID",
+      cellStyle: {
+        textAlign: "center",
+      },
     },
     {
       title: "CREATED DATE",
       field: "CREATED_DATE",
+      cellStyle: {
+        textAlign: "center",
+      },
     },
     {
       title: "GON",
       field: "GON",
+      cellStyle: {
+        textAlign: "center",
+      },
     },
     {
       title: "PROJECT NAME",
       field: "PROJECT_NAME",
+      cellStyle: {
+        textAlign: "left",
+      },
     },
     {
       title: "FW",
       field: "FW",
+      cellStyle: {
+        textAlign: "center",
+      },
     },
     {
       title: "ROSD",
       field: "ROSD",
+      cellStyle: {
+        textAlign: "center",
+      },
     },
     {
       title: "SHIP DATE",
       field: "SHIP_DATE",
+      cellStyle: {
+        textAlign: "center",
+      },
     },
     {
       title: "DEVICE COUNT",
       field: "DEVICE_COUNT",
+      cellStyle: {
+        textAlign: "center",
+      },
       render: (rowData) => {
-        if (rowData.DEVICE_COUNT !== "") {
+        if (
+          rowData.DEVICE_COUNT === null ||
+          rowData.DEVICE_COUNT === "" ||
+          rowData.DEVICE_COUNT === undefined ||
+          !rowData.DEVICE_COUNT ||
+          rowData.DEVICE_COUNT === "[]"
+        ) {
+          return (
+            <Chip
+              icon={<ErrorOutlineIcon style={{ color: "#f44336" }} />}
+              label={<span>Missing</span>}
+            />
+          );
+        } else {
           const deviceCountMenu = (
             <Menu>
               {JSON.parse(rowData.DEVICE_COUNT).map((key, i) => {
                 return (
                   <Menu.Item key={i}>
                     <div style={{ display: "flex" }}>
-                      <span>{key.device + ": "}</span>
+                      <span
+                        style={{ fontWeight: "bold", marginRight: "0.5em" }}
+                      >
+                        {key.device + ":"}
+                      </span>
                       <span>{key.quantity}</span>
                     </div>
                   </Menu.Item>
@@ -86,65 +130,198 @@ const Inventory = React.memo(() => {
               </Button>
             </Dropdown>
           );
-        } else {
-          return <></>;
         }
       },
     },
     {
       title: "PROJECT NANAGER",
       field: "PROJECT_NANAGER",
+      cellStyle: {
+        textAlign: "center",
+      },
+      render: (rowData) => {
+        if (rowData.PROJECT_MANAGER) {
+          return <span>{rowData.PROJECT_MANAGER}</span>;
+        } else {
+          return (
+            <Chip
+              icon={<ErrorOutlineIcon style={{ color: "#f44336" }} />}
+              label={<span>Missing</span>}
+            />
+          );
+        }
+      },
     },
     {
       title: "WRD",
       field: "WRD",
+      cellStyle: {
+        textAlign: "center",
+      },
+      render: (rowData) => {
+        if (rowData.WRD) {
+          return <span>{rowData.WRD}</span>;
+        } else {
+          return (
+            <Chip
+              icon={<ErrorOutlineIcon style={{ color: "#f44336" }} />}
+              label={<span>Missing</span>}
+            />
+          );
+        }
+      },
     },
     {
       title: "CONFIGURATION INFORMATION",
       field: "CONFIGURATION_INFORMATION",
+      cellStyle: {
+        textAlign: "center",
+      },
+      render: (rowData) => {
+        if (rowData.CONFIGURATION_INFORMATION) {
+          const menu = (
+            <Menu>
+              <Menu.Item>
+                <span style={{ whiteSpace: "pre-wrap" }}>
+                  {rowData.CONFIGURATION_INFORMATION
+                    ? rowData.CONFIGURATION_INFORMATION
+                    : null}
+                </span>
+              </Menu.Item>
+            </Menu>
+          );
+          return (
+            <Dropdown trigger={["click"]} overlay={menu}>
+              <span style={{ cursor: "pointer" }}>
+                {rowData.CONFIGURATION_INFORMATION
+                  ? rowData.CONFIGURATION_INFORMATION.substring(0, 30) + "...."
+                  : null}
+              </span>
+            </Dropdown>
+          );
+        } else {
+          return (
+            <Chip
+              icon={<ErrorOutlineIcon style={{ color: "#f44336" }} />}
+              label={<span>Missing</span>}
+            />
+          );
+        }
+      },
     },
     {
       title: "OWNER",
       field: "OWNER",
+      cellStyle: {
+        textAlign: "center",
+      },
+      render: (rowData) => (
+        <Chip icon={<AccountCircleIcon />} label={rowData.OWNER} />
+      ),
     },
     {
       title: "STATUS",
       field: "STATUS",
+      cellStyle: {
+        textAlign: "center",
+      },
+      render: (rowData) =>
+        rowData.STATUS ? (
+          <Chip
+            label={
+              rowData.STATUS.charAt(0).toUpperCase() + rowData.STATUS.slice(1)
+            }
+            style={
+              rowData.STATUS === "cancelled"
+                ? { backgroundColor: "#f44336", color: "white" }
+                : rowData.STATUS === "order completed"
+                ? { backgroundColor: "#4caf50" }
+                : { backgroundColor: "#2196f3", color: "white" }
+            }
+          />
+        ) : (
+          <Chip
+            icon={<ErrorOutlineIcon style={{ color: "#f44336" }} />}
+            label={<span>Missing</span>}
+          />
+        ),
     },
     {
       title: "CART USAGE",
       field: "CART_USAGE",
-      // render: (rowData) => {
-      //   if (rowData.DEVICE_USAGE !== "") {
-      //     const deviceCountMenu = (
-      //       <Menu>
-      //         {JSON.parse(rowData.DEVICE_COUNT).map((key, i) => {
-      //           return (
-      //             <Menu.Item key={i}>
-      //               <div style={{ display: "flex" }}>
-      //                 <span>{key.device + ": "}</span>
-      //                 <span>{key.quantity}</span>
-      //               </div>
-      //             </Menu.Item>
-      //           );
-      //         })}
-      //       </Menu>
-      //     );
-      //     return (
-      //       <Dropdown
-      //         overlay={deviceCountMenu}
-      //         trigger={["click"]}
-      //         placement={"topRight"}
-      //       >
-      //         <Button onClick={(e) => e.preventDefault()}>
-      //           <AddCircleIcon color="primary" />
-      //         </Button>
-      //       </Dropdown>
-      //     );
-      //   } else {
-      //     return <></>;
-      //   }
-      // },
+      cellStyle: {
+        textAlign: "center",
+      },
+      render: (rowData) => {
+        if (
+          rowData.CART_USAGE === null ||
+          rowData.CART_USAGE === "" ||
+          rowData.CART_USAGE === undefined ||
+          !rowData.CART_USAGE ||
+          rowData.CART_USAGE === " "
+        ) {
+          return (
+            <Chip
+              icon={<ErrorOutlineIcon style={{ color: "#f44336" }} />}
+              label={<span>Missing</span>}
+            />
+          );
+        } else {
+          const menu34 = (
+            <Menu>
+              {JSON.parse(rowData.CART_USAGE).map((key, i) => {
+                return (
+                  <Menu.Item key={i}>
+                    <div style={{ display: "flex" }}>
+                      <span
+                        style={{ fontWeight: "bold", marginRight: "0.5em" }}
+                      >
+                        {"Cart Usage: "}
+                      </span>
+                      <span>{key.cartUsage}</span>
+                    </div>
+                    <div style={{ display: "flex" }}>
+                      <span
+                        style={{ fontWeight: "bold", marginRight: "0.5em" }}
+                      >
+                        Total Slots:
+                      </span>
+                      <span>{key.totalSlots}</span>
+                    </div>
+                    <div style={{ display: "flex" }}>
+                      <span
+                        style={{ fontWeight: "bold", marginRight: "0.5em" }}
+                      >
+                        Tall:
+                      </span>
+                      <span>{key.tall}</span>
+                    </div>
+                    <div style={{ display: "flex" }}>
+                      <span
+                        style={{ fontWeight: "bold", marginRight: "0.5em" }}
+                      >
+                        Short:
+                      </span>
+                      <span>{key.short}</span>
+                    </div>
+                  </Menu.Item>
+                );
+              })}
+            </Menu>
+          );
+          return (
+            <Dropdown
+              overlay={menu34}
+              trigger={["click"]}
+              placement={"topRight"}
+            >
+              <Button onClick={(e) => e.preventDefault()}>
+                <AddCircleIcon color="primary" />
+              </Button>
+            </Dropdown>
+          );
+        }
+      },
     },
   ];
   const cartsColumns = [

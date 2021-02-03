@@ -662,8 +662,8 @@ const AddDialog = () => {
                         <Form.Item
                           {...field}
                           label="Qty"
-                          name={[field.name, "qty"]}
-                          fieldKey={[field.fieldKey, "qty"]}
+                          name={[field.name, "quantity"]}
+                          fieldKey={[field.fieldKey, "quantity"]}
                           rules={[
                             { required: true, message: "Missing Quantity" },
                           ]}
