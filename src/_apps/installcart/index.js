@@ -85,12 +85,10 @@ const InstallCartIndex = React.memo(() => {
       .catch((error) => console.log(error));
   };
   const AddOrder = (values) => {
-    console.log(values);
     setGenericLoader(true);
     axios
       .post(`${USELPUTIL02}/${currentApplication}/addNewOrder.php`, values)
       .then((response) => {
-        console.log(response.data);
         if (response.data.code === 200) {
           let temporalAddedItem = response.data.lastItem[0];
           if (temporalAddedItem.STATUS === "order completed") {
@@ -106,6 +104,7 @@ const InstallCartIndex = React.memo(() => {
           ]);
           setTimeout(() => {
             setGenericLoader(false);
+            setAddDialogVisibility(false);
           }, 1000);
         } else {
           setGenericLoader(false);

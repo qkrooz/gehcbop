@@ -51,11 +51,6 @@ import "../styles/addForm.css";
 const { Step } = Steps;
 const { TextArea } = Input;
 const { Option } = Select;
-// let formValues = "";
-// const SetEditFields = (values) => {
-//   formValues = values;
-//   console.log(formValues);
-// };
 const Orders = React.memo(() => {
   const {
     ordersState,
@@ -526,27 +521,32 @@ const AddDialog = () => {
   ] = addDialogVisibilityState;
   const [statusList] = statusListState;
   const [devicesList] = devicesListState;
-  const { Option } = Select;
-  const { TextArea } = Input;
   const [addForm] = Form.useForm();
+  addForm.resetFields();
   const dateFormat = "MM/DD/YYYY";
   const onFinish = (values) => {
     values.rosd = moment(values.rosd).format(dateFormat);
     values.shipDate = moment(values.shipDate).format(dateFormat);
-    values.recommendedBuild
-      ? (values.recommendedBuild = true)
-      : (values.recommendedBuild = false);
-    values.projectManager
-      ? (values.projectManager = values.projectManager)
-      : (values.projectManager = "");
+    if (!values.recommendedBuild) {
+      values.recommendedBuild = false;
+    } else {
+      values.recommendedBuild = true;
+    }
+    if (!values.projectManager) {
+      values.projectManager = "";
+    }
     values.wrd
       ? (values.wrd = moment(values.wrd).format(dateFormat))
       : (values.wrd = "");
-    values.configurationInformation
-      ? (values.configurationInformation = values.configurationInformation)
-      : (values.configurationInformation = "");
-    values.status ? (values.status = values.status) : (values.status = "");
-    values.devices ? (values.devices = values.devices) : (values.devices = []);
+    if (!values.configurationInformation) {
+      values.configurationInformation = "";
+    }
+    if (!values.status) {
+      values.status = "";
+    }
+    if (!values.devices) {
+      values.devices = [];
+    }
     values["owner"] = userData.USER_NAME;
     AddOrder(values);
   };
