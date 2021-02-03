@@ -84,7 +84,13 @@ const InstallCartIndex = React.memo(() => {
       })
       .catch((error) => console.log(error));
   };
-  const AddOrder = () => {};
+  const AddOrder = (values) => {
+    console.log(values);
+    axios
+      .post(`${USELPUTIL02}/${currentApplication}/addNewOrder.php`, values)
+      .then((response) => console.log(response.data))
+      .catch((error) => console.log(error));
+  };
   const EditOrder = () => {};
   const DeleteOrder = (order) => {
     setGenericLoader(true);

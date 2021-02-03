@@ -1,5 +1,6 @@
 import React, { useContext, useState, useEffect } from "react";
 import { InstallCartContext } from "../resources/InstallCartContext";
+import { Context } from "../../../_context/MainContext";
 import {
   Menu,
   Button,
@@ -13,6 +14,7 @@ import {
   Select,
   Form,
   Space,
+  Checkbox,
 } from "antd";
 import {
   EditOutlined,
@@ -508,12 +510,14 @@ const OrderElement = ({ data }) => {
 };
 
 const AddDialog = () => {
+  const { userDataState } = useContext(Context);
   const {
-    // AddOrder,
+    AddOrder,
     addDialogVisibilityState,
     statusListState,
     devicesListState,
   } = useContext(InstallCartContext);
+  const [userData] = userDataState;
   const [
     addDialogVisibility,
     setAddDialogVisibility,
@@ -523,12 +527,13 @@ const AddDialog = () => {
   const { Option } = Select;
   const { TextArea } = Input;
   const [addForm] = Form.useForm();
-
   const dateFormat = "MM/DD/YYYY";
   const onFinish = (values) => {
     values.rosd = moment(values.rosd).format(dateFormat);
     values.shipDate = moment(values.shipDate).format(dateFormat);
     values.wrd = moment(values.wrd).format(dateFormat);
+    values["owner"] = userData.USER_NAME;
+    AddOrder(values);
   };
   return (
     <Dialog
@@ -550,13 +555,21 @@ const AddDialog = () => {
           <div className="formRow">
             <div className="formItem">
               <span>General Order Number:</span>
-              <Form.Item name="gon" noStyle>
+              <Form.Item
+                name="gon"
+                noStyle
+                rules={[{ required: true, message: "Please fill this field" }]}
+              >
                 <Input type="number" allowClear />
               </Form.Item>
             </div>
             <div className="formItem">
               <span>Project Name:</span>
-              <Form.Item name="projectName" noStyle>
+              <Form.Item
+                name="projectName"
+                noStyle
+                rules={[{ required: true, message: "Please fill this field" }]}
+              >
                 <Input allowClear />
               </Form.Item>
             </div>
@@ -586,11 +599,7 @@ const AddDialog = () => {
           <div className="formRow">
             <div className="formItem">
               <span>Project Manager:</span>
-              <Form.Item
-                noStyle
-                name="projectManager"
-                rules={[{ required: true, message: "Please fill this field" }]}
-              >
+              <Form.Item noStyle name="projectManager">
                 <Input allowClear />
               </Form.Item>
             </div>
@@ -689,6 +698,11 @@ const AddDialog = () => {
                 </Select>
               </Form.Item>
             </div>
+          </div>
+          <div className="formRow">
+            <Form.Item name="recommendedBuild" valuePropName="checked" noStyle>
+              <Checkbox defaultChecked>Want a recommended build?</Checkbox>
+            </Form.Item>
           </div>
         </Form>
       </DialogContent>
