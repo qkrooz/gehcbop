@@ -254,7 +254,7 @@ const AddDialog = React.memo(() => {
     console.log(values);
     const tempSN = values.serialNumber;
     console.log(tempSN);
-    const serialNumbers = tempSN.split("\n");
+    const serialNumbers = tempSN.split("\n").filter(String);
     console.log(serialNumbers);
     const hostname = serialNumbers.map(
       (serialNumbers) => "G" + serialNumbers + "E"
