@@ -33,15 +33,15 @@ const CartsChart = React.memo((props) => {
     categoryAxis.renderer.grid.template.location = 0;
     categoryAxis.renderer.minGridDistance = 30;
 
-    // categoryAxis.renderer.labels.template.adapter.add(
-    //   "dy",
-    //   function (dy, target) {
-    //     if (target.dataItem && target.dataItem.index & (2 == 2)) {
-    //       return dy + 25;
-    //     }
-    //     return dy;
-    //   }
-    // );
+    categoryAxis.renderer.labels.template.adapter.add(
+      "dy",
+      function (dy, target) {
+        if (target.dataItem && target.dataItem.index & (2 == 2)) {
+          return dy + 25;
+        }
+        return dy;
+      }
+    );
 
     chart.yAxes.push(new am4charts.ValueAxis());
 

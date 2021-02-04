@@ -33,7 +33,7 @@ const Dashboard = React.memo(() => {
     </div>
   );
 });
-const Dash1 = () => {
+const Dash1 = React.memo(() => {
   const { completeOrdersState } = useContext(InstallCartContext);
   const [completeOrders] = completeOrdersState;
   useLayoutEffect(() => {
@@ -114,8 +114,8 @@ const Dash1 = () => {
       <div className="tableDataContainer"></div>
     </div>
   );
-};
-const Dash2 = () => {
+});
+const Dash2 = React.memo(() => {
   const { completeOrdersState } = useContext(InstallCartContext);
   const [completeOrders] = completeOrdersState;
   return (
@@ -131,8 +131,8 @@ const Dash2 = () => {
       </span>
     </div>
   );
-};
-const Dash3 = () => {
+});
+const Dash3 = React.memo(() => {
   const { completeOrdersState } = useContext(InstallCartContext);
   const [completeOrders] = completeOrdersState;
   const [value, setValue] = useState();
@@ -162,8 +162,8 @@ const Dash3 = () => {
       <span style={{ fontSize: "3em" }}>{value ? value : " "}</span>
     </div>
   );
-};
-const Dash4 = () => {
+});
+const Dash4 = React.memo(() => {
   const { completeOrdersState } = useContext(InstallCartContext);
   const [completeOrders] = completeOrdersState;
   return (
@@ -181,8 +181,8 @@ const Dash4 = () => {
       </span>
     </div>
   );
-};
-const Dash6 = () => {
+});
+const Dash6 = React.memo(() => {
   const { completeOrdersState } = useContext(InstallCartContext);
   const [completeOrders] = completeOrdersState;
   return (
@@ -203,9 +203,9 @@ const Dash6 = () => {
       </div>
     </div>
   );
-};
+});
 
-const Dash5 = () => {
+const Dash5 = React.memo(() => {
   return <div className="dash3Container"></div>;
-};
+});
 export default Dashboard;

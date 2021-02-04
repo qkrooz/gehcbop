@@ -60,12 +60,17 @@ const Orders = React.memo(() => {
     SearchOrders,
     ToggleComplete,
     addDialogVisibilityState,
+    workingOrderState,
   } = useContext(InstallCartContext);
   const [orders] = ordersState;
   const [ordersCheckbox] = ordersCheckboxState;
   const [ordersSwitch] = ordersSwitchState;
+  const [workingOrder] = workingOrderState;
   const [searchText_temp, setSearchText_temp] = useState("");
   const [, setAddDialogVisibility] = addDialogVisibilityState;
+  useEffect(() => {
+    console.log(workingOrder);
+  }, [workingOrder]);
   return (
     <div className="ordersMainContainer">
       <div className="ordersContainer">
@@ -147,7 +152,7 @@ const Orders = React.memo(() => {
     </div>
   );
 });
-const OrderElement = ({ data }) => {
+const OrderElement = React.memo(({ data }) => {
   const {
     ordersState,
     statusListState,
@@ -502,9 +507,8 @@ const OrderElement = ({ data }) => {
       </Collapse>
     </div>
   );
-};
-
-const AddDialog = () => {
+});
+const AddDialog = React.memo(() => {
   const { userDataState } = useContext(Context);
   const {
     AddOrder,
@@ -746,9 +750,8 @@ const AddDialog = () => {
       </DialogActions>
     </Dialog>
   );
-};
-
-const DeleteConfirmDialog = () => {
+});
+const DeleteConfirmDialog = React.memo(() => {
   const {
     DeleteOrder,
     workingOrderState,
@@ -809,14 +812,17 @@ const DeleteConfirmDialog = () => {
       </DialogActions>
     </Dialog>
   );
-};
-const EditDialog = () => {
+});
+const EditDialog = React.memo(() => {
   const {
+    EditOrder,
     editDialogVisibilityState,
     statusListState,
     workingOrderState,
+    devicesListState,
   } = useContext(InstallCartContext);
-  const [workingOrder] = workingOrderState;
+  // const [devicesList] = devicesListState;
+  const [workingOrder, setWorkingOrder] = workingOrderState;
   const [editForm] = Form.useForm();
   editForm.resetFields();
   const dateFormat = "MM/DD/YYYY";
@@ -825,36 +831,73 @@ const EditDialog = () => {
     editDialogVisibility,
     setEditDialogVisibility,
   ] = editDialogVisibilityState;
+  editForm.setFieldsValue({
+    gon: parseInt(workingOrder.GON),
+    projectName: workingOrder.PROJECT_NAME,
+    shipDate: moment(workingOrder.SHIP_DATE, dateFormat),
+    rosd: moment(workingOrder.ROSD, dateFormat),
+    projectManager: workingOrder.PROJECT_MANAGER,
+    wrd: workingOrder.WRD ? moment(workingOrder.WRD, dateFormat) : null,
+    configurationInformation: workingOrder.CONFIGURATION_INFORMATION,
+    status: workingOrder.STATUS,
+  });
+  const onFinish = (values) => {
+    if (!values.rosd) {
+      values.rosd = moment(values.rosd).format(dateFormat);
+    } else {
+      values.rosd = "";
+    }
+    if (!values.shipDate) {
+      values.shipDate = moment(values.shipDate).format(dateFormat);
+    } else {
+      values.shipDate = "";
+    }
+    if (!values.recommendedBuild) {
+      values.recommendedBuild = false;
+    } else {
+      values.recommendedBuild = true;
+    }
+    if (!values.projectManager) {
+      values.projectManager = "";
+    }
+    values.wrd
+      ? (values.wrd = moment(values.wrd).format(dateFormat))
+      : (values.wrd = "");
+    if (!values.configurationInformation) {
+      values.configurationInformation = "";
+    }
+    if (!values.status) {
+      values.status = "";
+    }
+    if (!values.devices) {
+      values.devices = [];
+    }
+    values["id"] = workingOrder.ID;
+    EditOrder(values);
+  };
   return (
     <Dialog
       open={editDialogVisibility}
       scroll="body"
       onClose={() => {
         setEditDialogVisibility(false);
+        setWorkingOrder({});
       }}
       style={{ zIndex: 2 }}
     >
       <DialogTitle>Edit Item</DialogTitle>
       <DialogContent>
-        <Form form={editForm}>
+        <Form form={editForm} onFinish={onFinish}>
           <div className="formRow">
             <div className="formItem">
               <span>General Order Number:</span>
-              <Form.Item
-                name="gon"
-                noStyle
-                initialValue={parseInt(workingOrder.GON)}
-              >
+              <Form.Item name="gon" noStyle>
                 <Input type="number" allowClear />
               </Form.Item>
             </div>
             <div className="formItem">
               <span>Project Name:</span>
-              <Form.Item
-                name="projectName"
-                noStyle
-                initialValue={workingOrder.PROJECT_NAME}
-              >
+              <Form.Item name="projectName" noStyle>
                 <Input allowClear />
               </Form.Item>
             </div>
@@ -863,56 +906,143 @@ const EditDialog = () => {
             <div className="formItem">
               <span>Ship Date:</span>
               <Form.Item name="shipDate" noStyle>
-                <DatePicker
-                  allowClear
-                  defaultValue={moment(workingOrder.SHIP_DATE, dateFormat)}
-                  format={dateFormat}
-                />
+                <DatePicker allowClear format={dateFormat} />
               </Form.Item>
             </div>
             <div className="formItem">
               <span>Requested On-Site Date:</span>
               <Form.Item name="rosd" noStyle>
-                <DatePicker
-                  allowClear
-                  defaultValue={moment(workingOrder.ROSD, dateFormat)}
-                  format={dateFormat}
-                />
+                <DatePicker allowClear format={dateFormat} />
               </Form.Item>
             </div>
           </div>
           <div className="formRow">
             <div className="formItem">
               <span>Project Manager:</span>
-              <Form.Item
-                name="projectManager"
-                noStyle
-                initialValue={workingOrder.PROJECT_MANAGER}
-              >
+              <Form.Item name="projectManager" noStyle>
                 <Input allowClear />
               </Form.Item>
             </div>
             <div className="formItem">
               <span>Warehouse Requested Date:</span>
-              <Form.Item
-                name="warehouseRequestedDate"
-                noStyle
-                defaultValue={moment(workingOrder.WRD, dateFormat)}
-                format={dateFormat}
-              >
-                <DatePicker allowClear />
+              <Form.Item name="wrd" noStyle>
+                <DatePicker allowClear format={dateFormat} />
               </Form.Item>
             </div>
           </div>
-          <div className="formRow">{/* Aqui iteramos el Form Item */}</div>
+          {/* <div className="formRow">
+            <div className="formItem" style={{ width: "100%", marginRight: 0 }}>
+              {workingOrder.DEVICE_COUNT === null ||
+              workingOrder.DEVICE_COUNT === "" ||
+              workingOrder.DEVICE_COUNT === undefined ||
+              !workingOrder.DEVICE_COUNT ||
+              workingOrder.DEVICE_COUNT === "[]" ? null : (
+                <Form.List name="devices2">
+                  {() => (
+                    <>
+                      {JSON.parse(workingOrder.DEVICE_COUNT).map((key, i) => (
+                        <Space key={i}>
+                          <Form.Item
+                            label="Device"
+                            name="device"
+                            fieldKey={[i, "device"]}
+                          >
+                            <Select
+                              style={{ width: 130 }}
+                              allowClear
+                              defaultValue={key.device}
+                            >
+                              {devicesList.map((item) => (
+                                <Option key={item} value={item}>
+                                  {item}
+                                </Option>
+                              ))}
+                            </Select>
+                          </Form.Item>
+                          <Form.Item
+                            initialValue={key.qty}
+                            label="Qty"
+                            name="quantity"
+                          >
+                            <Input
+                              type="number"
+                              allowClear
+                              defaultValue={key.quantity}
+                            />
+                          </Form.Item>
+                        </Space>
+                      ))}
+                    </>
+                  )}
+                </Form.List>
+              )}
+              <Form.List name="devices">
+                {(fields, { add, remove }) => (
+                  <>
+                    {fields.map((field) => (
+                      <Space key={field.key} align="baseline">
+                        <Form.Item
+                          noStyle
+                          shouldUpdate={(prevValues, curValues) =>
+                            prevValues.devices !== curValues.devices
+                          }
+                        >
+                          {() => (
+                            <Form.Item
+                              {...field}
+                              label="Device"
+                              name={[field.name, "device"]}
+                              fieldKey={[field.fieldKey, "device"]}
+                              rules={[
+                                { required: true, message: "Missing device" },
+                              ]}
+                            >
+                              <Select style={{ width: 130 }}>
+                                {devicesList.map((item) => (
+                                  <Option key={item} value={item}>
+                                    {item}
+                                  </Option>
+                                ))}
+                              </Select>
+                            </Form.Item>
+                          )}
+                        </Form.Item>
+                        <Form.Item
+                          {...field}
+                          label="Qty"
+                          name={[field.name, "quantity"]}
+                          fieldKey={[field.fieldKey, "quantity"]}
+                          rules={[
+                            { required: true, message: "Missing Quantity" },
+                          ]}
+                        >
+                          <Input />
+                        </Form.Item>
+                        <MinusCircleOutlined
+                          onClick={() => remove(field.name)}
+                        />
+                      </Space>
+                    ))}
+                    <Form.Item noStyle>
+                      <Button
+                        type="dashed"
+                        onClick={() => add()}
+                        block
+                        icon={<PlusOutlined />}
+                      >
+                        Add product
+                      </Button>
+                    </Form.Item>
+                  </>
+                )}
+              </Form.List>
+            </div>
+          </div> */}
+
           <div className="formRow">
             <div className="formItem" style={{ width: "100%", marginRight: 0 }}>
               <span>Configuration information:</span>
-              <Form.Item
-                name="configurationInformation"
-                noStyle
-                initialValue={workingOrder.CONFIGURATION_INFORMATION}
-              >
+              <Form.Item name="configurationInformation" noStyle>
                 <TextArea rows={3} allowClear />
               </Form.Item>
             </div>
@@ -921,7 +1051,7 @@ const EditDialog = () => {
             <div className="formItem" style={{ marginRight: 0, width: "100%" }}>
               <span>Status:</span>
               <Form.Item name="status" noStyle>
-                <Select defaultValue={workingOrder.STATUS}>
+                <Select>
                   {statusList.map((key, i) => {
                     return (
                       <Option key={i} value={key}>
@@ -933,17 +1063,35 @@ const EditDialog = () => {
               </Form.Item>
             </div>
           </div>
+          <div className="formRow">
+            <Form.Item name="recommendedBuild" valuePropName="checked" noStyle>
+              <Checkbox defaultChecked>Want a recommended build?</Checkbox>
+            </Form.Item>
+          </div>
         </Form>
       </DialogContent>
       <DialogActions>
-        <MaterialButton variant="container" color="default" onClick>
+        <MaterialButton
+          variant="contained"
+          color="default"
+          onClick={() => {
+            setEditDialogVisibility(false);
+            setWorkingOrder({});
+          }}
+        >
           Cancel
         </MaterialButton>
-        <MaterialButton variant="contained" color="primary">
+        <MaterialButton
+          variant="contained"
+          color="primary"
+          onClick={() => {
+            editForm.submit();
+          }}
+        >
           Update
         </MaterialButton>
       </DialogActions>
     </Dialog>
   );
-};
+});
 export default Orders;
