@@ -827,6 +827,7 @@ const EditDialog = React.memo(() => {
   editForm.resetFields();
   const dateFormat = "MM/DD/YYYY";
   const [statusList] = statusListState;
+  const [devicesList] = devicesListState;
   const [
     editDialogVisibility,
     setEditDialogVisibility,
