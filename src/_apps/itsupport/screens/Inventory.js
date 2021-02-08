@@ -243,7 +243,7 @@ const Inventory = React.memo(() => {
 
 const AddDialog = React.memo(() => {
   const { userDataState } = useContext(Context);
-  const { addDialogVisibilityState } = useContext(ItSupportContext);
+  const { addDialogVisibilityState, AddItem } = useContext(ItSupportContext);
   const [
     addDialogVisibility,
     setAddDialogVisibility,
@@ -251,15 +251,16 @@ const AddDialog = React.memo(() => {
   const [addForm] = Form.useForm();
   addForm.resetFields();
   const onFinish = (values) => {
-    console.log(values);
-    const tempSN = values.serialNumber;
-    console.log(tempSN);
-    const serialNumbers = tempSN.split("\n").filter(String);
-    console.log(serialNumbers);
-    const hostname = serialNumbers.map(
+    values.serialNumber = values.serialNumber
+      .toUpperCase()
+      .split("\n")
+      .filter(String);
+    values.hostname = values.serialNumber.map(
       (serialNumbers) => "G" + serialNumbers + "E"
     );
-    console.log(hostname);
+    values.section = "desktops";
+    console.log(values);
+    AddItem(values);
   };
   return (
     <Dialog
@@ -278,27 +279,29 @@ const AddDialog = React.memo(() => {
           autoComplete="off"
           onFinish={onFinish}
         >
-          <div className="formRow">
+          <div className="formItem">
             <Form.Item
               name="brand"
-              noStyle
-              rules={[{ required: true, message: "Please fill this field" }]}
+              rules={[
+                {
+                  required: true,
+                  message: "Please fill this field",
+                },
+              ]}
             >
-              <Input allowClear placeholder="Brand"></Input>
+              <Input allowClear placeholder="Brand" />
             </Form.Item>
           </div>
-          <div className="formRow">
+          <div className="formItem">
             <Form.Item
               name="model"
-              noStyle
               rules={[{ required: true, message: "Please fill this field" }]}
             >
-              <Input allowClear placeholder="Model"></Input>
+              <Input allowClear placeholder="Model" />
             </Form.Item>
           </div>
-          <div className="formRow">
+          <div className="formItem">
             <Form.Item
-              noStyle
               name="serialNumber"
               rules={[{ required: true, message: "Please fill this field" }]}
             >
@@ -310,58 +313,52 @@ const AddDialog = React.memo(() => {
               />
             </Form.Item>
           </div>
-          <div className="formRow">
+          <div className="formItem">
             <Form.Item
-              noStyle
               name="location"
               rules={[{ required: true, message: "Please fill this field" }]}
             >
-              <Input placeholder="Location" />
+              <Input allowClear placeholder="Location" />
             </Form.Item>
           </div>
-          <div className="formRow">
+          <div className="formItem">
             <Form.Item
-              noStyle
               name="area"
               rules={[{ required: true, message: "Please fill this field" }]}
             >
-              <Input placeholder="Area" />
+              <Input allowClear placeholder="Area" />
             </Form.Item>
           </div>
-          <div className="formRow">
+          <div className="formItem">
             <Form.Item
-              noStyle
               name="os"
               rules={[{ required: true, message: "Please fill this field" }]}
             >
-              <Input placeholder="OS" />
+              <Input allowClear placeholder="OS" />
             </Form.Item>
           </div>
-          <div className="formRow">
+          <div className="formItem">
             <Form.Item
-              noStyle
               name="specs"
               rules={[{ required: true, message: "Please fill this field" }]}
             >
-              <Input placeholder="Specs" />
+              <Input allowClear placeholder="Specs" />
             </Form.Item>
           </div>
-          <div className="formRow">
+          <div className="formItem">
             <Form.Item
-              noStyle
               name="country"
               rules={[{ required: true, message: "Please fill this field" }]}
             >
-              <Input placeholder="Country" />
+              <Input allowClear placeholder="Country" />
             </Form.Item>
           </div>
-          <div className="formRow">
+          <div className="formItem">
             <Form.Item
-              noStyle
               name="username"
               rules={[{ required: true, message: "Please fill this field" }]}
             >
-              <Input placeholder="Username" />
+              <Input allowClear placeholder="Username" />
             </Form.Item>
           </div>
         </Form>

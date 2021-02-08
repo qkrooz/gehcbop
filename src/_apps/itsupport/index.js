@@ -11,8 +11,17 @@ const ItSupportIndex = React.memo(() => {
   } = useContext(Context);
   //states
   const [currentApplication] = currentApplicationState;
+  //progress
+  const [genericLoader, setGenericLoader] = useState(false);
   //modals
   const [addDialogVisibility, setAddDialogVisibility] = useState(false);
+  //functions
+  const AddItem = (values) => {
+    axios
+      .post(`${USELPUTIL02}/${currentApplication}/addItem.php`, values)
+      .then((response) => console.log(response.data))
+      .catch((error) => console.log(error));
+  };
   return (
     <ItSupportContext.Provider
       value={{
@@ -20,6 +29,7 @@ const ItSupportIndex = React.memo(() => {
           setAddDialogVisibility,
           setAddDialogVisibility,
         ],
+        AddItem: AddItem,
       }}
     >
       <Tabs />
