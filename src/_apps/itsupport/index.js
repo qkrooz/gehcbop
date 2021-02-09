@@ -17,6 +17,7 @@ const ItSupportIndex = React.memo(() => {
   const [addDialogVisibility, setAddDialogVisibility] = useState(false);
   //functions
   const AddItem = (values) => {
+    console.log(`${USELPUTIL02}/${currentApplication}/addItem.php`, values);
     axios
       .post(`${USELPUTIL02}/${currentApplication}/addItem.php`, values)
       .then((response) => console.log(response.data))

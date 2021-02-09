@@ -255,11 +255,13 @@ const AddDialog = React.memo(() => {
       .toUpperCase()
       .split("\n")
       .filter(String);
-    values.hostname = values.serialNumber.map(
+    let hostname = values.serialNumber.map(
       (serialNumbers) => "G" + serialNumbers + "E"
     );
     values.section = "desktops";
-    console.log(values);
+    values.hostname = hostname;
+    const count = hostname.length;
+    values.count = count;
     AddItem(values);
   };
   return (
