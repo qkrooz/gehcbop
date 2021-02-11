@@ -12,8 +12,6 @@ import MaterialTable from "material-table";
 import MoreVert from "@material-ui/icons/MoreVert";
 import MaterialButton from "@material-ui/core/Button";
 import AddIcon from "@material-ui/icons/Add";
-import { InstallCartContext } from "../../installcart/resources/InstallCartContext";
-
 import { Form, Input, Space } from "antd";
 import {
   EditOutlined,
@@ -32,156 +30,362 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import { CircularProgress } from "@material-ui/core";
-// import Menu from "@material-ui/core/Menu";
-// import MenuItem from "@material-ui/core/MenuItem";
+
 const { TextArea } = Input;
+
 const Inventory = React.memo(() => {
-  const { addDialogVisibilityState } = useContext(ItSupportContext);
+  const {
+    addDesktopVisibilityState,
+    addLaptopVisibilityState,
+    addMobileVisibilityState,
+    addLabelPrinterVisibilityState,
+    addLaserPrinterVisibilityState,
+    addReservedIpVisibilityState,
+    desktopsState,
+    laptopsState,
+    mobilesState,
+    labelPrintersState,
+    laserPrintersState,
+    reservedIpsState,
+  } = useContext(ItSupportContext);
+  const [, setAddDesktopVisibility] = addDesktopVisibilityState;
+  const [, setAddLaptopVisibility] = addLaptopVisibilityState;
+  const [, setAddMobileVisibility] = addMobileVisibilityState;
+  const [, setAddLabelPrinterVisibility] = addLabelPrinterVisibilityState;
+  const [, setAddLaserPrinterVisibility] = addLaserPrinterVisibilityState;
+  const [, setAddReservedIpVisibility] = addReservedIpVisibilityState;
   const { BASE_URL, currentApplicationState } = useContext(Context);
-  const [dataLoading, setDataLoading] = useState(true);
-  const [columns, setColumns] = useState([]);
-  const [currentApplication] = currentApplicationState;
-  const [height, setHeight] = useState(null);
-  const [, setAddDialogVisibility] = addDialogVisibilityState;
-  // const [anchorEl, setAnchorEl] = useState(null);
-  // const [rowData_action, setRowData_action] = useState({});
-  // const [rowMenu_visibility, setRowMenu_visibility] = useState(false);
-  const [its_inventory_section, set_its_inventory_section] = useLocalStorage(
-    "its_inventory_section",
-    "desktops"
-  );
+  const [desktops] = desktopsState;
+  const [laptops] = laptopsState;
+  const [mobiles] = mobilesState;
+  const [labelPrinters] = labelPrintersState;
+  const [laserPrinters] = laserPrintersState;
+  const [reservedIps] = reservedIpsState;
   const [tableData, setTableData] = useState([]);
-  const getData = (section) => {
-    setDataLoading(true);
-    axios
-      .post(`${BASE_URL}/${currentApplication}/fetchMaster.php`, {
-        section: section,
-      })
-      .then((response) => {
-        if (response.data.code === 200) {
-          const tempColumns = response.data.columns;
-          let finalColumns = [];
-          tempColumns.forEach((item) => {
-            let temporalObj = {
-              title: item.COLUMN_NAME.toUpperCase(),
-              field: item.COLUMN_NAME,
-            };
-            finalColumns.push(temporalObj);
-          });
-          setColumns(finalColumns);
-          setTableData(response.data.data);
-          setDataLoading(false);
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
-  const openMenu = (event, rowData) => {
-    // let anchorElement = event.currentTarget;
-    // setAnchorEl(anchorElement);
-    // setRowMenu_visibility(true);
-  };
+  const [tableColumns, setTableColumns] = useState([]);
+  const [height, setHeight] = useState(null);
   const heightdiv = useCallback((node) => {
     if (node !== null) {
       setHeight(node.getBoundingClientRect().height);
     }
   }, []);
+  const [ic_inventory_section, set_ic_inventory_section] = useLocalStorage(
+    "ic_inventory_section",
+    "desktops"
+  );
+  const desktopsColumns = [
+    {
+      title: "BRAND",
+      field: "Brand",
+    },
+    {
+      title: "MODEL",
+      field: "Model",
+    },
+    {
+      title: "SERVICE TAG",
+      field: "ServiceTag",
+    },
+    {
+      title: "LOCATION",
+      field: "Location",
+    },
+    {
+      title: "AREA",
+      field: "Area",
+    },
+    {
+      title: "OS",
+      field: "OS",
+    },
+    {
+      title: "SPECS",
+      field: "Specs",
+    },
+    {
+      title: "HOSTNAME",
+      field: "Hostname",
+    },
+    {
+      title: "COUNTRY",
+      field: "Country",
+    },
+    {
+      title: "USERNAME",
+      field: "Username",
+    },
+  ];
+  const laptopsColumns = [
+    {
+      title: "BRAND",
+      field: "Brand",
+    },
+    {
+      title: "MODEL",
+      field: "Model",
+    },
+    {
+      title: "SERVICE TAG",
+      field: "ServiceTag",
+    },
+    {
+      title: "SSO",
+      field: "SSO",
+    },
+    {
+      title: "USERNAME",
+      field: "UserName",
+    },
+    {
+      title: "OS",
+      field: "OS",
+    },
+    {
+      title: "SPECS",
+      field: "Specs",
+    },
+    {
+      title: "HOSTNAME",
+      field: "Hostname",
+    },
+    {
+      title: "COUNTRY",
+      field: "Country",
+    },
+  ];
+  const mobilesColumns = [
+    {
+      title: "BRAND",
+      field: "Brand",
+    },
+    {
+      title: "MODEL",
+      field: "Model",
+    },
+    {
+      title: "IMEI",
+      field: "IMEI",
+    },
+    {
+      title: "SSO",
+      field: "SSO",
+    },
+    {
+      title: "USERNAME",
+      field: "UserName",
+    },
+    {
+      title: "DEPARTMENT",
+      field: "Department",
+    },
+    {
+      title: "COLOR",
+      field: "Color",
+    },
+    {
+      title: "SPECS",
+      field: "Specs",
+    },
+    {
+      title: "TEL NUMBER",
+      field: "TelNumber",
+    },
+  ];
+  const labelPrintersColumns = [
+    {
+      title: "BRAND",
+      field: "Brand",
+    },
+    {
+      title: "MODEL",
+      field: "Model",
+    },
+    {
+      title: "SERIAL NUMBER",
+      field: "SerialNumber",
+    },
+    {
+      title: "LOCATION",
+      field: "Location",
+    },
+    {
+      title: "AREA",
+      field: "Area",
+    },
+    {
+      title: "TAG",
+      field: "Tag",
+    },
+    {
+      title: "BARTENDER NAME",
+      field: "BartenderName",
+    },
+    {
+      title: "IP ADDRESS",
+      field: "IPAddress",
+    },
+  ];
+  const laserPrintersColumns = [
+    {
+      title: "BRAND",
+      field: "Brand",
+    },
+    {
+      title: "MODEL",
+      field: "Model",
+    },
+    {
+      title: "SERIAL NUMBER",
+      field: "SerialNumber",
+    },
+    {
+      title: "LOCATION",
+      field: "Location",
+    },
+    {
+      title: "AREA",
+      field: "Area",
+    },
+    {
+      title: "DAHILL TAG",
+      field: "DahillTag",
+    },
+    {
+      title: "HOSTNAME",
+      field: "Hostname",
+    },
+    {
+      title: "IP ADDRESS",
+      field: "IPAddress",
+    },
+  ];
+  const reserverdIpsColumns = [
+    {
+      title: "IP ADDRESS",
+      field: "IP",
+    },
+    {
+      title: "DEVICE",
+      field: "Device",
+    },
+    {
+      title: "LOCATION",
+      field: "Location",
+    },
+    {
+      title: "AREA",
+      field: "Area",
+    },
+  ];
   useEffect(() => {
-    getData(its_inventory_section);
-    // eslint-disable-next-line
-  }, [its_inventory_section]);
-  // const rowMenuRender = (
-  //   <Menu
-  //     id="simple-menu"
-  //     anchorEl={anchorEl}
-  //     keepMounted
-  //     open={rowMenu_visibility}
-  //     onClose={() => {
-  //       setAnchorEl(null);
-  //     }}
-  //   >
-  //     <MenuItem>Edit</MenuItem>
-  //   </Menu>
-  // );
+    if (
+      desktops.length !== 0 &&
+      laptops !== 0 &&
+      mobiles !== 0 &&
+      labelPrinters !== 0 &&
+      laserPrinters !== 0 &&
+      reservedIps !== 0
+    ) {
+      switch (ic_inventory_section) {
+        case "desktops":
+          setTableColumns(desktopsColumns);
+          setTableData(desktops);
+          break;
+        case "laptops":
+          setTableColumns(laptopsColumns);
+          setTableData(laptops);
+          break;
+        case "mobiles":
+          setTableColumns(mobilesColumns);
+          setTableData(mobiles);
+          break;
+        case "labelPrinters":
+          setTableColumns(labelPrintersColumns);
+          setTableData(labelPrinters);
+          break;
+        case "laserPrinters":
+          setTableColumns(laserPrintersColumns);
+          setTableData(laserPrinters);
+          break;
+        case "reservedIps":
+          setTableColumns(reserverdIpsColumns);
+          setTableData(reservedIps);
+          break;
+        default:
+          break;
+      }
+    }
+  }, [ic_inventory_section]);
   return (
-    <>
-      {/* <div className="inventoryContainer">
-        <div className="controls">
-          <ButtonGroup
-            disableElevation
-            variant="contained"
-            color="primary"
-            aria-label="contained primary button group"
+    <div className="inventoryMainContainer">
+      <div className="dataNavigatorContainer">
+        <ButtonGroup
+          disableElevation
+          variant="contained"
+          color="primary"
+          aria-label="contained primary button group"
+        >
+          <Button
+            className={
+              ic_inventory_section === "desktops" ? "button-active" : null
+            }
+            onClick={() => {
+              set_ic_inventory_section("desktops");
+            }}
           >
-            <Button
-              className={
-                its_inventory_section === "desktops" ? "button-active" : null
-              }
-              onClick={() => {
-                set_its_inventory_section("desktops");
-              }}
-            >
-              Desktops
-            </Button>
-            <Button
-              className={
-                its_inventory_section === "laptops" ? "button-active" : null
-              }
-              onClick={() => {
-                set_its_inventory_section("laptops");
-              }}
-            >
-              Laptops
-            </Button>
-            <Button
-              className={
-                its_inventory_section === "mobiles" ? "button-active" : null
-              }
-              onClick={() => {
-                set_its_inventory_section("mobiles");
-              }}
-            >
-              Mobiles
-            </Button>
-            <Button
-              className={
-                its_inventory_section === "label_printers"
-                  ? "button-active"
-                  : null
-              }
-              onClick={() => {
-                set_its_inventory_section("label_printers");
-              }}
-            >
-              Label Printers
-            </Button>
-            <Button
-              className={
-                its_inventory_section === "laser_printers"
-                  ? "button-active"
-                  : null
-              }
-              onClick={() => {
-                set_its_inventory_section("laser_printers");
-              }}
-            >
-              Laser Printers
-            </Button>
-            <Button
-              className={
-                its_inventory_section === "reserved_ips"
-                  ? "button-active"
-                  : null
-              }
-              onClick={() => {
-                set_its_inventory_section("reserved_ips");
-              }}
-            >
-              Reserverd Ip's
-            </Button>
-          </ButtonGroup>
-        </div>
+            Desktops
+          </Button>
+          <Button
+            className={
+              ic_inventory_section === "laptops" ? "button-active" : null
+            }
+            onClick={() => {
+              set_ic_inventory_section("laptops");
+            }}
+          >
+            Laptops
+          </Button>
+          <Button
+            className={
+              ic_inventory_section === "mobiles" ? "button-active" : null
+            }
+            onClick={() => {
+              set_ic_inventory_section("mobiles");
+            }}
+          >
+            Mobiles
+          </Button>
+          <Button
+            className={
+              ic_inventory_section === "labelPrinters" ? "button-active" : null
+            }
+            onClick={() => {
+              set_ic_inventory_section("labelPrinters");
+            }}
+          >
+            Label Printers
+          </Button>
+          <Button
+            className={
+              ic_inventory_section === "laserPrinters" ? "button-active" : null
+            }
+            onClick={() => {
+              set_ic_inventory_section("laserPrinters");
+            }}
+          >
+            Laser Printers
+          </Button>
+          <Button
+            className={
+              ic_inventory_section === "reservedIps" ? "button-active" : null
+            }
+            onClick={() => {
+              set_ic_inventory_section("reservedIps");
+            }}
+          >
+            Reserved IP's
+          </Button>
+        </ButtonGroup>
         <div>
           <MaterialButton
             variant="contained"
@@ -189,74 +393,82 @@ const Inventory = React.memo(() => {
             disableElevation
             startIcon={<AddIcon />}
             onClick={() => {
-              setAddDialogVisibility(true);
+              switch (ic_inventory_section) {
+                case "desktops":
+                  setAddDesktopVisibility(true);
+                  break;
+                case "laptops":
+                  setAddLaptopVisibility(true);
+                  break;
+                case "mobiles":
+                  setAddMobileVisibility(true);
+                  break;
+                case "labelPrinters":
+                  setAddLabelPrinterVisibility(true);
+                  break;
+                case "laserPrinters":
+                  setAddLaserPrinterVisibility(true);
+                  break;
+                case "reservedIps":
+                  setAddReservedIpVisibility(true);
+                  break;
+                default:
+                  break;
+              }
             }}
           >
-            Add Desktop
+            Add Item
           </MaterialButton>
         </div>
-        <div className="its_inventory_tableContainer" ref={heightdiv}>
-          <MaterialTable
-            icons={tableIcons}
-            localization={{
-              header: {
-                actions: "",
-              },
-            }}
-            actions={[
-              {
-                icon: () => (
-                  <MoreVert
-                    color="disabled"
-                    aria-controls="simple-menu"
-                    aria-haspopup="true"
-                  />
-                ),
-                tooltip: "More",
-                onClick: (event, rowData) => {
-                  openMenu(event, rowData);
-                },
-              },
-            ]}
-            title=""
-            isLoading={dataLoading}
-            options={{
-              actionsColumnIndex: -1,
-              padding: "dense",
-              toolbar: true,
-              search: true,
-              headerStyle: { position: "sticky", top: 0 },
-              pageSizeOptions: [25, 50, 100, tableData.length],
-              pageSize: 25,
-              minBodyHeight: height - 135,
-              maxBodyHeight: height - 135,
-            }}
-            columns={columns}
-            data={tableData}
-          />
-        </div>
-      </div> */}
-      <AddDialog />
-    </>
+      </div>
+      <div className="tableContainer" ref={heightdiv}>
+        <MaterialTable
+          icons={tableIcons}
+          title={
+            ic_inventory_section.charAt(0).toUpperCase() +
+            ic_inventory_section.slice(1)
+          }
+          options={{
+            actionsColumnIndex: -1,
+            padding: "dense",
+            toolbar: true,
+            search: true,
+            headerStyle: { position: "sticky", top: 0 },
+            pageSizeOptions: [15, 50, 100, tableData.length],
+            pageSize: 15,
+            minBodyHeight: height - 135,
+            maxBodyHeight: height - 135,
+          }}
+          columns={tableColumns}
+          data={tableData}
+        ></MaterialTable>
+      </div>
+      <AddDesktop />
+      <AddLaptop />
+      <AddMobile />
+      <AddLabelPrinter />
+      <AddLaserPrinter />
+      <AddReservedIp />
+    </div>
   );
 });
 
-const AddDialog = React.memo(() => {
+const AddDesktop = React.memo(() => {
   const { userDataState } = useContext(Context);
-  const { addDialogVisibilityState, AddItem } = useContext(ItSupportContext);
+  const { addDesktopVisibilityState, AddItem } = useContext(ItSupportContext);
   const [
-    addDialogVisibility,
-    setAddDialogVisibility,
-  ] = addDialogVisibilityState;
+    addDesktopVisibility,
+    setAddDesktopVisibility,
+  ] = addDesktopVisibilityState;
   const [addForm] = Form.useForm();
   addForm.resetFields();
   const onFinish = (values) => {
-    values.serialNumber = values.serialNumber
+    values.serviceTag = values.serviceTag
       .toUpperCase()
       .split("\n")
       .filter(String);
-    let hostname = values.serialNumber.map(
-      (serialNumbers) => "G" + serialNumbers + "E"
+    let hostname = values.serviceTag.map(
+      (serviceTag) => "G" + serviceTag + "E"
     );
     values.section = "desktops";
     values.hostname = hostname;
@@ -266,14 +478,431 @@ const AddDialog = React.memo(() => {
   };
   return (
     <Dialog
-      open={addDialogVisibility}
+      open={addDesktopVisibility}
       scroll="body"
       onClose={() => {
-        setAddDialogVisibility(false);
+        setAddDesktopVisibility(false);
+      }}
+      style={{ zIndex: 9 }}
+    >
+      <DialogTitle id="simple-dialog-title">Add new Desktop</DialogTitle>
+      <DialogContent dividers className="addFormContainer">
+        <Form
+          form={addForm}
+          name="dynamic_form_nest_item"
+          autoComplete="off"
+          onFinish={onFinish}
+        >
+          <div className="formItem">
+            <Form.Item
+              name="brand"
+              rules={[
+                {
+                  required: true,
+                  message: "Please fill this field",
+                },
+              ]}
+            >
+              <Input allowClear placeholder="Brand" />
+            </Form.Item>
+          </div>
+          <div className="formItem">
+            <Form.Item
+              name="model"
+              rules={[{ required: true, message: "Please fill this field" }]}
+            >
+              <Input allowClear placeholder="Model" />
+            </Form.Item>
+          </div>
+          <div className="formItem">
+            <Form.Item
+              name="serviceTag"
+              rules={[{ required: true, message: "Please fill this field" }]}
+            >
+              <TextArea
+                rows={1}
+                allowClear
+                placeholder="Service Tag(s)"
+                autoSize
+              />
+            </Form.Item>
+          </div>
+          <div className="formItem">
+            <Form.Item
+              name="location"
+              rules={[{ required: true, message: "Please fill this field" }]}
+            >
+              <Input allowClear placeholder="Location" />
+            </Form.Item>
+          </div>
+          <div className="formItem">
+            <Form.Item
+              name="area"
+              rules={[{ required: true, message: "Please fill this field" }]}
+            >
+              <Input allowClear placeholder="Area" />
+            </Form.Item>
+          </div>
+          <div className="formItem">
+            <Form.Item
+              name="os"
+              rules={[{ required: true, message: "Please fill this field" }]}
+            >
+              <Input allowClear placeholder="OS" />
+            </Form.Item>
+          </div>
+          <div className="formItem">
+            <Form.Item
+              name="specs"
+              rules={[{ required: true, message: "Please fill this field" }]}
+            >
+              <Input allowClear placeholder="Specs" />
+            </Form.Item>
+          </div>
+          <div className="formItem">
+            <Form.Item
+              name="country"
+              rules={[{ required: true, message: "Please fill this field" }]}
+            >
+              <Input allowClear placeholder="Country" />
+            </Form.Item>
+          </div>
+          <div className="formItem">
+            <Form.Item
+              name="username"
+              rules={[{ required: true, message: "Please fill this field" }]}
+            >
+              <Input allowClear placeholder="Username" />
+            </Form.Item>
+          </div>
+        </Form>
+      </DialogContent>
+      <DialogActions>
+        <MaterialButton autoFocus variant="contained">
+          CANCEL
+        </MaterialButton>
+        <MaterialButton
+          color="primary"
+          variant="contained"
+          onClick={addForm.submit}
+        >
+          CONFIRM
+        </MaterialButton>
+      </DialogActions>
+    </Dialog>
+  );
+});
+
+const AddLaptop = React.memo(() => {
+  const { userDataState } = useContext(Context);
+  const { addLaptopVisibilityState, AddItem } = useContext(ItSupportContext);
+  const [
+    addLaptopVisibility,
+    setAddLaptopVisibility,
+  ] = addLaptopVisibilityState;
+  const [addForm] = Form.useForm();
+  addForm.resetFields();
+  const onFinish = (values) => {
+    values.serviceTag = values.serviceTag
+      .toUpperCase()
+      .split("\n")
+      .filter(String);
+    let hostname = values.serviceTag.map(
+      (serviceTag) => "G" + serviceTag + "E"
+    );
+    values.section = "laptops";
+    values.hostname = hostname;
+    const count = hostname.length;
+    values.count = count;
+    AddItem(values);
+  };
+  return (
+    <Dialog
+      open={addLaptopVisibility}
+      scroll="body"
+      onClose={() => {
+        setAddLaptopVisibility(false);
       }}
       style={{ zIndex: 2 }}
     >
-      <DialogTitle id="simple-dialog-title">Add new Desktop</DialogTitle>
+      <DialogTitle id="simple-dialog-title">Add new Laptop</DialogTitle>
+      <DialogContent dividers className="addFormContainer">
+        <Form
+          form={addForm}
+          name="dynamic_form_nest_item"
+          autoComplete="off"
+          onFinish={onFinish}
+        >
+          <div className="formItem">
+            <Form.Item
+              name="brand"
+              rules={[
+                {
+                  required: true,
+                  message: "Please fill this field",
+                },
+              ]}
+            >
+              <Input allowClear placeholder="Brand" />
+            </Form.Item>
+          </div>
+          <div className="formItem">
+            <Form.Item
+              name="model"
+              rules={[{ required: true, message: "Please fill this field" }]}
+            >
+              <Input allowClear placeholder="Model" />
+            </Form.Item>
+          </div>
+          <div className="formItem">
+            <Form.Item
+              name="serviceTag"
+              rules={[{ required: true, message: "Please fill this field" }]}
+            >
+              <TextArea
+                rows={1}
+                allowClear
+                placeholder="Service Tag(s)"
+                autoSize
+              />
+            </Form.Item>
+          </div>
+          <div className="formItem">
+            <Form.Item
+              name="sso"
+              rules={[{ required: true, message: "Please fill this field" }]}
+            >
+              <Input allowClear placeholder="SSO" />
+            </Form.Item>
+          </div>
+          <div className="formItem">
+            <Form.Item
+              name="username"
+              rules={[{ required: true, message: "Please fill this field" }]}
+            >
+              <Input allowClear placeholder="Username" />
+            </Form.Item>
+          </div>
+          <div className="formItem">
+            <Form.Item
+              name="department"
+              rules={[{ required: true, message: "Please fill this field" }]}
+            >
+              <Input allowClear placeholder="Department" />
+            </Form.Item>
+          </div>
+          <div className="formItem">
+            <Form.Item
+              name="os"
+              rules={[{ required: true, message: "Please fill this field" }]}
+            >
+              <Input allowClear placeholder="OS" />
+            </Form.Item>
+          </div>
+          <div className="formItem">
+            <Form.Item
+              name="specs"
+              rules={[{ required: true, message: "Please fill this field" }]}
+            >
+              <Input allowClear placeholder="Specs" />
+            </Form.Item>
+          </div>
+          <div className="formItem">
+            <Form.Item
+              name="country"
+              rules={[{ required: true, message: "Please fill this field" }]}
+            >
+              <Input allowClear placeholder="Country" />
+            </Form.Item>
+          </div>
+        </Form>
+      </DialogContent>
+      <DialogActions>
+        <MaterialButton autoFocus variant="contained">
+          CANCEL
+        </MaterialButton>
+        <MaterialButton
+          color="primary"
+          variant="contained"
+          onClick={addForm.submit}
+        >
+          CONFIRM
+        </MaterialButton>
+      </DialogActions>
+    </Dialog>
+  );
+});
+
+const AddMobile = React.memo(() => {
+  const { userDataState } = useContext(Context);
+  const { addMobileVisibilityState, AddItem } = useContext(ItSupportContext);
+  const [
+    addMobileVisibility,
+    setAddMobileVisibility,
+  ] = addMobileVisibilityState;
+  const [addForm] = Form.useForm();
+  addForm.resetFields();
+  const onFinish = (values) => {
+    values.serviceTag = values.serviceTag
+      .toUpperCase()
+      .split("\n")
+      .filter(String);
+    let hostname = values.serviceTag.map(
+      (serviceTag) => "G" + serviceTag + "E"
+    );
+    values.section = "mobiles";
+    values.hostname = hostname;
+    const count = hostname.length;
+    values.count = count;
+    AddItem(values);
+  };
+  return (
+    <Dialog
+      open={addMobileVisibility}
+      scroll="body"
+      onClose={() => {
+        setAddMobileVisibility(false);
+      }}
+      style={{ zIndex: 2 }}
+    >
+      <DialogTitle id="simple-dialog-title">Add new Mobile</DialogTitle>
+      <DialogContent dividers className="addFormContainer">
+        <Form
+          form={addForm}
+          name="dynamic_form_nest_item"
+          autoComplete="off"
+          onFinish={onFinish}
+        >
+          <div className="formItem">
+            <Form.Item
+              name="brand"
+              rules={[
+                {
+                  required: true,
+                  message: "Please fill this field",
+                },
+              ]}
+            >
+              <Input allowClear placeholder="Brand" />
+            </Form.Item>
+          </div>
+          <div className="formItem">
+            <Form.Item
+              name="model"
+              rules={[{ required: true, message: "Please fill this field" }]}
+            >
+              <Input allowClear placeholder="Model" />
+            </Form.Item>
+          </div>
+          <div className="formItem">
+            <Form.Item
+              name="imei"
+              rules={[{ required: true, message: "Please fill this field" }]}
+            >
+              <Input allowClear placeholder="IMEI" />
+            </Form.Item>
+          </div>
+          <div className="formItem">
+            <Form.Item
+              name="sso"
+              rules={[{ required: true, message: "Please fill this field" }]}
+            >
+              <Input allowClear placeholder="SSO" />
+            </Form.Item>
+          </div>
+          <div className="formItem">
+            <Form.Item
+              name="username"
+              rules={[{ required: true, message: "Please fill this field" }]}
+            >
+              <Input allowClear placeholder="Username" />
+            </Form.Item>
+          </div>
+          <div className="formItem">
+            <Form.Item
+              name="department"
+              rules={[{ required: true, message: "Please fill this field" }]}
+            >
+              <Input allowClear placeholder="Department" />
+            </Form.Item>
+          </div>
+          <div className="formItem">
+            <Form.Item
+              name="color"
+              rules={[{ required: true, message: "Please fill this field" }]}
+            >
+              <Input allowClear placeholder="Color" />
+            </Form.Item>
+          </div>
+          <div className="formItem">
+            <Form.Item
+              name="specs"
+              rules={[{ required: true, message: "Please fill this field" }]}
+            >
+              <Input allowClear placeholder="Specs" />
+            </Form.Item>
+          </div>
+          <div className="formItem">
+            <Form.Item
+              name="telNumber"
+              rules={[{ required: true, message: "Please fill this field" }]}
+            >
+              <Input allowClear placeholder="Tel Number" />
+            </Form.Item>
+          </div>
+        </Form>
+      </DialogContent>
+      <DialogActions>
+        <MaterialButton autoFocus variant="contained">
+          CANCEL
+        </MaterialButton>
+        <MaterialButton
+          color="primary"
+          variant="contained"
+          onClick={addForm.submit}
+        >
+          CONFIRM
+        </MaterialButton>
+      </DialogActions>
+    </Dialog>
+  );
+});
+
+const AddLabelPrinter = React.memo(() => {
+  const { userDataState } = useContext(Context);
+  const { addLabelPrinterVisibilityState, AddItem } = useContext(
+    ItSupportContext
+  );
+  const [
+    addLabelPrinterVisibility,
+    setAddLabelPrinterVisibility,
+  ] = addLabelPrinterVisibilityState;
+  const [addForm] = Form.useForm();
+  addForm.resetFields();
+  const onFinish = (values) => {
+    values.serialNumber = values.serialNumber
+      .toUpperCase()
+      .split("\n")
+      .filter(String);
+    let hostname = values.serialNumber.map(
+      (serialNumber) => "G" + serialNumber + "E"
+    );
+    values.section = "labelPrinters";
+    values.hostname = hostname;
+    const count = hostname.length;
+    values.count = count;
+    AddItem(values);
+  };
+  return (
+    <Dialog
+      open={addLabelPrinterVisibility}
+      scroll="body"
+      onClose={() => {
+        setAddLabelPrinterVisibility(false);
+      }}
+      style={{ zIndex: 2 }}
+    >
+      <DialogTitle id="simple-dialog-title">Add new Label Printer</DialogTitle>
       <DialogContent dividers className="addFormContainer">
         <Form
           form={addForm}
@@ -333,34 +962,259 @@ const AddDialog = React.memo(() => {
           </div>
           <div className="formItem">
             <Form.Item
-              name="os"
+              name="tag"
               rules={[{ required: true, message: "Please fill this field" }]}
             >
-              <Input allowClear placeholder="OS" />
+              <Input allowClear placeholder="TAG" />
             </Form.Item>
           </div>
           <div className="formItem">
             <Form.Item
-              name="specs"
+              name="bartenderName"
               rules={[{ required: true, message: "Please fill this field" }]}
             >
-              <Input allowClear placeholder="Specs" />
+              <Input allowClear placeholder="Bartender Name" />
             </Form.Item>
           </div>
           <div className="formItem">
             <Form.Item
-              name="country"
+              name="ipAddress"
               rules={[{ required: true, message: "Please fill this field" }]}
             >
-              <Input allowClear placeholder="Country" />
+              <Input allowClear placeholder="IP Address" />
+            </Form.Item>
+          </div>
+        </Form>
+      </DialogContent>
+      <DialogActions>
+        <MaterialButton autoFocus variant="contained">
+          CANCEL
+        </MaterialButton>
+        <MaterialButton
+          color="primary"
+          variant="contained"
+          onClick={addForm.submit}
+        >
+          CONFIRM
+        </MaterialButton>
+      </DialogActions>
+    </Dialog>
+  );
+});
+
+const AddLaserPrinter = React.memo(() => {
+  const { userDataState } = useContext(Context);
+  const { addLaserPrinterVisibilityState, AddItem } = useContext(
+    ItSupportContext
+  );
+  const [
+    addLaserPrinterVisibility,
+    setAddLaserPrinterVisibility,
+  ] = addLaserPrinterVisibilityState;
+  const [addForm] = Form.useForm();
+  addForm.resetFields();
+  const onFinish = (values) => {
+    values.serialNumber = values.serialNumber
+      .toUpperCase()
+      .split("\n")
+      .filter(String);
+    let hostname = values.serialNumber.map(
+      (serialNumber) => "G" + serialNumber + "E"
+    );
+    values.section = "labelPrinters";
+    values.hostname = hostname;
+    const count = hostname.length;
+    values.count = count;
+    AddItem(values);
+  };
+  return (
+    <Dialog
+      open={addLaserPrinterVisibility}
+      scroll="body"
+      onClose={() => {
+        setAddLaserPrinterVisibility(false);
+      }}
+      style={{ zIndex: 2 }}
+    >
+      <DialogTitle id="simple-dialog-title">Add new Laser Printer</DialogTitle>
+      <DialogContent dividers className="addFormContainer">
+        <Form
+          form={addForm}
+          name="dynamic_form_nest_item"
+          autoComplete="off"
+          onFinish={onFinish}
+        >
+          <div className="formItem">
+            <Form.Item
+              name="brand"
+              rules={[
+                {
+                  required: true,
+                  message: "Please fill this field",
+                },
+              ]}
+            >
+              <Input allowClear placeholder="Brand" />
             </Form.Item>
           </div>
           <div className="formItem">
             <Form.Item
-              name="username"
+              name="model"
               rules={[{ required: true, message: "Please fill this field" }]}
             >
-              <Input allowClear placeholder="Username" />
+              <Input allowClear placeholder="Model" />
+            </Form.Item>
+          </div>
+          <div className="formItem">
+            <Form.Item
+              name="serialNumber"
+              rules={[{ required: true, message: "Please fill this field" }]}
+            >
+              <TextArea
+                rows={1}
+                allowClear
+                placeholder="Serial Number(s)"
+                autoSize
+              />
+            </Form.Item>
+          </div>
+          <div className="formItem">
+            <Form.Item
+              name="location"
+              rules={[{ required: true, message: "Please fill this field" }]}
+            >
+              <Input allowClear placeholder="Location" />
+            </Form.Item>
+          </div>
+          <div className="formItem">
+            <Form.Item
+              name="area"
+              rules={[{ required: true, message: "Please fill this field" }]}
+            >
+              <Input allowClear placeholder="Area" />
+            </Form.Item>
+          </div>
+          <div className="formItem">
+            <Form.Item
+              name="dahillTag"
+              rules={[{ required: true, message: "Please fill this field" }]}
+            >
+              <Input allowClear placeholder="DAHILL Tag" />
+            </Form.Item>
+          </div>
+          <div className="formItem">
+            <Form.Item
+              name="netName"
+              rules={[{ required: true, message: "Please fill this field" }]}
+            >
+              <Input allowClear placeholder="Network Name" />
+            </Form.Item>
+          </div>
+          <div className="formItem">
+            <Form.Item
+              name="ipAddress"
+              rules={[{ required: true, message: "Please fill this field" }]}
+            >
+              <Input allowClear placeholder="IP Address" />
+            </Form.Item>
+          </div>
+        </Form>
+      </DialogContent>
+      <DialogActions>
+        <MaterialButton autoFocus variant="contained">
+          CANCEL
+        </MaterialButton>
+        <MaterialButton
+          color="primary"
+          variant="contained"
+          onClick={addForm.submit}
+        >
+          CONFIRM
+        </MaterialButton>
+      </DialogActions>
+    </Dialog>
+  );
+});
+
+const AddReservedIp = React.memo(() => {
+  const { userDataState } = useContext(Context);
+  const { addReservedIpVisibilityState, AddItem } = useContext(
+    ItSupportContext
+  );
+  const [
+    addReservedIpVisibility,
+    setAddReservedIpVisibility,
+  ] = addReservedIpVisibilityState;
+  const [addForm] = Form.useForm();
+  addForm.resetFields();
+  const onFinish = (values) => {
+    values.serialNumber = values.serialNumber
+      .toUpperCase()
+      .split("\n")
+      .filter(String);
+    let hostname = values.serialNumber.map(
+      (serialNumber) => "G" + serialNumber + "E"
+    );
+    values.section = "labelPrinters";
+    values.hostname = hostname;
+    const count = hostname.length;
+    values.count = count;
+    AddItem(values);
+  };
+  return (
+    <Dialog
+      open={addReservedIpVisibility}
+      scroll="body"
+      onClose={() => {
+        setAddReservedIpVisibility(false);
+      }}
+      style={{ zIndex: 9 }}
+    >
+      <DialogTitle id="simple-dialog-title">
+        Add new Reserved IP Address
+      </DialogTitle>
+      <DialogContent dividers className="addFormContainer">
+        <Form
+          form={addForm}
+          name="dynamic_form_nest_item"
+          autoComplete="off"
+          onFinish={onFinish}
+        >
+          <div className="formItem">
+            <Form.Item
+              name="ip"
+              rules={[
+                {
+                  required: true,
+                  message: "Please fill this field",
+                },
+              ]}
+            >
+              <Input allowClear placeholder="IP" />
+            </Form.Item>
+          </div>
+          <div className="formItem">
+            <Form.Item
+              name="device"
+              rules={[{ required: true, message: "Please fill this field" }]}
+            >
+              <Input allowClear placeholder="Device" />
+            </Form.Item>
+          </div>
+          <div className="formItem">
+            <Form.Item
+              name="location"
+              rules={[{ required: true, message: "Please fill this field" }]}
+            >
+              <Input allowClear placeholder="Location" />
+            </Form.Item>
+          </div>
+          <div className="formItem">
+            <Form.Item
+              name="area"
+              rules={[{ required: true, message: "Please fill this field" }]}
+            >
+              <Input allowClear placeholder="Area" />
             </Form.Item>
           </div>
         </Form>
