@@ -821,13 +821,12 @@ const EditDialog = React.memo(() => {
     workingOrderState,
     devicesListState,
   } = useContext(InstallCartContext);
-  // const [devicesList] = devicesListState;
+  const [devicesList] = devicesListState;
   const [workingOrder, setWorkingOrder] = workingOrderState;
   const [editForm] = Form.useForm();
   editForm.resetFields();
   const dateFormat = "MM/DD/YYYY";
   const [statusList] = statusListState;
-  const [devicesList] = devicesListState;
   const [
     editDialogVisibility,
     setEditDialogVisibility,
@@ -835,8 +834,10 @@ const EditDialog = React.memo(() => {
   editForm.setFieldsValue({
     gon: parseInt(workingOrder.GON),
     projectName: workingOrder.PROJECT_NAME,
-    shipDate: moment(workingOrder.SHIP_DATE, dateFormat),
-    rosd: moment(workingOrder.ROSD, dateFormat),
+    shipDate: workingOrder.SHIP_DATE
+      ? moment(workingOrder.SHIP_DATE, dateFormat)
+      : null,
+    rosd: workingOrder.ROSD ? moment(workingOrder.ROSD, dateFormat) : null,
     projectManager: workingOrder.PROJECT_MANAGER,
     wrd: workingOrder.WRD ? moment(workingOrder.WRD, dateFormat) : null,
     configurationInformation: workingOrder.CONFIGURATION_INFORMATION,

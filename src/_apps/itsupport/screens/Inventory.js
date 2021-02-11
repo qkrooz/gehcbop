@@ -317,139 +317,146 @@ const Inventory = React.memo(() => {
     }
   }, [ic_inventory_section]);
   return (
-    <div className="inventoryMainContainer">
-      <div className="dataNavigatorContainer">
-        <ButtonGroup
-          disableElevation
-          variant="contained"
-          color="primary"
-          aria-label="contained primary button group"
-        >
-          <Button
-            className={
-              ic_inventory_section === "desktops" ? "button-active" : null
-            }
-            onClick={() => {
-              set_ic_inventory_section("desktops");
-            }}
-          >
-            Desktops
-          </Button>
-          <Button
-            className={
-              ic_inventory_section === "laptops" ? "button-active" : null
-            }
-            onClick={() => {
-              set_ic_inventory_section("laptops");
-            }}
-          >
-            Laptops
-          </Button>
-          <Button
-            className={
-              ic_inventory_section === "mobiles" ? "button-active" : null
-            }
-            onClick={() => {
-              set_ic_inventory_section("mobiles");
-            }}
-          >
-            Mobiles
-          </Button>
-          <Button
-            className={
-              ic_inventory_section === "labelPrinters" ? "button-active" : null
-            }
-            onClick={() => {
-              set_ic_inventory_section("labelPrinters");
-            }}
-          >
-            Label Printers
-          </Button>
-          <Button
-            className={
-              ic_inventory_section === "laserPrinters" ? "button-active" : null
-            }
-            onClick={() => {
-              set_ic_inventory_section("laserPrinters");
-            }}
-          >
-            Laser Printers
-          </Button>
-          <Button
-            className={
-              ic_inventory_section === "reservedIps" ? "button-active" : null
-            }
-            onClick={() => {
-              set_ic_inventory_section("reservedIps");
-            }}
-          >
-            Reserved IP's
-          </Button>
-        </ButtonGroup>
-        <div>
-          <MaterialButton
+    <>
+      <div className="inventoryMainContainer">
+        <div className="dataNavigatorContainer">
+          <ButtonGroup
+            disableElevation
             variant="contained"
             color="primary"
-            disableElevation
-            startIcon={<AddIcon />}
-            onClick={() => {
-              switch (ic_inventory_section) {
-                case "desktops":
-                  setAddDesktopVisibility(true);
-                  break;
-                case "laptops":
-                  setAddLaptopVisibility(true);
-                  break;
-                case "mobiles":
-                  setAddMobileVisibility(true);
-                  break;
-                case "labelPrinters":
-                  setAddLabelPrinterVisibility(true);
-                  break;
-                case "laserPrinters":
-                  setAddLaserPrinterVisibility(true);
-                  break;
-                case "reservedIps":
-                  setAddReservedIpVisibility(true);
-                  break;
-                default:
-                  break;
-              }
-            }}
+            aria-label="contained primary button group"
           >
-            Add Item
-          </MaterialButton>
+            <Button
+              className={
+                ic_inventory_section === "desktops" ? "button-active" : null
+              }
+              onClick={() => {
+                set_ic_inventory_section("desktops");
+              }}
+            >
+              Desktops
+            </Button>
+            <Button
+              className={
+                ic_inventory_section === "laptops" ? "button-active" : null
+              }
+              onClick={() => {
+                set_ic_inventory_section("laptops");
+              }}
+            >
+              Laptops
+            </Button>
+            <Button
+              className={
+                ic_inventory_section === "mobiles" ? "button-active" : null
+              }
+              onClick={() => {
+                set_ic_inventory_section("mobiles");
+              }}
+            >
+              Mobiles
+            </Button>
+            <Button
+              className={
+                ic_inventory_section === "labelPrinters"
+                  ? "button-active"
+                  : null
+              }
+              onClick={() => {
+                set_ic_inventory_section("labelPrinters");
+              }}
+            >
+              Label Printers
+            </Button>
+            <Button
+              className={
+                ic_inventory_section === "laserPrinters"
+                  ? "button-active"
+                  : null
+              }
+              onClick={() => {
+                set_ic_inventory_section("laserPrinters");
+              }}
+            >
+              Laser Printers
+            </Button>
+            <Button
+              className={
+                ic_inventory_section === "reservedIps" ? "button-active" : null
+              }
+              onClick={() => {
+                set_ic_inventory_section("reservedIps");
+              }}
+            >
+              Reserved IP's
+            </Button>
+          </ButtonGroup>
+          <div>
+            <MaterialButton
+              variant="contained"
+              color="primary"
+              disableElevation
+              startIcon={<AddIcon />}
+              onClick={() => {
+                switch (ic_inventory_section) {
+                  case "desktops":
+                    setAddDesktopVisibility(true);
+                    break;
+                  case "laptops":
+                    setAddLaptopVisibility(true);
+                    break;
+                  case "mobiles":
+                    setAddMobileVisibility(true);
+                    break;
+                  case "labelPrinters":
+                    setAddLabelPrinterVisibility(true);
+                    break;
+                  case "laserPrinters":
+                    setAddLaserPrinterVisibility(true);
+                    break;
+                  case "reservedIps":
+                    setAddReservedIpVisibility(true);
+                    break;
+                  default:
+                    break;
+                }
+              }}
+            >
+              Add Item
+            </MaterialButton>
+          </div>
+        </div>
+        <div className="tableContainer" ref={heightdiv} style={{ zIndex: 1 }}>
+          <MaterialTable
+            icons={tableIcons}
+            title={
+              ic_inventory_section.charAt(0).toUpperCase() +
+              ic_inventory_section.slice(1)
+            }
+            options={{
+              actionsColumnIndex: -1,
+              padding: "dense",
+              toolbar: true,
+              search: true,
+              headerStyle: { position: "sticky", top: 0 },
+              pageSizeOptions: [15, 50, 100, tableData.length],
+              pageSize: 15,
+              minBodyHeight: height - 135,
+              maxBodyHeight: height - 135,
+            }}
+            columns={tableColumns}
+            data={tableData}
+          />
         </div>
       </div>
-      <div className="tableContainer" ref={heightdiv}>
-        <MaterialTable
-          icons={tableIcons}
-          title={
-            ic_inventory_section.charAt(0).toUpperCase() +
-            ic_inventory_section.slice(1)
-          }
-          options={{
-            actionsColumnIndex: -1,
-            padding: "dense",
-            toolbar: true,
-            search: true,
-            headerStyle: { position: "sticky", top: 0 },
-            pageSizeOptions: [15, 50, 100, tableData.length],
-            pageSize: 15,
-            minBodyHeight: height - 135,
-            maxBodyHeight: height - 135,
-          }}
-          columns={tableColumns}
-          data={tableData}
-        ></MaterialTable>
-      </div>
+
       <AddDesktop />
       <AddLaptop />
       <AddMobile />
       <AddLabelPrinter />
       <AddLaserPrinter />
       <AddReservedIp />
-    </div>
+    </>
   );
 });
 

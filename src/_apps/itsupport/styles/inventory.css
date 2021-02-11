@@ -1,3 +1,9 @@
+.MuiTableRow-head {
+  z-index: -2 !important;
+}
+.MuiTableHead-root {
+  z-index: -99999 !important;
+}
 .inventoryContainer {
   height: 100%;
   width: 100%;
