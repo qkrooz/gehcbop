@@ -111,11 +111,11 @@ const Dash1 = React.memo(() => {
   return (
     <div className="dash1Container">
       <div id="lineChartContainer"></div>
-      <div className="tableDataContainer"></div>
+      {/* <div className="tableDataContainer"></div> */}
     </div>
   );
 });
-const Dash2 = React.memo(() => {
+const Dash2 = () => {
   const { completeOrdersState } = useContext(InstallCartContext);
   const [completeOrders] = completeOrdersState;
   return (
@@ -131,7 +131,7 @@ const Dash2 = React.memo(() => {
       </span>
     </div>
   );
-});
+};
 const Dash3 = React.memo(() => {
   const { completeOrdersState } = useContext(InstallCartContext);
   const [completeOrders] = completeOrdersState;

@@ -118,7 +118,23 @@ const InstallCartIndex = React.memo(() => {
     console.log(values);
     axios
       .post(`${USELPUTIL02}/${currentApplication}/updateItem.php`, values)
-      .then((response) => console.log(response.data.lastItem[0]))
+      .then((response) => {
+        let temporalItem = response.data.lastItem[0];
+        const itemIDInCompleteOrders = completeOrders.findIndex(
+          (element) => element.ID === values.ID
+        );
+        const completeOrdersCopy = [...completeOrders];
+        completeOrdersCopy[itemIDInCompleteOrders] = temporalItem;
+        setCompleteOrders(completeOrdersCopy);
+        const ordersCopy = [...orders];
+        const itemIDInOrders = orders.findIndex(
+          (element) => element.ID === values.id
+        );
+        ordersCopy[itemIDInOrders] = temporalItem;
+        setOrders(ordersCopy);
+        setEditDialogVisibility(false);
+        setWorkingOrder({});
+      })
       .catch((error) => console.log(error));
   };
   const DeleteOrder = (order) => {
