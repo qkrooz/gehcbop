@@ -30,6 +30,7 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import { CircularProgress } from "@material-ui/core";
+import { Edit } from "@material-ui/icons";
 
 const { TextArea } = Input;
 
@@ -47,6 +48,8 @@ const Inventory = React.memo(() => {
     labelPrintersState,
     laserPrintersState,
     reservedIpsState,
+    EditItem,
+    DeleteItem,
   } = useContext(ItSupportContext);
   const [, setAddDesktopVisibility] = addDesktopVisibilityState;
   const [, setAddLaptopVisibility] = addLaptopVisibilityState;
@@ -69,8 +72,8 @@ const Inventory = React.memo(() => {
       setHeight(node.getBoundingClientRect().height);
     }
   }, []);
-  const [ic_inventory_section, set_ic_inventory_section] = useLocalStorage(
-    "ic_inventory_section",
+  const [its_inventory_section, set_its_inventory_section] = useLocalStorage(
+    "its_inventory_section",
     "desktops"
   );
   const desktopsColumns = [
@@ -143,6 +146,10 @@ const Inventory = React.memo(() => {
     {
       title: "SPECS",
       field: "Specs",
+    },
+    {
+      title: "DEPARTMENT",
+      field: "Department",
     },
     {
       title: "HOSTNAME",
@@ -286,7 +293,7 @@ const Inventory = React.memo(() => {
       laserPrinters !== 0 &&
       reservedIps !== 0
     ) {
-      switch (ic_inventory_section) {
+      switch (its_inventory_section) {
         case "desktops":
           setTableColumns(desktopsColumns);
           setTableData(desktops);
@@ -315,7 +322,7 @@ const Inventory = React.memo(() => {
           break;
       }
     }
-  }, [ic_inventory_section]);
+  }, [its_inventory_section]);
   return (
     <div className="inventoryMainContainer">
       <div className="dataNavigatorContainer">
@@ -327,60 +334,60 @@ const Inventory = React.memo(() => {
         >
           <Button
             className={
-              ic_inventory_section === "desktops" ? "button-active" : null
+              its_inventory_section === "desktops" ? "button-active" : null
             }
             onClick={() => {
-              set_ic_inventory_section("desktops");
+              set_its_inventory_section("desktops");
             }}
           >
             Desktops
           </Button>
           <Button
             className={
-              ic_inventory_section === "laptops" ? "button-active" : null
+              its_inventory_section === "laptops" ? "button-active" : null
             }
             onClick={() => {
-              set_ic_inventory_section("laptops");
+              set_its_inventory_section("laptops");
             }}
           >
             Laptops
           </Button>
           <Button
             className={
-              ic_inventory_section === "mobiles" ? "button-active" : null
+              its_inventory_section === "mobiles" ? "button-active" : null
             }
             onClick={() => {
-              set_ic_inventory_section("mobiles");
+              set_its_inventory_section("mobiles");
             }}
           >
             Mobiles
           </Button>
           <Button
             className={
-              ic_inventory_section === "labelPrinters" ? "button-active" : null
+              its_inventory_section === "labelPrinters" ? "button-active" : null
             }
             onClick={() => {
-              set_ic_inventory_section("labelPrinters");
+              set_its_inventory_section("labelPrinters");
             }}
           >
             Label Printers
           </Button>
           <Button
             className={
-              ic_inventory_section === "laserPrinters" ? "button-active" : null
+              its_inventory_section === "laserPrinters" ? "button-active" : null
             }
             onClick={() => {
-              set_ic_inventory_section("laserPrinters");
+              set_its_inventory_section("laserPrinters");
             }}
           >
             Laser Printers
           </Button>
           <Button
             className={
-              ic_inventory_section === "reservedIps" ? "button-active" : null
+              its_inventory_section === "reservedIps" ? "button-active" : null
             }
             onClick={() => {
-              set_ic_inventory_section("reservedIps");
+              set_its_inventory_section("reservedIps");
             }}
           >
             Reserved IP's
@@ -391,9 +398,10 @@ const Inventory = React.memo(() => {
             variant="contained"
             color="primary"
             disableElevation
+            style={{ float: "right" }}
             startIcon={<AddIcon />}
             onClick={() => {
-              switch (ic_inventory_section) {
+              switch (its_inventory_section) {
                 case "desktops":
                   setAddDesktopVisibility(true);
                   break;
@@ -424,9 +432,10 @@ const Inventory = React.memo(() => {
       <div className="tableContainer" ref={heightdiv}>
         <MaterialTable
           icons={tableIcons}
+          style={{ zIndex: "1" }}
           title={
-            ic_inventory_section.charAt(0).toUpperCase() +
-            ic_inventory_section.slice(1)
+            its_inventory_section.charAt(0).toUpperCase() +
+            its_inventory_section.slice(1)
           }
           options={{
             actionsColumnIndex: -1,
@@ -434,13 +443,39 @@ const Inventory = React.memo(() => {
             toolbar: true,
             search: true,
             headerStyle: { position: "sticky", top: 0 },
-            pageSizeOptions: [15, 50, 100, tableData.length],
-            pageSize: 15,
+            pageSizeOptions: [20, 50, 100, tableData.length],
+            pageSize: 20,
             minBodyHeight: height - 135,
             maxBodyHeight: height - 135,
           }}
           columns={tableColumns}
           data={tableData}
+          editable={{
+            onRowUpdate: (newData, oldData) =>
+              new Promise((resolve, reject) => {
+                setTimeout(() => {
+                  const dataUpdate = [...tableData];
+                  const index = oldData.tableData.id;
+                  newData.section = its_inventory_section;
+                  dataUpdate[index] = newData;
+                  EditItem(newData);
+                  // console.log(newData);
+                  resolve();
+                }, 1000);
+              }),
+            onRowDelete: (oldData) =>
+              new Promise((resolve, reject) => {
+                setTimeout(() => {
+                  const dataDelete = [...tableData];
+                  const index = oldData.tableData.id;
+                  dataDelete.splice(index, 1);
+                  oldData.section = its_inventory_section;
+                  DeleteItem(oldData);
+
+                  resolve();
+                }, 1000);
+              }),
+          }}
         ></MaterialTable>
       </div>
       <AddDesktop />
@@ -475,6 +510,7 @@ const AddDesktop = React.memo(() => {
     const count = hostname.length;
     values.count = count;
     AddItem(values);
+    setAddDesktopVisibility(false);
   };
   return (
     <Dialog
@@ -578,7 +614,13 @@ const AddDesktop = React.memo(() => {
         </Form>
       </DialogContent>
       <DialogActions>
-        <MaterialButton autoFocus variant="contained">
+        <MaterialButton
+          autoFocus
+          variant="contained"
+          onClick={() => {
+            setAddDesktopVisibility(false);
+          }}
+        >
           CANCEL
         </MaterialButton>
         <MaterialButton
@@ -615,6 +657,7 @@ const AddLaptop = React.memo(() => {
     const count = hostname.length;
     values.count = count;
     AddItem(values);
+    setAddLaptopVisibility(false);
   };
   return (
     <Dialog
@@ -718,7 +761,13 @@ const AddLaptop = React.memo(() => {
         </Form>
       </DialogContent>
       <DialogActions>
-        <MaterialButton autoFocus variant="contained">
+        <MaterialButton
+          autoFocus
+          variant="contained"
+          onClick={() => {
+            setAddLaptopVisibility(false);
+          }}
+        >
           CANCEL
         </MaterialButton>
         <MaterialButton
@@ -743,18 +792,11 @@ const AddMobile = React.memo(() => {
   const [addForm] = Form.useForm();
   addForm.resetFields();
   const onFinish = (values) => {
-    values.serviceTag = values.serviceTag
-      .toUpperCase()
-      .split("\n")
-      .filter(String);
-    let hostname = values.serviceTag.map(
-      (serviceTag) => "G" + serviceTag + "E"
-    );
     values.section = "mobiles";
-    values.hostname = hostname;
-    const count = hostname.length;
+    const count = values.imei.length;
     values.count = count;
     AddItem(values);
+    setAddMobileVisibility(false);
   };
   return (
     <Dialog
@@ -853,7 +895,13 @@ const AddMobile = React.memo(() => {
         </Form>
       </DialogContent>
       <DialogActions>
-        <MaterialButton autoFocus variant="contained">
+        <MaterialButton
+          autoFocus
+          variant="contained"
+          onClick={() => {
+            setAddMobileVisibility(false);
+          }}
+        >
           CANCEL
         </MaterialButton>
         <MaterialButton
@@ -884,14 +932,11 @@ const AddLabelPrinter = React.memo(() => {
       .toUpperCase()
       .split("\n")
       .filter(String);
-    let hostname = values.serialNumber.map(
-      (serialNumber) => "G" + serialNumber + "E"
-    );
     values.section = "labelPrinters";
-    values.hostname = hostname;
-    const count = hostname.length;
+    const count = values.serialNumber.length;
     values.count = count;
     AddItem(values);
+    setAddLabelPrinterVisibility(true);
   };
   return (
     <Dialog
@@ -987,7 +1032,13 @@ const AddLabelPrinter = React.memo(() => {
         </Form>
       </DialogContent>
       <DialogActions>
-        <MaterialButton autoFocus variant="contained">
+        <MaterialButton
+          autoFocus
+          variant="contained"
+          onClick={() => {
+            setAddLabelPrinterVisibility(false);
+          }}
+        >
           CANCEL
         </MaterialButton>
         <MaterialButton
@@ -1018,14 +1069,12 @@ const AddLaserPrinter = React.memo(() => {
       .toUpperCase()
       .split("\n")
       .filter(String);
-    let hostname = values.serialNumber.map(
-      (serialNumber) => "G" + serialNumber + "E"
-    );
-    values.section = "labelPrinters";
-    values.hostname = hostname;
-    const count = hostname.length;
+
+    values.section = "laserPrinters";
+    const count = values.serialNumber.length;
     values.count = count;
     AddItem(values);
+    setAddLaserPrinterVisibility(false);
   };
   return (
     <Dialog
@@ -1104,10 +1153,10 @@ const AddLaserPrinter = React.memo(() => {
           </div>
           <div className="formItem">
             <Form.Item
-              name="netName"
+              name="hostname"
               rules={[{ required: true, message: "Please fill this field" }]}
             >
-              <Input allowClear placeholder="Network Name" />
+              <Input allowClear placeholder="Hostname" />
             </Form.Item>
           </div>
           <div className="formItem">
@@ -1121,7 +1170,13 @@ const AddLaserPrinter = React.memo(() => {
         </Form>
       </DialogContent>
       <DialogActions>
-        <MaterialButton autoFocus variant="contained">
+        <MaterialButton
+          autoFocus
+          variant="contained"
+          onClick={() => {
+            setAddLaserPrinterVisibility(false);
+          }}
+        >
           CANCEL
         </MaterialButton>
         <MaterialButton
@@ -1148,18 +1203,12 @@ const AddReservedIp = React.memo(() => {
   const [addForm] = Form.useForm();
   addForm.resetFields();
   const onFinish = (values) => {
-    values.serialNumber = values.serialNumber
-      .toUpperCase()
-      .split("\n")
-      .filter(String);
-    let hostname = values.serialNumber.map(
-      (serialNumber) => "G" + serialNumber + "E"
-    );
-    values.section = "labelPrinters";
-    values.hostname = hostname;
-    const count = hostname.length;
+    values.ip = values.ip.split("\n").filter(String);
+    values.section = "reservedIps";
+    const count = values.ip.length;
     values.count = count;
     AddItem(values);
+    setAddReservedIpVisibility(false);
   };
   return (
     <Dialog
@@ -1220,7 +1269,13 @@ const AddReservedIp = React.memo(() => {
         </Form>
       </DialogContent>
       <DialogActions>
-        <MaterialButton autoFocus variant="contained">
+        <MaterialButton
+          autoFocus
+          variant="contained"
+          onClick={() => {
+            setAddReservedIpVisibility(false);
+          }}
+        >
           CANCEL
         </MaterialButton>
         <MaterialButton

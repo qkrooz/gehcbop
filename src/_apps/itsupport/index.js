@@ -39,6 +39,20 @@ const ItSupportIndex = React.memo(() => {
       .then((response) => console.log(response.data))
       .catch((error) => console.log(error));
   };
+  const EditItem = (values) => {
+    console.log(`${USELPUTIL02}/${currentApplication}/editItem.php`, values);
+    axios
+      .post(`${USELPUTIL02}/${currentApplication}/editItem.php`, values)
+      .then((response) => console.log(response.data))
+      .catch((error) => console.log(error));
+  };
+  const DeleteItem = (values) => {
+    console.log(`${USELPUTIL02}/${currentApplication}/deleteItem.php`, values);
+    axios
+      .post(`${USELPUTIL02}/${currentApplication}/deleteItem.php`, values)
+      .then((response) => console.log(response.data))
+      .catch((error) => console.log(error));
+  };
   const ic_getDatanConfiguration = () => {
     function getDesktops() {
       return axios.get(
@@ -114,6 +128,8 @@ const ItSupportIndex = React.memo(() => {
           setAddReservedIpVisibility,
         ],
         AddItem: AddItem,
+        EditItem: EditItem,
+        DeleteItem: DeleteItem,
         desktopsState: [desktops, setDesktops],
         laptopsState: [laptops, setLaptops],
         mobilesState: [mobiles, setMobiles],
