@@ -1,6 +1,7 @@
 import React, { useContext, useState, useEffect } from "react";
 import { Context } from "./_context/MainContext";
 import useLocalStorage from "./_resources/useLocalStorage";
+import { appsIndex } from "./_resources/appsIndex";
 import { Switch, Route, Link, Redirect } from "react-router-dom";
 import { Layout, Menu, Dropdown, Button, Tooltip, Input } from "antd";
 import CircularProgress from "@material-ui/core/CircularProgress";
@@ -42,7 +43,7 @@ const Main = React.memo(() => {
   }, [appPool]);
   return (
     <>
-      <Redirect exact to="/" />
+      <Redirect to={currentPage} />
       <Layout className="main-layout">
         <SiderBar />
         <Content style={{ display: "flex", flexDirection: "column" }}>
@@ -78,7 +79,7 @@ const Main = React.memo(() => {
                       key={appPool[i].appName}
                       path={"/" + appPool[i].appName}
                     >
-                      <App />
+                      {appsIndex[appPool[i].appName]}
                     </Route>
                   );
                 })}
@@ -187,11 +188,11 @@ const SiderBar = React.memo(() => {
         <span>Apps</span>
       </div>
       {Object.values(userDataState).length !== 0 ? (
-        <Menu theme="dark" mode="inline">
+        <Menu theme="dark" mode="inline" defaultSelectedKeys={currentPage}>
           {Object.values(appPool).map((app, i) => {
             return (
               <Menu.Item
-                key={i}
+                key={app.appName}
                 icon={appIcons[app.appName]}
                 onClick={() => {
                   setCurrentPage(`/${app.appName}`);

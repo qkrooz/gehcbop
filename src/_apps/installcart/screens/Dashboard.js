@@ -1,5 +1,6 @@
 import React, { useLayoutEffect, useContext, useState } from "react";
 import { InstallCartContext } from "../resources/InstallCartContext";
+
 import * as am4core from "@amcharts/amcharts4/core";
 import * as am4charts from "@amcharts/amcharts4/charts";
 import am4themes_animated from "@amcharts/amcharts4/themes/animated";
@@ -106,6 +107,9 @@ const Dash1 = React.memo(() => {
       chart.scrollbarX.parent = chart.bottomAxesContainer;
       dateAxis.start = 0.9;
       dateAxis.keepSelection = true;
+      return () => {
+        chart.dispose();
+      };
     }
   }, [completeOrders]);
   return (
