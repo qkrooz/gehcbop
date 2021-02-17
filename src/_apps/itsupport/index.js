@@ -103,7 +103,9 @@ const ItSupportIndex = React.memo(() => {
       .catch((error) => console.log(error));
   };
   useEffect(() => {
+    const ac = new AbortController();
     ic_getDatanConfiguration();
+    return () => ac.abort();
     // eslint-disable-next-line
   }, []);
   return (

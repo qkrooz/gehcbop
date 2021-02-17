@@ -47,7 +47,7 @@ const Main = React.memo(() => {
       <Redirect to={currentPage} />
       <Layout className="main-layout">
         <SiderBar />
-        <Content>
+        <Content style={{ display: "flex", flexDirection: "column" }}>
           {mainProgress === 0 || mainProgress === 100 ? null : (
             <LinearProgress
               variant="determinate"

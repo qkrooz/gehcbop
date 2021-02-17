@@ -1,8 +1,18 @@
 import React, { useContext, useEffect, useState } from "react";
-import Tabs from "./components/Tabs";
 import axios from "axios";
 import { Context } from "../../_context/MainContext";
 import { InstallCartContext } from "./resources/InstallCartContext";
+import NavBar from "./components/NavBar";
+import {
+  MemoryRouter as Router,
+  Switch,
+  Route,
+  Redirect,
+} from "react-router-dom";
+// Screens
+import Dashboard from "./screens/Dashboard";
+import Orders from "./screens/Orders";
+import Inventory from "./screens/Inventory";
 const InstallCartIndex = React.memo(() => {
   const {
     mainProgressState,
@@ -66,7 +76,8 @@ const InstallCartIndex = React.memo(() => {
         setCompleteOrders(results[2].data.orders);
         setOrders(
           results[2].data.orders.filter(
-            (item) => item.STATUS !== "order completed"
+            (item) =>
+              item.STATUS !== "order completed" && item.STATUS !== "cancelled"
           )
         );
         setFilteredOrders(
@@ -249,41 +260,58 @@ const InstallCartIndex = React.memo(() => {
     // eslint-disable-next-line
   }, []);
   return (
-    <InstallCartContext.Provider
-      value={{
-        // states
-        ordersState: [orders, setOrders],
-        completeOrdersState: [completeOrders, setCompleteOrders],
-        filteredOrdersState: [filteredOrders, setFilteredOrders],
-        workingOrderState: [workingOrder, setWorkingOrder],
-        statusListState: [statusList, setStatusList],
-        devicesListState: [devicesList, setDevicesList],
-        ordersSwitchState: [ordersSwitch, setOrdersSwitch],
-        ordersCheckboxState: [ordersCheckbox, setOrdersCheckbox],
-        cartsState: [carts, setCarts],
-        insertsState: [inserts, setInserts],
-        genericLoaderState: [genericLoader, setGenericLoader],
-        // progress
-        addDialogVisibilityState: [addDialogVisibility, setAddDialogVisibility],
-        deleteDialogVisibilityState: [
-          deleteConfirmDialogVisibility,
-          setDeleteConfirmDialogVisibility,
-        ],
-        editDialogVisibilityState: [
-          editDialogVisibility,
-          setEditDialogVisibility,
-        ],
-        // functions
-        AddOrder: AddOrder,
-        EditOrder: EditOrder,
-        DeleteOrder: DeleteOrder,
-        SearchOrders: SearchOrders,
-        SwitchOrders: SwitchOrders,
-        ToggleComplete: ToggleComplete,
-      }}
-    >
-      <Tabs />
-    </InstallCartContext.Provider>
+    <Router>
+      <InstallCartContext.Provider
+        value={{
+          // states
+          ordersState: [orders, setOrders],
+          completeOrdersState: [completeOrders, setCompleteOrders],
+          filteredOrdersState: [filteredOrders, setFilteredOrders],
+          workingOrderState: [workingOrder, setWorkingOrder],
+          statusListState: [statusList, setStatusList],
+          devicesListState: [devicesList, setDevicesList],
+          ordersSwitchState: [ordersSwitch, setOrdersSwitch],
+          ordersCheckboxState: [ordersCheckbox, setOrdersCheckbox],
+          cartsState: [carts, setCarts],
+          insertsState: [inserts, setInserts],
+          genericLoaderState: [genericLoader, setGenericLoader],
+          // progress
+          addDialogVisibilityState: [
+            addDialogVisibility,
+            setAddDialogVisibility,
+          ],
+          deleteDialogVisibilityState: [
+            deleteConfirmDialogVisibility,
+            setDeleteConfirmDialogVisibility,
+          ],
+          editDialogVisibilityState: [
+            editDialogVisibility,
+            setEditDialogVisibility,
+          ],
+          // functions
+          AddOrder: AddOrder,
+          EditOrder: EditOrder,
+          DeleteOrder: DeleteOrder,
+          SearchOrders: SearchOrders,
+          SwitchOrders: SwitchOrders,
+          ToggleComplete: ToggleComplete,
+        }}
+      >
+        <Redirect to={`/${currentApplication}/dashboard`} />
+        <NavBar />
+        <Switch>
+          <Route
+            component={Dashboard}
+            path={`/${currentApplication}/dashboard`}
+          />
+          <Route component={Orders} path={`/${currentApplication}/orders`} />
+          <Route
+            component={Inventory}
+            path={`/${currentApplication}/inventory`}
+          />
+        </Switch>
+      </InstallCartContext.Provider>
+    </Router>
   );
 });
 export default InstallCartIndex;
