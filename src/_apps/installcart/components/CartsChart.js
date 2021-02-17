@@ -55,6 +55,9 @@ const CartsChart = React.memo((props) => {
     var columnTemplate = series.columns.template;
     columnTemplate.strokeWidth = 2;
     columnTemplate.strokeOpacity = 1;
+    return () => {
+      chart.dispose();
+    };
   }, [carts]);
   return (
     <div className="cartsChartContainer" {...props}>

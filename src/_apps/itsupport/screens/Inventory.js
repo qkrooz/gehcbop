@@ -1,39 +1,21 @@
-import React, { useState, useEffect, useContext, useCallback } from "react";
+import React, { useState, useContext, useCallback } from "react";
 import { ItSupportContext } from "../resources/ItSupportContext";
 import { Context } from "../../../_context/MainContext";
 import Button from "@material-ui/core/Button";
 import ButtonGroup from "@material-ui/core/ButtonGroup";
 import "../styles/inventory.css";
 import "../styles/addForm.css";
-import useLocalStorage from "../../../_resources/useLocalStorage";
-import axios from "axios";
+import { columnsIndex } from "../resources/inventoryColumns";
 import { tableIcons } from "../resources/tableIcons";
 import MaterialTable from "material-table";
-import MoreVert from "@material-ui/icons/MoreVert";
 import MaterialButton from "@material-ui/core/Button";
 import AddIcon from "@material-ui/icons/Add";
-import { Form, Input, Space } from "antd";
-import {
-  EditOutlined,
-  FileTextOutlined,
-  DeleteOutlined,
-  ExclamationCircleTwoTone,
-  EllipsisOutlined,
-  CaretUpOutlined,
-  CaretDownOutlined,
-  MinusCircleOutlined,
-  PlusOutlined,
-} from "@ant-design/icons";
+import { Form, Input } from "antd";
 import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
-import { CircularProgress } from "@material-ui/core";
-import { Edit } from "@material-ui/icons";
-
 const { TextArea } = Input;
-
 const Inventory = React.memo(() => {
   const {
     addDesktopVisibilityState,
@@ -42,287 +24,30 @@ const Inventory = React.memo(() => {
     addLabelPrinterVisibilityState,
     addLaserPrinterVisibilityState,
     addReservedIpVisibilityState,
-    desktopsState,
-    laptopsState,
-    mobilesState,
-    labelPrintersState,
-    laserPrintersState,
-    reservedIpsState,
-    EditItem,
-    DeleteItem,
+    dataState,
+    genericLoaderState,
+    // EditItem,
+    // DeleteItem,
+    its_inventory_sectionState,
   } = useContext(ItSupportContext);
+  const [
+    its_inventory_section,
+    set_its_inventory_section,
+  ] = its_inventory_sectionState;
+  const [genericLoader] = genericLoaderState;
   const [, setAddDesktopVisibility] = addDesktopVisibilityState;
   const [, setAddLaptopVisibility] = addLaptopVisibilityState;
   const [, setAddMobileVisibility] = addMobileVisibilityState;
   const [, setAddLabelPrinterVisibility] = addLabelPrinterVisibilityState;
   const [, setAddLaserPrinterVisibility] = addLaserPrinterVisibilityState;
   const [, setAddReservedIpVisibility] = addReservedIpVisibilityState;
-  const { BASE_URL, currentApplicationState } = useContext(Context);
-  const [desktops] = desktopsState;
-  const [laptops] = laptopsState;
-  const [mobiles] = mobilesState;
-  const [labelPrinters] = labelPrintersState;
-  const [laserPrinters] = laserPrintersState;
-  const [reservedIps] = reservedIpsState;
-  const [tableData, setTableData] = useState([]);
-  const [tableColumns, setTableColumns] = useState([]);
+  const [data] = dataState;
   const [height, setHeight] = useState(null);
   const heightdiv = useCallback((node) => {
     if (node !== null) {
       setHeight(node.getBoundingClientRect().height);
     }
   }, []);
-  const [its_inventory_section, set_its_inventory_section] = useLocalStorage(
-    "its_inventory_section",
-    "desktops"
-  );
-  const desktopsColumns = [
-    {
-      title: "BRAND",
-      field: "Brand",
-    },
-    {
-      title: "MODEL",
-      field: "Model",
-    },
-    {
-      title: "SERVICE TAG",
-      field: "ServiceTag",
-    },
-    {
-      title: "LOCATION",
-      field: "Location",
-    },
-    {
-      title: "AREA",
-      field: "Area",
-    },
-    {
-      title: "OS",
-      field: "OS",
-    },
-    {
-      title: "SPECS",
-      field: "Specs",
-    },
-    {
-      title: "HOSTNAME",
-      field: "Hostname",
-    },
-    {
-      title: "COUNTRY",
-      field: "Country",
-    },
-    {
-      title: "USERNAME",
-      field: "Username",
-    },
-  ];
-  const laptopsColumns = [
-    {
-      title: "BRAND",
-      field: "Brand",
-    },
-    {
-      title: "MODEL",
-      field: "Model",
-    },
-    {
-      title: "SERVICE TAG",
-      field: "ServiceTag",
-    },
-    {
-      title: "SSO",
-      field: "SSO",
-    },
-    {
-      title: "USERNAME",
-      field: "UserName",
-    },
-    {
-      title: "OS",
-      field: "OS",
-    },
-    {
-      title: "SPECS",
-      field: "Specs",
-    },
-    {
-      title: "DEPARTMENT",
-      field: "Department",
-    },
-    {
-      title: "HOSTNAME",
-      field: "Hostname",
-    },
-    {
-      title: "COUNTRY",
-      field: "Country",
-    },
-  ];
-  const mobilesColumns = [
-    {
-      title: "BRAND",
-      field: "Brand",
-    },
-    {
-      title: "MODEL",
-      field: "Model",
-    },
-    {
-      title: "IMEI",
-      field: "IMEI",
-    },
-    {
-      title: "SSO",
-      field: "SSO",
-    },
-    {
-      title: "USERNAME",
-      field: "UserName",
-    },
-    {
-      title: "DEPARTMENT",
-      field: "Department",
-    },
-    {
-      title: "COLOR",
-      field: "Color",
-    },
-    {
-      title: "SPECS",
-      field: "Specs",
-    },
-    {
-      title: "TEL NUMBER",
-      field: "TelNumber",
-    },
-  ];
-  const labelPrintersColumns = [
-    {
-      title: "BRAND",
-      field: "Brand",
-    },
-    {
-      title: "MODEL",
-      field: "Model",
-    },
-    {
-      title: "SERIAL NUMBER",
-      field: "SerialNumber",
-    },
-    {
-      title: "LOCATION",
-      field: "Location",
-    },
-    {
-      title: "AREA",
-      field: "Area",
-    },
-    {
-      title: "TAG",
-      field: "Tag",
-    },
-    {
-      title: "BARTENDER NAME",
-      field: "BartenderName",
-    },
-    {
-      title: "IP ADDRESS",
-      field: "IPAddress",
-    },
-  ];
-  const laserPrintersColumns = [
-    {
-      title: "BRAND",
-      field: "Brand",
-    },
-    {
-      title: "MODEL",
-      field: "Model",
-    },
-    {
-      title: "SERIAL NUMBER",
-      field: "SerialNumber",
-    },
-    {
-      title: "LOCATION",
-      field: "Location",
-    },
-    {
-      title: "AREA",
-      field: "Area",
-    },
-    {
-      title: "DAHILL TAG",
-      field: "DahillTag",
-    },
-    {
-      title: "HOSTNAME",
-      field: "Hostname",
-    },
-    {
-      title: "IP ADDRESS",
-      field: "IPAddress",
-    },
-  ];
-  const reserverdIpsColumns = [
-    {
-      title: "IP ADDRESS",
-      field: "IP",
-    },
-    {
-      title: "DEVICE",
-      field: "Device",
-    },
-    {
-      title: "LOCATION",
-      field: "Location",
-    },
-    {
-      title: "AREA",
-      field: "Area",
-    },
-  ];
-  useEffect(() => {
-    if (
-      desktops.length !== 0 &&
-      laptops !== 0 &&
-      mobiles !== 0 &&
-      labelPrinters !== 0 &&
-      laserPrinters !== 0 &&
-      reservedIps !== 0
-    ) {
-      switch (its_inventory_section) {
-        case "desktops":
-          setTableColumns(desktopsColumns);
-          setTableData(desktops);
-          break;
-        case "laptops":
-          setTableColumns(laptopsColumns);
-          setTableData(laptops);
-          break;
-        case "mobiles":
-          setTableColumns(mobilesColumns);
-          setTableData(mobiles);
-          break;
-        case "labelPrinters":
-          setTableColumns(labelPrintersColumns);
-          setTableData(labelPrinters);
-          break;
-        case "laserPrinters":
-          setTableColumns(laserPrintersColumns);
-          setTableData(laserPrinters);
-          break;
-        case "reservedIps":
-          setTableColumns(reserverdIpsColumns);
-          setTableData(reservedIps);
-          break;
-        default:
-          break;
-      }
-    }
-  }, [its_inventory_section]);
   return (
     <div className="inventoryMainContainer">
       <div className="dataNavigatorContainer">
@@ -393,44 +118,43 @@ const Inventory = React.memo(() => {
             Reserved IP's
           </Button>
         </ButtonGroup>
-        <div>
-          <MaterialButton
-            variant="contained"
-            color="primary"
-            disableElevation
-            style={{ float: "right" }}
-            startIcon={<AddIcon />}
-            onClick={() => {
-              switch (its_inventory_section) {
-                case "desktops":
-                  setAddDesktopVisibility(true);
-                  break;
-                case "laptops":
-                  setAddLaptopVisibility(true);
-                  break;
-                case "mobiles":
-                  setAddMobileVisibility(true);
-                  break;
-                case "labelPrinters":
-                  setAddLabelPrinterVisibility(true);
-                  break;
-                case "laserPrinters":
-                  setAddLaserPrinterVisibility(true);
-                  break;
-                case "reservedIps":
-                  setAddReservedIpVisibility(true);
-                  break;
-                default:
-                  break;
-              }
-            }}
-          >
-            Add Item
-          </MaterialButton>
-        </div>
+        <MaterialButton
+          variant="contained"
+          color="primary"
+          disableElevation
+          style={{ float: "right" }}
+          startIcon={<AddIcon />}
+          onClick={() => {
+            switch (its_inventory_section) {
+              case "desktops":
+                setAddDesktopVisibility(true);
+                break;
+              case "laptops":
+                setAddLaptopVisibility(true);
+                break;
+              case "mobiles":
+                setAddMobileVisibility(true);
+                break;
+              case "labelPrinters":
+                setAddLabelPrinterVisibility(true);
+                break;
+              case "laserPrinters":
+                setAddLaserPrinterVisibility(true);
+                break;
+              case "reservedIps":
+                setAddReservedIpVisibility(true);
+                break;
+              default:
+                break;
+            }
+          }}
+        >
+          Add Item
+        </MaterialButton>
       </div>
       <div className="tableContainer" ref={heightdiv}>
         <MaterialTable
+          isLoading={genericLoader}
           icons={tableIcons}
           style={{ zIndex: "1" }}
           title={
@@ -443,40 +167,39 @@ const Inventory = React.memo(() => {
             toolbar: true,
             search: true,
             headerStyle: { position: "sticky", top: 0 },
-            pageSizeOptions: [20, 50, 100, tableData.length],
+            pageSizeOptions: [20, 50, 100, data.length],
             pageSize: 20,
             minBodyHeight: height - 135,
             maxBodyHeight: height - 135,
           }}
-          columns={tableColumns}
-          data={tableData}
+          columns={columnsIndex[its_inventory_section]}
+          data={data}
           editable={{
             onRowUpdate: (newData, oldData) =>
               new Promise((resolve, reject) => {
-                setTimeout(() => {
-                  const dataUpdate = [...tableData];
-                  const index = oldData.tableData.id;
-                  newData.section = its_inventory_section;
-                  dataUpdate[index] = newData;
-                  EditItem(newData);
-                  // console.log(newData);
-                  resolve();
-                }, 1000);
+                // setTimeout(() => {
+                //   const dataUpdate = [...data];
+                //   const index = oldData.data.id;
+                //   newData.section = its_inventory_section;
+                //   dataUpdate[index] = newData;
+                //   EditItem(newData);
+                //   // console.log(newData);
+                //   resolve();
+                // }, 1000);
               }),
             onRowDelete: (oldData) =>
               new Promise((resolve, reject) => {
-                setTimeout(() => {
-                  const dataDelete = [...tableData];
-                  const index = oldData.tableData.id;
-                  dataDelete.splice(index, 1);
-                  oldData.section = its_inventory_section;
-                  DeleteItem(oldData);
-
-                  resolve();
-                }, 1000);
+                // setTimeout(() => {
+                //   const dataDelete = [...data];
+                //   const index = oldData.tableData.id;
+                //   dataDelete.splice(index, 1);
+                //   oldData.section = its_inventory_section;
+                //   DeleteItem(oldData);
+                //   resolve();
+                // }, 1000);
               }),
           }}
-        ></MaterialTable>
+        />
       </div>
       <AddDesktop />
       <AddLaptop />

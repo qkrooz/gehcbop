@@ -28,7 +28,7 @@ const Main = React.memo(() => {
   const [appPool] = appPoolState;
   const [appLoader, setAppLoader] = useState(true);
   useEffect(() => {
-    if (Object.values(appPool).length !== 0) {
+    if (appPool.length !== 0) {
       let tempApps = [];
       Object.values(appPool).forEach((App) => {
         import("./_apps/" + App.appName).then((ImportedApp) =>
@@ -37,14 +37,12 @@ const Main = React.memo(() => {
       });
       setRenderApps(tempApps);
       setAppLoader(false);
-    } else {
-      setAppLoader(true);
     }
     // eslint-disable-next-line
   }, [appPool]);
   return (
     <>
-      <Redirect to={currentPage} />
+      <Redirect exact to="/" />
       <Layout className="main-layout">
         <SiderBar />
         <Content style={{ display: "flex", flexDirection: "column" }}>
@@ -72,13 +70,18 @@ const Main = React.memo(() => {
             <Route exact path="/">
               <SelectAppPage />
             </Route>
-            {renderApps.map((App, i) => {
-              return (
-                <Route key={i} path={"/" + appPool[i].appName}>
-                  <App />
-                </Route>
-              );
-            })}
+            {renderApps.length === 0
+              ? null
+              : renderApps.map((App, i) => {
+                  return (
+                    <Route
+                      key={appPool[i].appName}
+                      path={"/" + appPool[i].appName}
+                    >
+                      <App />
+                    </Route>
+                  );
+                })}
           </Switch>
         </Content>
       </Layout>
@@ -183,18 +186,17 @@ const SiderBar = React.memo(() => {
       >
         <span>Apps</span>
       </div>
-
       {Object.values(userDataState).length !== 0 ? (
-        <Menu theme="dark" defaultSelectedKeys={currentPage} mode="inline">
+        <Menu theme="dark" mode="inline">
           {Object.values(appPool).map((app, i) => {
             return (
               <Menu.Item
-                key={app.appName}
+                key={i}
                 icon={appIcons[app.appName]}
                 onClick={() => {
-                  console.log(app.appName);
                   setCurrentPage(`/${app.appName}`);
                   setCurrentApplication(app.appName);
+                  console.log(app.appName);
                 }}
               >
                 <Link to={`/${app.appName}`} />
