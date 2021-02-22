@@ -1,6 +1,6 @@
 import React, { useState, useContext, useCallback } from "react";
 import { ItSupportContext } from "../resources/ItSupportContext";
-import { Switch } from "react-router-dom";
+import { MemoryRouter as Router, Link, Switch, Route } from "react-router-dom";
 import { Context } from "../../../_context/MainContext";
 import Button from "@material-ui/core/Button";
 import ButtonGroup from "@material-ui/core/ButtonGroup";
@@ -57,112 +57,122 @@ const Inventory = React.memo(() => {
     }
   }, []);
   return (
-    <div className="inventoryMainContainer">
-      <div className="dataNavigatorContainer">
-        <ButtonGroup
-          disableElevation
-          variant="contained"
-          color="primary"
-          aria-label="contained primary button group"
-        >
-          <Button
-            className={
-              its_inventory_section === "desktops" ? "button-active" : null
-            }
+    <Router>
+      <div className="inventoryMainContainer">
+        <div className="dataNavigatorContainer">
+          <ButtonGroup
+            disableElevation
+            variant="contained"
+            color="primary"
+            aria-label="contained primary button group"
+          >
+            <Button
+              className={
+                its_inventory_section === "desktops" ? "button-active" : null
+              }
+              onClick={() => {
+                set_its_inventory_section("desktops");
+              }}
+            ></Button>
+            <Button
+              className={
+                its_inventory_section === "laptops" ? "button-active" : null
+              }
+              onClick={() => {
+                set_its_inventory_section("laptops");
+              }}
+            >
+              Laptops
+            </Button>
+            <Button
+              className={
+                its_inventory_section === "mobiles" ? "button-active" : null
+              }
+              onClick={() => {
+                set_its_inventory_section("mobiles");
+              }}
+            >
+              Mobiles
+            </Button>
+            <Button
+              className={
+                its_inventory_section === "labelPrinters"
+                  ? "button-active"
+                  : null
+              }
+              onClick={() => {
+                set_its_inventory_section("labelPrinters");
+              }}
+            >
+              Label Printers
+            </Button>
+            <Button
+              className={
+                its_inventory_section === "laserPrinters"
+                  ? "button-active"
+                  : null
+              }
+              onClick={() => {
+                set_its_inventory_section("laserPrinters");
+              }}
+            >
+              Laser Printers
+            </Button>
+            <Button
+              className={
+                its_inventory_section === "reservedIps" ? "button-active" : null
+              }
+              onClick={() => {
+                set_its_inventory_section("reservedIps");
+              }}
+            >
+              Reserved IP's
+            </Button>
+          </ButtonGroup>
+          <MaterialButton
+            variant="contained"
+            color="primary"
+            disableElevation
+            style={{ float: "right" }}
+            startIcon={<AddIcon />}
             onClick={() => {
-              set_its_inventory_section("desktops");
+              switch (its_inventory_section) {
+                case "desktops":
+                  setAddDesktopVisibility(true);
+                  break;
+                case "laptops":
+                  setAddLaptopVisibility(true);
+                  break;
+                case "mobiles":
+                  setAddMobileVisibility(true);
+                  break;
+                case "labelPrinters":
+                  setAddLabelPrinterVisibility(true);
+                  break;
+                case "laserPrinters":
+                  setAddLaserPrinterVisibility(true);
+                  break;
+                case "reservedIps":
+                  setAddReservedIpVisibility(true);
+                  break;
+                default:
+                  break;
+              }
             }}
           >
-            Desktops
-          </Button>
-          <Button
-            className={
-              its_inventory_section === "laptops" ? "button-active" : null
-            }
-            onClick={() => {
-              set_its_inventory_section("laptops");
-            }}
-          >
-            Laptops
-          </Button>
-          <Button
-            className={
-              its_inventory_section === "mobiles" ? "button-active" : null
-            }
-            onClick={() => {
-              set_its_inventory_section("mobiles");
-            }}
-          >
-            Mobiles
-          </Button>
-          <Button
-            className={
-              its_inventory_section === "labelPrinters" ? "button-active" : null
-            }
-            onClick={() => {
-              set_its_inventory_section("labelPrinters");
-            }}
-          >
-            Label Printers
-          </Button>
-          <Button
-            className={
-              its_inventory_section === "laserPrinters" ? "button-active" : null
-            }
-            onClick={() => {
-              set_its_inventory_section("laserPrinters");
-            }}
-          >
-            Laser Printers
-          </Button>
-          <Button
-            className={
-              its_inventory_section === "reservedIps" ? "button-active" : null
-            }
-            onClick={() => {
-              set_its_inventory_section("reservedIps");
-            }}
-          >
-            Reserved IP's
-          </Button>
-        </ButtonGroup>
-        <MaterialButton
-          variant="contained"
-          color="primary"
-          disableElevation
-          style={{ float: "right" }}
-          startIcon={<AddIcon />}
-          onClick={() => {
-            switch (its_inventory_section) {
-              case "desktops":
-                setAddDesktopVisibility(true);
-                break;
-              case "laptops":
-                setAddLaptopVisibility(true);
-                break;
-              case "mobiles":
-                setAddMobileVisibility(true);
-                break;
-              case "labelPrinters":
-                setAddLabelPrinterVisibility(true);
-                break;
-              case "laserPrinters":
-                setAddLaserPrinterVisibility(true);
-                break;
-              case "reservedIps":
-                setAddReservedIpVisibility(true);
-                break;
-              default:
-                break;
-            }
-          }}
-        >
-          Add Item
-        </MaterialButton>
-      </div>
-      <div className="tableContainer" ref={heightdiv}>
-        <Switch></Switch>
-        {/* <MaterialTable
+            Add Item
+          </MaterialButton>
+        </div>
+        <div className="tableContainer" ref={heightdiv}>
+          <Switch>
+            <Route component={DesktopsTable} path="/" />
+            <Route component={LaptopsTable} path="/LaptopsTable" />
+            <Route component={MobilesTable} path="/MobilesTable" />
+            <Route component={LabelPrintersTable} path="/LabelPrintersTable" />
+            <Route component={LaserPrintersTable} path="/LaserPrintersTable" />
+            <Route component={ReservedIpsTable} path="/ReservedIpsTable" />
+          </Switch>
+          {/* <MaterialTable
           isLoading={genericLoader}
           icons={tableIcons}
           style={{ zIndex: "1" }}
@@ -209,14 +219,15 @@ const Inventory = React.memo(() => {
               }),
           }}
         /> */}
+        </div>
+        <AddDesktop />
+        <AddLaptop />
+        <AddMobile />
+        <AddLabelPrinter />
+        <AddLaserPrinter />
+        <AddReservedIp />
       </div>
-      <AddDesktop />
-      <AddLaptop />
-      <AddMobile />
-      <AddLabelPrinter />
-      <AddLaserPrinter />
-      <AddReservedIp />
-    </div>
+    </Router>
   );
 });
 
