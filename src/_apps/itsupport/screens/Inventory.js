@@ -1,5 +1,6 @@
 import React, { useState, useContext, useCallback } from "react";
 import { ItSupportContext } from "../resources/ItSupportContext";
+import { Switch } from "react-router-dom";
 import { Context } from "../../../_context/MainContext";
 import Button from "@material-ui/core/Button";
 import ButtonGroup from "@material-ui/core/ButtonGroup";
@@ -15,6 +16,13 @@ import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
+// tables
+import DesktopsTable from "../components/desktopsTable";
+import LaptopsTable from "../components/laptopsTable";
+import MobilesTable from "../components/mobilesTable";
+import LabelPrintersTable from "../components/labelPrintersTable";
+import LaserPrintersTable from "../components/laserPrintersTable";
+import ReservedIpsTable from "../components/reservedIpsTable";
 const { TextArea } = Input;
 const Inventory = React.memo(() => {
   const {
@@ -153,7 +161,8 @@ const Inventory = React.memo(() => {
         </MaterialButton>
       </div>
       <div className="tableContainer" ref={heightdiv}>
-        <MaterialTable
+        <Switch></Switch>
+        {/* <MaterialTable
           isLoading={genericLoader}
           icons={tableIcons}
           style={{ zIndex: "1" }}
@@ -199,7 +208,7 @@ const Inventory = React.memo(() => {
                 // }, 1000);
               }),
           }}
-        />
+        /> */}
       </div>
       <AddDesktop />
       <AddLaptop />
