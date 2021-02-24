@@ -1,3 +1,5 @@
 import React from "react";
-const ReservedIpsTable = React.memo(() => {});
+const ReservedIpsTable = React.memo(() => {
+  return <></>;
+});
 export default ReservedIpsTable;

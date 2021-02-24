@@ -73,7 +73,11 @@ const Inventory = React.memo(() => {
               onClick={() => {
                 set_its_inventory_section("desktops");
               }}
-            ></Button>
+            >
+              <Link to="/" style={{ width: "100%", color: "white" }}>
+                Desktops
+              </Link>
+            </Button>
             <Button
               className={
                 its_inventory_section === "laptops" ? "button-active" : null
@@ -82,7 +86,9 @@ const Inventory = React.memo(() => {
                 set_its_inventory_section("laptops");
               }}
             >
-              Laptops
+              <Link to="/laptops" style={{ width: "100%", color: "white" }}>
+                Laptops
+              </Link>
             </Button>
             <Button
               className={
@@ -92,7 +98,9 @@ const Inventory = React.memo(() => {
                 set_its_inventory_section("mobiles");
               }}
             >
-              Mobiles
+              <Link to="/mobiles" style={{ width: "100%", color: "white" }}>
+                Mobiles
+              </Link>
             </Button>
             <Button
               className={
@@ -104,7 +112,12 @@ const Inventory = React.memo(() => {
                 set_its_inventory_section("labelPrinters");
               }}
             >
-              Label Printers
+              <Link
+                to="/labelPrinters"
+                style={{ width: "100%", color: "white" }}
+              >
+                Label Printers
+              </Link>
             </Button>
             <Button
               className={
@@ -116,7 +129,12 @@ const Inventory = React.memo(() => {
                 set_its_inventory_section("laserPrinters");
               }}
             >
-              Laser Printers
+              <Link
+                to="/laserPrinters"
+                style={{ width: "100%", color: "white" }}
+              >
+                Laser Printers
+              </Link>
             </Button>
             <Button
               className={
@@ -126,7 +144,9 @@ const Inventory = React.memo(() => {
                 set_its_inventory_section("reservedIps");
               }}
             >
-              Reserved IP's
+              <Link to="/reservedIps" style={{ width: "100%", color: "white" }}>
+                Reserved IP's
+              </Link>
             </Button>
           </ButtonGroup>
           <MaterialButton
@@ -165,12 +185,12 @@ const Inventory = React.memo(() => {
         </div>
         <div className="tableContainer" ref={heightdiv}>
           <Switch>
-            <Route component={DesktopsTable} path="/" />
-            <Route component={LaptopsTable} path="/LaptopsTable" />
-            <Route component={MobilesTable} path="/MobilesTable" />
-            <Route component={LabelPrintersTable} path="/LabelPrintersTable" />
-            <Route component={LaserPrintersTable} path="/LaserPrintersTable" />
-            <Route component={ReservedIpsTable} path="/ReservedIpsTable" />
+            <Route component={DesktopsTable} path="/" exact />
+            <Route component={LaptopsTable} path="/laptops" />
+            <Route component={MobilesTable} path="/mobiles" />
+            <Route component={LabelPrintersTable} path="/labelPrinters" />
+            <Route component={LaserPrintersTable} path="/laserPrinters" />
+            <Route component={ReservedIpsTable} path="/reservedIps" />
           </Switch>
           {/* <MaterialTable
           isLoading={genericLoader}
