@@ -14,6 +14,8 @@ import NavBar from "./components/NavBar";
 import Inventory from "./screens/Inventory";
 import Miscellaneous from "./screens/Miscellaneous";
 const ItSupportIndex = React.memo(() => {
+  const [inventoryFormData, setInventoryFormData] = useState({});
+
   const {
     mainProgressState,
     USELPUTIL02,
@@ -107,6 +109,7 @@ const ItSupportIndex = React.memo(() => {
     <Router>
       <ItSupportContext.Provider
         value={{
+          inventoryFormDataState: [inventoryFormData, setInventoryFormData],
           addDesktopVisibilityState: [
             addDesktopVisibility,
             setAddDesktopVisibility,

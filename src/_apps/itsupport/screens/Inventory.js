@@ -2,6 +2,18 @@ import React, { useState } from "react";
 import { MemoryRouter as Router, Link, Switch, Route } from "react-router-dom";
 import { Button, Menu, MenuItem } from "@material-ui/core";
 import MenuIcon from "@material-ui/icons/Menu";
+import AddToPhotosIcon from "@material-ui/icons/AddToPhotos";
+import { sectionTitles } from "../resources/sectionTitles";
+import { index } from "../components/addForms";
+import {
+  Drawer,
+  DrawerBody,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerOverlay,
+  DrawerContent,
+  DrawerCloseButton,
+} from "@chakra-ui/react";
 import "../styles/inventory.css";
 import "../styles/addForm.css";
 // tables
@@ -11,17 +23,13 @@ import MobilesTable from "../components/mobilesTable";
 import LabelPrintersTable from "../components/labelPrintersTable";
 import LaserPrintersTable from "../components/laserPrintersTable";
 import ReservedIpsTable from "../components/reservedIpsTable";
+// add forms
+
 const Inventory = React.memo(() => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [section, setSection] = useState("desktops");
-  const sectionTitle = {
-    desktops: "Desktops",
-    laptops: "Laptops",
-    mobiles: "Mobiles",
-    laserPrinters: "Laser Printers",
-    labelPrinters: "LabelPrinters",
-    reservedIps: "Reserved IP's",
-  };
+  const [addDrawerVisibility, setAddDrawerVisibility] = useState(false);
+
   return (
     <Router>
       <div className="inventoryMainContainer" style={{ flexGrow: 1 }}>
@@ -36,7 +44,7 @@ const Inventory = React.memo(() => {
               setAnchorEl(e.currentTarget);
             }}
           >
-            {sectionTitle[section]}
+            {sectionTitles[section]}
           </Button>
           <Menu
             id="simple-menu"
@@ -53,7 +61,7 @@ const Inventory = React.memo(() => {
                 setSection("desktops");
               }}
             >
-              <Link to="/" exact>
+              <Link style={{ width: "100%", height: "100%" }} to="/">
                 Desktops
               </Link>
             </MenuItem>
@@ -63,7 +71,9 @@ const Inventory = React.memo(() => {
                 setSection("laptops");
               }}
             >
-              <Link to="/laptops">Laptops</Link>
+              <Link style={{ width: "100%", height: "100%" }} to="/laptops">
+                Laptops
+              </Link>
             </MenuItem>
             <MenuItem
               onClick={() => {
@@ -71,7 +81,9 @@ const Inventory = React.memo(() => {
                 setSection("mobiles");
               }}
             >
-              <Link to="/mobiles">Mobiles</Link>
+              <Link style={{ width: "100%", height: "100%" }} to="/mobiles">
+                Mobiles
+              </Link>
             </MenuItem>
             <MenuItem
               onClick={() => {
@@ -79,7 +91,12 @@ const Inventory = React.memo(() => {
                 setSection("laserPrinters");
               }}
             >
-              <Link to="/laserPrinters">Laser Printers</Link>
+              <Link
+                style={{ width: "100%", height: "100%" }}
+                to="/laserPrinters"
+              >
+                Laser Printers
+              </Link>
             </MenuItem>
             <MenuItem
               onClick={() => {
@@ -87,7 +104,12 @@ const Inventory = React.memo(() => {
                 setSection("labelPrinters");
               }}
             >
-              <Link to="/labelPrinters">Label Printers</Link>
+              <Link
+                style={{ width: "100%", height: "100%" }}
+                to="/labelPrinters"
+              >
+                Label Printers
+              </Link>
             </MenuItem>
             <MenuItem
               onClick={() => {
@@ -95,9 +117,22 @@ const Inventory = React.memo(() => {
                 setSection("reservedIps");
               }}
             >
-              <Link to="/reservedIps">Reserved Ip's</Link>
+              <Link style={{ width: "100%", height: "100%" }} to="/reservedIps">
+                Reserved Ip's
+              </Link>
             </MenuItem>
           </Menu>
+          <Button
+            startIcon={<AddToPhotosIcon />}
+            variant="contained"
+            disableElevation
+            style={{ marginLeft: "auto" }}
+            onClick={() => {
+              setAddDrawerVisibility(!addDrawerVisibility);
+            }}
+          >
+            Add Multiple
+          </Button>
         </div>
         <div className="tableContainer">
           <Switch>
@@ -109,6 +144,39 @@ const Inventory = React.memo(() => {
             <Route component={ReservedIpsTable} path="/reservedIps" />
           </Switch>
         </div>
+        <Drawer
+          size="sm"
+          isOpen={addDrawerVisibility}
+          placement="right"
+          onClose={() => {
+            setAddDrawerVisibility(!addDrawerVisibility);
+          }}
+          onOverlayClick={() => {
+            setAddDrawerVisibility(true);
+          }}
+        >
+          <DrawerOverlay>
+            <DrawerContent>
+              <DrawerCloseButton />
+              <DrawerHeader>Add new {sectionTitles[section]} item</DrawerHeader>
+              <DrawerBody>{index[section]}</DrawerBody>
+              <DrawerFooter>
+                <Button
+                  variant="outline"
+                  mr={3}
+                  onClick={() => {
+                    setAddDrawerVisibility(!addDrawerVisibility);
+                  }}
+                >
+                  Cancel
+                </Button>
+                <Button color="blue" variant="contained" color="primary">
+                  Add
+                </Button>
+              </DrawerFooter>
+            </DrawerContent>
+          </DrawerOverlay>
+        </Drawer>
       </div>
     </Router>
   );
