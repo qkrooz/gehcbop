@@ -1,7 +1,6 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useState, useEffect, Suspense, lazy } from "react";
 import { Context } from "./_context/MainContext";
 import useLocalStorage from "./_resources/useLocalStorage";
-import { appsIndex } from "./_resources/appsIndex";
 import { Switch, Route, Link, Redirect } from "react-router-dom";
 import { Layout, Menu, Dropdown, Button, Tooltip, Input } from "antd";
 import CircularProgress from "@material-ui/core/CircularProgress";
@@ -20,21 +19,20 @@ import "./_styles/main.css";
 import "./_styles/sider.css";
 const { Sider, Content } = Layout;
 const Main = React.memo(() => {
+  const [renderApps, setRenderApps] = useState([]);
+  const [appLoader, setAppLoader] = useState(true);
   const { currentPageState, appPoolState, mainProgressState } = useContext(
     Context
   );
   const [mainProgress] = mainProgressState;
-  const [renderApps, setRenderApps] = useState([]);
   const [currentPage] = currentPageState;
   const [appPool] = appPoolState;
-  const [appLoader, setAppLoader] = useState(true);
   useEffect(() => {
     if (appPool.length !== 0) {
       let tempApps = [];
       Object.values(appPool).forEach((App) => {
-        import("./_apps/" + App.appName).then((ImportedApp) =>
-          tempApps.push(ImportedApp.default)
-        );
+        let ImportedApp = lazy(() => import("./_apps/" + App.appName));
+        tempApps.push(ImportedApp);
       });
       setRenderApps(tempApps);
       setAppLoader(false);
@@ -46,7 +44,9 @@ const Main = React.memo(() => {
       <Redirect to={currentPage} />
       <Layout className="main-layout">
         <SiderBar />
-        <Content style={{ display: "flex", flexDirection: "column" }}>
+        <Content
+          style={{ display: "flex", flexDirection: "column", height: "100vh" }}
+        >
           {mainProgress === 0 || mainProgress === 100 ? null : (
             <LinearProgress
               variant="determinate"
@@ -67,23 +67,37 @@ const Main = React.memo(() => {
               <CircularProgress />
             </div>
           ) : null}
-          <Switch>
-            <Route exact path="/">
-              <SelectAppPage />
-            </Route>
-            {renderApps.length === 0
-              ? null
-              : renderApps.map((App, i) => {
-                  return (
-                    <Route
-                      key={appPool[i].appName}
-                      path={"/" + appPool[i].appName}
-                    >
-                      {appsIndex[appPool[i].appName]}
-                    </Route>
-                  );
-                })}
-          </Switch>
+          <Suspense
+            fallback={
+              <div
+                style={{
+                  flex: 1,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <CircularProgress />
+              </div>
+            }
+          >
+            <Switch>
+              <Route exact path="/">
+                <SelectAppPage />
+              </Route>
+              {renderApps.length === 0
+                ? null
+                : renderApps.map((App, i) => {
+                    return (
+                      <Route
+                        key={appPool[i].appName}
+                        path={"/" + appPool[i].appName}
+                        component={App}
+                      />
+                    );
+                  })}
+            </Switch>
+          </Suspense>
         </Content>
       </Layout>
     </>

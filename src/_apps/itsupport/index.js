@@ -9,6 +9,7 @@ import {
   Redirect,
 } from "react-router-dom";
 import NavBar from "./components/NavBar";
+
 // screens
 import Inventory from "./screens/Inventory";
 import Miscellaneous from "./screens/Miscellaneous";

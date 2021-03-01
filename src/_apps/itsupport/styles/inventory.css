@@ -1,3 +1,6 @@
+.inventoryMainContainer {
+  flex-grow: 1;
+}
 .inventoryContainer {
   height: 100%;
   width: 100%;
@@ -33,6 +36,8 @@
 }
 .dataNavigatorContainer {
   padding: 1em;
+  display: flex;
+  justify-content: flex-start !important;
 }
 .tableContainer {
   flex-grow: 1;

@@ -1,5 +1,5 @@
 import React from "react";
 const LaptopsTable = React.memo(() => {
-  return <></>;
+  return <>Laptops</>;
 });
 export default LaptopsTable;

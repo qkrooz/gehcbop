@@ -2,6 +2,7 @@
   font-family: "Heebo", sans-serif !important;
 }
 .main-layout {
+  display: flex;
   min-width: 100vw;
   min-height: 100vh;
   position: relative;
