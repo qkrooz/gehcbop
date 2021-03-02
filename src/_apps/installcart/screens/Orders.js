@@ -819,9 +819,9 @@ const EditDialog = React.memo(() => {
     editDialogVisibilityState,
     statusListState,
     workingOrderState,
-    devicesListState,
+    // devicesListState,
   } = useContext(InstallCartContext);
-  const [devicesList] = devicesListState;
+  // const [devicesList] = devicesListState;
   const [workingOrder, setWorkingOrder] = workingOrderState;
   const [editForm] = Form.useForm();
   editForm.resetFields();

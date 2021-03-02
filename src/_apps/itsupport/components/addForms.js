@@ -1,9 +1,7 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useEffect, useContext } from "react";
 import { ItSupportContext } from "../resources/ItSupportContext";
 import TextField from "@material-ui/core/TextField";
 import MenuItem from "@material-ui/core/MenuItem";
-import { Checkbox } from "@material-ui/core";
-import InputAdornment from "@material-ui/core/InputAdornment";
 const AddDesktopsForm = React.memo(() => {
   const { inventoryFormDataState } = useContext(ItSupportContext);
   const [inventoryFormData, setInventoryFormData] = inventoryFormDataState;
@@ -23,7 +21,7 @@ const AddDesktopsForm = React.memo(() => {
       </span>
       <div style={{ display: "flex", marginBottom: "1em" }}>
         <TextField
-          value={inventoryFormData.brand}
+          value={inventoryFormData.brand ? inventoryFormData.brand : ""}
           size="small"
           label="Brand"
           variant="outlined"
@@ -45,7 +43,7 @@ const AddDesktopsForm = React.memo(() => {
           <MenuItem value="other">Other</MenuItem>
         </TextField>
         <TextField
-          value={inventoryFormData.model}
+          value={inventoryFormData.model ? inventoryFormData.model : ""}
           name="model"
           size="small"
           label="Model"
@@ -61,7 +59,7 @@ const AddDesktopsForm = React.memo(() => {
       </div>
 
       <TextField
-        value={inventoryFormData.serviceTag}
+        value={inventoryFormData.serviceTag ? inventoryFormData.serviceTag : ""}
         size="small"
         label="Service Tag"
         variant="outlined"
@@ -79,7 +77,7 @@ const AddDesktopsForm = React.memo(() => {
       />
       <div style={{ display: "flex", marginBottom: "1em" }}>
         <TextField
-          value={inventoryFormData.location}
+          value={inventoryFormData.location ? inventoryFormData.location : ""}
           size="small"
           label="Location"
           variant="outlined"
@@ -93,7 +91,7 @@ const AddDesktopsForm = React.memo(() => {
           }
         />
         <TextField
-          value={inventoryFormData.area}
+          value={inventoryFormData.area ? inventoryFormData.area : ""}
           size="small"
           label="Area"
           name="area"
@@ -109,7 +107,7 @@ const AddDesktopsForm = React.memo(() => {
       </div>
       <div style={{ display: "flex", marginBottom: "1em" }}>
         <TextField
-          value={inventoryFormData.hostname}
+          value={inventoryFormData.hostname ? inventoryFormData.hostname : ""}
           size="small"
           label="Hostname"
           variant="outlined"
@@ -123,7 +121,7 @@ const AddDesktopsForm = React.memo(() => {
           }
         />
         <TextField
-          value={inventoryFormData.username}
+          value={inventoryFormData.username ? inventoryFormData.username : ""}
           size="small"
           name="username"
           label="Username"
@@ -142,7 +140,7 @@ const AddDesktopsForm = React.memo(() => {
       </span>
       <div style={{ display: "flex", marginBottom: "1em" }}>
         <TextField
-          value={inventoryFormData.os}
+          value={inventoryFormData.os ? inventoryFormData.os : ""}
           name="os"
           size="small"
           label="OS"
@@ -163,7 +161,7 @@ const AddDesktopsForm = React.memo(() => {
           <MenuItem value="other">Other</MenuItem>
         </TextField>
         <TextField
-          value={inventoryFormData.country}
+          value={inventoryFormData.country ? inventoryFormData.country : ""}
           name="country"
           size="small"
           label="Country"
@@ -186,9 +184,15 @@ const AddDesktopsForm = React.memo(() => {
           size="small"
           label="HDD"
           name="hdd"
+          value={
+            !inventoryFormData.specs
+              ? ""
+              : inventoryFormData.specs.hdd
+              ? inventoryFormData.specs.hdd
+              : ""
+          }
           variant="outlined"
           style={{ width: "100%", marginRight: "1em" }}
-          endAdornment={<InputAdornment position="end">GB</InputAdornment>}
           onChange={(e) => {
             let specs = { ...inventoryFormData.specs };
             setInventoryFormData({
@@ -203,7 +207,13 @@ const AddDesktopsForm = React.memo(() => {
           name="ram"
           variant="outlined"
           style={{ width: "100%" }}
-          endAdornment={<InputAdornment position="end">GB</InputAdornment>}
+          value={
+            !inventoryFormData.specs
+              ? ""
+              : inventoryFormData.specs.ram
+              ? inventoryFormData.specs.ram
+              : ""
+          }
           onChange={(e) => {
             let specs = { ...inventoryFormData.specs };
             setInventoryFormData({
@@ -221,6 +231,13 @@ const AddDesktopsForm = React.memo(() => {
           variant="outlined"
           style={{ width: "100%", marginRight: "1em" }}
           select
+          value={
+            !inventoryFormData.specs
+              ? ""
+              : inventoryFormData.specs.processor
+              ? inventoryFormData.specs.processor
+              : ""
+          }
           onChange={(e) => {
             let specs = { ...inventoryFormData.specs };
             setInventoryFormData({
@@ -241,7 +258,6 @@ const AddDesktopsForm = React.memo(() => {
           variant="outlined"
           name="screenSize"
           style={{ width: "100%" }}
-          endAdornment={<InputAdornment position="end">GB</InputAdornment>}
           onChange={(e) => {
             let specs = { ...inventoryFormData.specs };
             setInventoryFormData({

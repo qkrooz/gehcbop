@@ -155,7 +155,6 @@ const Inventory = React.memo(() => {
               <DrawerBody>{index[section]}</DrawerBody>
               <DrawerFooter>
                 <Button
-                  variant="outline"
                   mr={3}
                   onClick={() => {
                     setAddDrawerVisibility(!addDrawerVisibility);
@@ -163,7 +162,7 @@ const Inventory = React.memo(() => {
                 >
                   Cancel
                 </Button>
-                <Button color="blue" variant="contained" color="primary">
+                <Button variant="contained" color="primary">
                   Add
                 </Button>
               </DrawerFooter>

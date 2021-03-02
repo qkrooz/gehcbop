@@ -36,7 +36,7 @@ const CartsChart = React.memo((props) => {
     categoryAxis.renderer.labels.template.adapter.add(
       "dy",
       function (dy, target) {
-        if (target.dataItem && target.dataItem.index & (2 == 2)) {
+        if (target.dataItem && target.dataItem.index) {
           return dy + 25;
         }
         return dy;
