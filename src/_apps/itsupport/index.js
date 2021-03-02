@@ -14,6 +14,8 @@ import NavBar from "./components/NavBar";
 import Inventory from "./screens/Inventory";
 import Miscellaneous from "./screens/Miscellaneous";
 const ItSupportIndex = React.memo(() => {
+  const [addDrawerVisibility, setAddDrawerVisibility] = useState(false);
+
   const [inventoryFormData, setInventoryFormData] = useState({});
 
   const {
@@ -109,31 +111,12 @@ const ItSupportIndex = React.memo(() => {
     <Router>
       <ItSupportContext.Provider
         value={{
+          addDrawerVisibilityState: [
+            addDrawerVisibility,
+            setAddDrawerVisibility,
+          ],
           inventoryFormDataState: [inventoryFormData, setInventoryFormData],
-          addDesktopVisibilityState: [
-            addDesktopVisibility,
-            setAddDesktopVisibility,
-          ],
-          addLaptopVisibilityState: [
-            addLaptopVisibility,
-            setAddLaptopVisibility,
-          ],
-          addMobileVisibilityState: [
-            addMobileVisibility,
-            setAddMobileVisibility,
-          ],
-          addLabelPrinterVisibilityState: [
-            addLabelPrinterVisibility,
-            setAddLabelPrinterVisibility,
-          ],
-          addLaserPrinterVisibilityState: [
-            addLaserPrinterVisibility,
-            setAddLaserPrinterVisibility,
-          ],
-          addReservedIpVisibilityState: [
-            addReservedIpVisibility,
-            setAddReservedIpVisibility,
-          ],
+          //  functiones
           AddItem: AddItem,
           EditItem: EditItem,
           DeleteItem: DeleteItem,

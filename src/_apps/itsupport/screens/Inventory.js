@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
+import { ItSupportContext } from "../resources/ItSupportContext";
 import { MemoryRouter as Router, Link, Switch, Route } from "react-router-dom";
 import { Button, Menu, MenuItem } from "@material-ui/core";
 import MenuIcon from "@material-ui/icons/Menu";
@@ -26,10 +27,14 @@ import ReservedIpsTable from "../components/reservedIpsTable";
 // add forms
 
 const Inventory = React.memo(() => {
+  const { addDrawerVisibilityState } = useContext(ItSupportContext);
+  const [
+    addDrawerVisibility,
+    setAddDrawerVisibility,
+  ] = addDrawerVisibilityState;
   const [anchorEl, setAnchorEl] = useState(null);
   const [section, setSection] = useState("desktops");
-  const [addDrawerVisibility, setAddDrawerVisibility] = useState(false);
-
+  const btnRef = React.useRef();
   return (
     <Router>
       <div className="inventoryMainContainer" style={{ flexGrow: 1 }}>
@@ -123,6 +128,7 @@ const Inventory = React.memo(() => {
             </MenuItem>
           </Menu>
           <Button
+            ref={btnRef}
             startIcon={<AddToPhotosIcon />}
             variant="contained"
             disableElevation
@@ -145,6 +151,7 @@ const Inventory = React.memo(() => {
           </Switch>
         </div>
         <Drawer
+          finalFocusRef={btnRef}
           size="sm"
           isOpen={addDrawerVisibility}
           placement="right"

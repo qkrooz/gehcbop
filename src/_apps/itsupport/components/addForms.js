@@ -3,6 +3,7 @@ import { ItSupportContext } from "../resources/ItSupportContext";
 import TextField from "@material-ui/core/TextField";
 import MenuItem from "@material-ui/core/MenuItem";
 import { Checkbox } from "@material-ui/core";
+import InputAdornment from "@material-ui/core/InputAdornment";
 const AddDesktopsForm = React.memo(() => {
   const { inventoryFormDataState } = useContext(ItSupportContext);
   const [inventoryFormData, setInventoryFormData] = inventoryFormDataState;
@@ -15,6 +16,252 @@ const AddDesktopsForm = React.memo(() => {
         display: "flex",
         flexDirection: "column",
         height: "100%",
+      }}
+    >
+      <span style={{ fontSize: "1.1em", color: "gray", marginBottom: "1em" }}>
+        Primary Info
+      </span>
+      <div style={{ display: "flex", marginBottom: "1em" }}>
+        <TextField
+          value={inventoryFormData.brand}
+          size="small"
+          label="Brand"
+          variant="outlined"
+          style={{ width: "100%", marginRight: "1em" }}
+          select
+          name="brand"
+          onChange={(e) =>
+            setInventoryFormData({
+              ...inventoryFormData,
+              [e.target.name]: e.target.value,
+            })
+          }
+        >
+          <MenuItem value="dell">DELL</MenuItem>
+          <MenuItem value="hp">HP</MenuItem>
+          <MenuItem value="lenovo">Lenovo</MenuItem>
+          <MenuItem value="apple">Apple</MenuItem>
+          <MenuItem value="microsoft">Microsoft</MenuItem>
+          <MenuItem value="other">Other</MenuItem>
+        </TextField>
+        <TextField
+          value={inventoryFormData.model}
+          name="model"
+          size="small"
+          label="Model"
+          variant="outlined"
+          style={{ width: "100%" }}
+          onChange={(e) =>
+            setInventoryFormData({
+              ...inventoryFormData,
+              [e.target.name]: e.target.value,
+            })
+          }
+        />
+      </div>
+
+      <TextField
+        value={inventoryFormData.serviceTag}
+        size="small"
+        label="Service Tag"
+        variant="outlined"
+        name="serviceTag"
+        style={{ width: "100%", marginBottom: "1em" }}
+        multiline
+        rowsMax={4}
+        rows={1}
+        onChange={(e) =>
+          setInventoryFormData({
+            ...inventoryFormData,
+            [e.target.name]: e.target.value,
+          })
+        }
+      />
+      <div style={{ display: "flex", marginBottom: "1em" }}>
+        <TextField
+          value={inventoryFormData.location}
+          size="small"
+          label="Location"
+          variant="outlined"
+          name="location"
+          style={{ width: "100%", marginRight: "1em" }}
+          onChange={(e) =>
+            setInventoryFormData({
+              ...inventoryFormData,
+              [e.target.name]: e.target.value,
+            })
+          }
+        />
+        <TextField
+          value={inventoryFormData.area}
+          size="small"
+          label="Area"
+          name="area"
+          variant="outlined"
+          style={{ width: "100%" }}
+          onChange={(e) =>
+            setInventoryFormData({
+              ...inventoryFormData,
+              [e.target.name]: e.target.value,
+            })
+          }
+        />
+      </div>
+      <div style={{ display: "flex", marginBottom: "1em" }}>
+        <TextField
+          value={inventoryFormData.hostname}
+          size="small"
+          label="Hostname"
+          variant="outlined"
+          style={{ width: "100%", marginRight: "1em" }}
+          name="hostname"
+          onChange={(e) =>
+            setInventoryFormData({
+              ...inventoryFormData,
+              [e.target.name]: e.target.value,
+            })
+          }
+        />
+        <TextField
+          value={inventoryFormData.username}
+          size="small"
+          name="username"
+          label="Username"
+          variant="outlined"
+          style={{ width: "100%" }}
+          onChange={(e) =>
+            setInventoryFormData({
+              ...inventoryFormData,
+              [e.target.name]: e.target.value,
+            })
+          }
+        />
+      </div>
+      <span style={{ fontSize: "1.1em", color: "gray", marginBottom: "1em" }}>
+        Specifications
+      </span>
+      <div style={{ display: "flex", marginBottom: "1em" }}>
+        <TextField
+          value={inventoryFormData.os}
+          name="os"
+          size="small"
+          label="OS"
+          variant="outlined"
+          style={{ width: "100%", marginRight: "1em" }}
+          select
+          onChange={(e) =>
+            setInventoryFormData({
+              ...inventoryFormData,
+              [e.target.name]: e.target.value,
+            })
+          }
+        >
+          <MenuItem value="windows 10">Windows 10</MenuItem>
+          <MenuItem value="windows 7">Windows 7</MenuItem>
+          <MenuItem value="windows xp">Windows XP</MenuItem>
+          <MenuItem value="linux/ubuntu">Linux / Ubuntu</MenuItem>
+          <MenuItem value="other">Other</MenuItem>
+        </TextField>
+        <TextField
+          value={inventoryFormData.country}
+          name="country"
+          size="small"
+          label="Country"
+          variant="outlined"
+          style={{ width: "100%" }}
+          select
+          onChange={(e) =>
+            setInventoryFormData({
+              ...inventoryFormData,
+              [e.target.name]: e.target.value,
+            })
+          }
+        >
+          <MenuItem value="united states">United States</MenuItem>
+          <MenuItem value="mexico">Mexico</MenuItem>
+        </TextField>
+      </div>
+      <div style={{ display: "flex", marginBottom: "1em" }}>
+        <TextField
+          size="small"
+          label="HDD"
+          name="hdd"
+          variant="outlined"
+          style={{ width: "100%", marginRight: "1em" }}
+          endAdornment={<InputAdornment position="end">GB</InputAdornment>}
+          onChange={(e) => {
+            let specs = { ...inventoryFormData.specs };
+            setInventoryFormData({
+              ...inventoryFormData,
+              specs: { ...specs, [e.target.name]: e.target.value },
+            });
+          }}
+        />
+        <TextField
+          size="small"
+          label="RAM"
+          name="ram"
+          variant="outlined"
+          style={{ width: "100%" }}
+          endAdornment={<InputAdornment position="end">GB</InputAdornment>}
+          onChange={(e) => {
+            let specs = { ...inventoryFormData.specs };
+            setInventoryFormData({
+              ...inventoryFormData,
+              specs: { ...specs, [e.target.name]: e.target.value },
+            });
+          }}
+        />
+      </div>
+      <div style={{ display: "flex", marginBottom: "1em" }}>
+        <TextField
+          size="small"
+          label="Processor"
+          name="processor"
+          variant="outlined"
+          style={{ width: "100%", marginRight: "1em" }}
+          select
+          onChange={(e) => {
+            let specs = { ...inventoryFormData.specs };
+            setInventoryFormData({
+              ...inventoryFormData,
+              specs: { ...specs, [e.target.name]: e.target.value },
+            });
+          }}
+        >
+          <MenuItem value="i7">i7</MenuItem>
+          <MenuItem value="i5">i5</MenuItem>
+          <MenuItem value="i3">i3</MenuItem>
+          <MenuItem value="xeon">Xeon</MenuItem>
+          <MenuItem value="other">Other</MenuItem>
+        </TextField>
+        <TextField
+          size="small"
+          label="Screen size"
+          variant="outlined"
+          name="screenSize"
+          style={{ width: "100%" }}
+          endAdornment={<InputAdornment position="end">GB</InputAdornment>}
+          onChange={(e) => {
+            let specs = { ...inventoryFormData.specs };
+            setInventoryFormData({
+              ...inventoryFormData,
+              specs: { ...specs, [e.target.name]: e.target.value },
+            });
+          }}
+        />
+      </div>
+    </div>
+  );
+});
+const AddLaptopsForm = React.memo(() => {
+  return (
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        height: "100%",
+        justifyContent: "space-between",
       }}
     >
       <div style={{ display: "flex", marginBottom: "1em" }}>
@@ -41,102 +288,6 @@ const AddDesktopsForm = React.memo(() => {
           style={{ width: "100%" }}
         />
       </div>
-
-      <TextField
-        size="small"
-        label="Service Tag"
-        variant="outlined"
-        style={{ width: "100%", marginBottom: "1em" }}
-        multiline
-        rowsMax={6}
-        rows={4}
-      />
-      <div style={{ display: "flex", marginBottom: "1em" }}>
-        <TextField
-          size="small"
-          label="Location"
-          variant="outlined"
-          style={{ width: "100%", marginRight: "1em" }}
-        />
-        <TextField
-          size="small"
-          label="Area"
-          variant="outlined"
-          style={{ width: "100%" }}
-        />
-      </div>
-      <div style={{ display: "flex", marginBottom: "1em" }}>
-        <TextField
-          size="small"
-          label="OS"
-          variant="outlined"
-          style={{ width: "100%", marginRight: "1em" }}
-          select
-        >
-          <MenuItem value="windows 10">Windows 10</MenuItem>
-          <MenuItem value="windows 7">Windows 7</MenuItem>
-          <MenuItem value="windows xp">Windows XP</MenuItem>
-          <MenuItem value="linux/ubuntu">Linux / Ubuntu</MenuItem>
-          <MenuItem value="other">Other</MenuItem>
-        </TextField>
-        <TextField
-          size="small"
-          label="Specs"
-          variant="outlined"
-          style={{ width: "100%" }}
-        />
-      </div>
-      <div style={{ display: "flex", marginBottom: "1em" }}>
-        <TextField
-          size="small"
-          label="Hostname"
-          variant="outlined"
-          style={{ width: "100%", marginRight: "1em" }}
-        >
-          <Checkbox />
-        </TextField>
-        <TextField
-          size="small"
-          label="Username"
-          variant="outlined"
-          style={{ width: "100%" }}
-        />
-      </div>
-      <TextField
-        size="small"
-        label="Country"
-        variant="outlined"
-        style={{ width: "100%" }}
-        select
-      >
-        <MenuItem value="united states">United States</MenuItem>
-        <MenuItem value="mexico">Mexico</MenuItem>
-      </TextField>
-    </div>
-  );
-});
-const AddLaptopsForm = React.memo(() => {
-  return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        height: "100%",
-        justifyContent: "space-between",
-      }}
-    >
-      <TextField
-        size="small"
-        label="Brand"
-        variant="outlined"
-        style={{ width: "100%" }}
-      />
-      <TextField
-        size="small"
-        label="Model"
-        variant="outlined"
-        style={{ width: "100%" }}
-      />
       <TextField
         size="small"
         label="Service Tag"
