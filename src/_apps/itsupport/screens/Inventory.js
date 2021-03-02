@@ -3,7 +3,6 @@ import { ItSupportContext } from "../resources/ItSupportContext";
 import { MemoryRouter as Router, Link, Switch, Route } from "react-router-dom";
 import { Button, Menu, MenuItem } from "@material-ui/core";
 import MenuIcon from "@material-ui/icons/Menu";
-import AddToPhotosIcon from "@material-ui/icons/AddToPhotos";
 import { sectionTitles } from "../resources/sectionTitles";
 import { index } from "../components/addForms";
 import {
@@ -27,13 +26,13 @@ import ReservedIpsTable from "../components/reservedIpsTable";
 // add forms
 
 const Inventory = React.memo(() => {
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [section, setSection] = useState("desktops");
   const { addDrawerVisibilityState } = useContext(ItSupportContext);
   const [
     addDrawerVisibility,
     setAddDrawerVisibility,
   ] = addDrawerVisibilityState;
-  const [anchorEl, setAnchorEl] = useState(null);
-  const [section, setSection] = useState("desktops");
   return (
     <Router>
       <div className="inventoryMainContainer" style={{ flexGrow: 1 }}>

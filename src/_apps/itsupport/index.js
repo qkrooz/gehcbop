@@ -9,30 +9,21 @@ import {
   Redirect,
 } from "react-router-dom";
 import NavBar from "./components/NavBar";
-
 // screens
 import Inventory from "./screens/Inventory";
 import Miscellaneous from "./screens/Miscellaneous";
 const ItSupportIndex = React.memo(() => {
-  const [addDrawerVisibility, setAddDrawerVisibility] = useState(false);
-
-  const [inventoryFormData, setInventoryFormData] = useState({});
-
-  const {
-    mainProgressState,
-    USELPUTIL02,
-    currentApplicationState,
-  } = useContext(Context);
   //states
+  const [inventoryFormData, setInventoryFormData] = useState({});
+  const [data, setData] = useState([]);
+  const [genericLoader, setGenericLoader] = useState(false);
+  const [addDrawerVisibility, setAddDrawerVisibility] = useState(false);
   const [its_inventory_section, set_its_inventory_section] = useState(
     "desktops"
   );
+  const { USELPUTIL02, currentApplicationState } = useContext(Context);
   const [currentApplication] = currentApplicationState;
-  const [data, setData] = useState([]);
   //progress
-  const [, setMainProgress] = mainProgressState;
-  const [genericLoader, setGenericLoader] = useState(false);
-
   //functions
   const AddItem = (values) => {
     console.log(`${USELPUTIL02}/${currentApplication}/addItem.php`, values);
