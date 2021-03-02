@@ -34,7 +34,6 @@ const Inventory = React.memo(() => {
   ] = addDrawerVisibilityState;
   const [anchorEl, setAnchorEl] = useState(null);
   const [section, setSection] = useState("desktops");
-  const btnRef = React.useRef();
   return (
     <Router>
       <div className="inventoryMainContainer" style={{ flexGrow: 1 }}>
@@ -127,18 +126,6 @@ const Inventory = React.memo(() => {
               </Link>
             </MenuItem>
           </Menu>
-          <Button
-            ref={btnRef}
-            startIcon={<AddToPhotosIcon />}
-            variant="contained"
-            disableElevation
-            style={{ marginLeft: "auto" }}
-            onClick={() => {
-              setAddDrawerVisibility(!addDrawerVisibility);
-            }}
-          >
-            Add Multiple
-          </Button>
         </div>
         <div className="tableContainer">
           <Switch>
@@ -151,7 +138,6 @@ const Inventory = React.memo(() => {
           </Switch>
         </div>
         <Drawer
-          finalFocusRef={btnRef}
           size="sm"
           isOpen={addDrawerVisibility}
           placement="right"
@@ -159,7 +145,7 @@ const Inventory = React.memo(() => {
             setAddDrawerVisibility(!addDrawerVisibility);
           }}
           onOverlayClick={() => {
-            setAddDrawerVisibility(true);
+            setAddDrawerVisibility(false);
           }}
         >
           <DrawerOverlay>

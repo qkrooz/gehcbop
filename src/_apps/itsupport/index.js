@@ -32,17 +32,7 @@ const ItSupportIndex = React.memo(() => {
   //progress
   const [, setMainProgress] = mainProgressState;
   const [genericLoader, setGenericLoader] = useState(false);
-  //modals
-  const [addDesktopVisibility, setAddDesktopVisibility] = useState(false);
-  const [addLaptopVisibility, setAddLaptopVisibility] = useState(false);
-  const [addMobileVisibility, setAddMobileVisibility] = useState(false);
-  const [addLabelPrinterVisibility, setAddLabelPrinterVisibility] = useState(
-    false
-  );
-  const [addLaserPrinterVisibility, setAddLaserPrinterVisibility] = useState(
-    false
-  );
-  const [addReservedIpVisibility, setAddReservedIpVisibility] = useState(false);
+
   //functions
   const AddItem = (values) => {
     console.log(`${USELPUTIL02}/${currentApplication}/addItem.php`, values);
