@@ -3,6 +3,6 @@ export const sectionTitles = {
   laptops: "Laptops",
   mobiles: "Mobiles",
   laserPrinters: "Laser Printers",
-  labelPrinters: "LabelPrinters",
+  labelPrinters: "Label Printers",
   reservedIps: "Reserved IP's",
 };
