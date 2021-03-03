@@ -11,11 +11,14 @@ const DesktopsTable = React.memo(() => {
   const [genericLoader, setGenericLoader] = useState(false);
   const [data, setData] = useState([]);
   // context
-  const { addDrawerVisibilityState, heightState } = useContext(
-    ItSupportContext
-  );
+  const {
+    addDrawerVisibilityState,
+    heightState,
+    auditModalVisibilityState,
+  } = useContext(ItSupportContext);
   const [height] = heightState;
   const [, setAddDrawerVisibility] = addDrawerVisibilityState;
+  const [, setAuditModalVisibility] = auditModalVisibilityState;
   // functions
   const fetchData = () => {
     axios
@@ -88,6 +91,9 @@ const DesktopsTable = React.memo(() => {
           icon: VisibilityIcon,
           tooltip: "Audit",
           isFreeAction: "true",
+          onClick: () => {
+            setAuditModalVisibility(true);
+          },
         },
       ]}
       columns={[
