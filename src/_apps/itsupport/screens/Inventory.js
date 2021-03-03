@@ -91,7 +91,7 @@ const Inventory = React.memo(() => {
             <MenuItem
               onClick={() => {
                 setAnchorEl(null);
-                setSection("laserPrinters");
+                setSection("laser_printers");
               }}
             >
               <Link
@@ -104,7 +104,7 @@ const Inventory = React.memo(() => {
             <MenuItem
               onClick={() => {
                 setAnchorEl(null);
-                setSection("labelPrinters");
+                setSection("label_printers");
               }}
             >
               <Link
@@ -117,7 +117,7 @@ const Inventory = React.memo(() => {
             <MenuItem
               onClick={() => {
                 setAnchorEl(null);
-                setSection("reservedIps");
+                setSection("reserved_ips");
               }}
             >
               <Link style={{ width: "100%", height: "100%" }} to="/reservedIps">

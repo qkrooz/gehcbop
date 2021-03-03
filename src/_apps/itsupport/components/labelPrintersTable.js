@@ -93,35 +93,35 @@ const LabelPrintersTable = React.memo(() => {
       columns={[
         {
           title: "BRAND",
-          field: "Brand",
+          field: "BRAND",
         },
         {
           title: "MODEL",
-          field: "Model",
+          field: "MODEL",
         },
         {
           title: "SERIAL NUMBER",
-          field: "SerialNumber",
+          field: "SERIAL_NUMBER",
         },
         {
           title: "LOCATION",
-          field: "Location",
+          field: "LOCATION",
         },
         {
           title: "AREA",
-          field: "Area",
+          field: "AREA",
         },
         {
           title: "TAG",
-          field: "Tag",
+          field: "TAG",
         },
         {
           title: "BARTENDER NAME",
-          field: "BartenderName",
+          field: "BARTENDER_NAME",
         },
         {
           title: "IP ADDRESS",
-          field: "IPAddress",
+          field: "IP_ADDRESS",
         },
       ]}
       data={data}
@@ -129,7 +129,7 @@ const LabelPrintersTable = React.memo(() => {
         onRowAdd: (newData) =>
           new Promise((resolve, reject) => {
             setTimeout(() => {
-              newData.section = "labelPrinters";
+              newData.section = "label_printers";
               newData.count = 1;
               AddItem(newData);
               setData([newData, ...data]);
@@ -141,7 +141,7 @@ const LabelPrintersTable = React.memo(() => {
             setTimeout(() => {
               const dataUpdate = [...data];
               const index = oldData.tableData.id;
-              newData.section = "labelPrinters";
+              newData.section = "label_printers";
               dataUpdate[index] = newData;
               console.log(newData);
               EditItem(newData);
@@ -155,10 +155,9 @@ const LabelPrintersTable = React.memo(() => {
               const dataDelete = [...data];
               const index = oldData.tableData.id;
               dataDelete.splice(index, 1);
-              oldData.section = "labelPrinters";
+              oldData.section = "label_printers";
               DeleteItem(oldData);
               setData(dataDelete);
-
               resolve();
             }, 1000);
           }),

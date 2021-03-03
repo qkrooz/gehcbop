@@ -93,35 +93,35 @@ const LaserPrintersTable = React.memo(() => {
       columns={[
         {
           title: "BRAND",
-          field: "Brand",
+          field: "BRAND",
         },
         {
           title: "MODEL",
-          field: "Model",
+          field: "MODEL",
         },
         {
           title: "SERIAL NUMBER",
-          field: "SerialNumber",
+          field: "SERIAL_NUMBER",
         },
         {
           title: "LOCATION",
-          field: "Location",
+          field: "LOCATION",
         },
         {
           title: "AREA",
-          field: "Area",
+          field: "AREA",
         },
         {
           title: "DAHILL TAG",
-          field: "DahillTag",
+          field: "DAHILL_TAG",
         },
         {
           title: "HOSTNAME",
-          field: "Hostname",
+          field: "HOSTNAME",
         },
         {
           title: "IP ADDRESS",
-          field: "IPAddress",
+          field: "IP_ADDRESS",
         },
       ]}
       data={data}
@@ -129,7 +129,7 @@ const LaserPrintersTable = React.memo(() => {
         onRowAdd: (newData) =>
           new Promise((resolve, reject) => {
             setTimeout(() => {
-              newData.section = "laserPrinters";
+              newData.section = "laser_printers";
               newData.count = 1;
               AddItem(newData);
               setData([newData, ...data]);
@@ -141,7 +141,7 @@ const LaserPrintersTable = React.memo(() => {
             setTimeout(() => {
               const dataUpdate = [...data];
               const index = oldData.tableData.id;
-              newData.section = "laserPrinters";
+              newData.section = "laser_printers";
               dataUpdate[index] = newData;
               console.log(newData);
               EditItem(newData);
@@ -155,7 +155,7 @@ const LaserPrintersTable = React.memo(() => {
               const dataDelete = [...data];
               const index = oldData.tableData.id;
               dataDelete.splice(index, 1);
-              oldData.section = "laserPrinters";
+              oldData.section = "laser_printers";
               DeleteItem(oldData);
               setData(dataDelete);
 

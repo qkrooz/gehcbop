@@ -141,15 +141,15 @@ const LaptopsTable = React.memo(() => {
       columns={[
         {
           title: "BRAND",
-          field: "Brand",
+          field: "BRAND",
         },
         {
           title: "MODEL",
-          field: "Model",
+          field: "MODEL",
         },
         {
           title: "SERVICE TAG",
-          field: "ServiceTag",
+          field: "SERVICE_TAG",
         },
         {
           title: "SSO",
@@ -157,7 +157,7 @@ const LaptopsTable = React.memo(() => {
         },
         {
           title: "USERNAME",
-          field: "UserName",
+          field: "USERNAME",
         },
         {
           title: "OS",
@@ -165,20 +165,20 @@ const LaptopsTable = React.memo(() => {
         },
         {
           title: "SPECS",
-          field: "Specs",
+          field: "SPECS",
         },
         {
           title: "DEPARTMENT",
-          field: "Department",
+          field: "DEPARTMENT",
         },
         {
           title: "HOSTNAME",
-          field: "Hostname",
+          field: "HOSTNAME",
           editable: "onUpdate",
         },
         {
           title: "COUNTRY",
-          field: "Country",
+          field: "COUNTRY",
         },
       ]}
       data={data}

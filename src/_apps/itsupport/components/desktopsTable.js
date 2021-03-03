@@ -93,23 +93,23 @@ const DesktopsTable = React.memo(() => {
       columns={[
         {
           title: "BRAND",
-          field: "Brand",
+          field: "BRAND",
         },
         {
           title: "MODEL",
-          field: "Model",
+          field: "MODEL",
         },
         {
           title: "SERVICE TAG",
-          field: "ServiceTag",
+          field: "SERVICE_TAG",
         },
         {
           title: "LOCATION",
-          field: "Location",
+          field: "LOCATION",
         },
         {
           title: "AREA",
-          field: "Area",
+          field: "AREA",
         },
         {
           title: "OS",
@@ -117,20 +117,20 @@ const DesktopsTable = React.memo(() => {
         },
         {
           title: "SPECS",
-          field: "Specs",
+          field: "SPECS",
         },
         {
           title: "HOSTNAME",
-          field: "Hostname",
+          field: "HOSTNAME",
           editable: "onUpdate",
         },
         {
           title: "COUNTRY",
-          field: "Country",
+          field: "COUNTRY",
         },
         {
           title: "USERNAME",
-          field: "Username",
+          field: "USERNAME",
         },
       ]}
       data={data}
@@ -153,7 +153,6 @@ const DesktopsTable = React.memo(() => {
               const index = oldData.tableData.id;
               newData.section = "desktops";
               dataUpdate[index] = newData;
-              console.log(newData);
               EditItem(newData);
               setData(dataUpdate);
               resolve();

@@ -141,11 +141,11 @@ export const MobilesTable = React.memo(() => {
       columns={[
         {
           title: "BRAND",
-          field: "Brand",
+          field: "BRAND",
         },
         {
           title: "MODEL",
-          field: "Model",
+          field: "MODEL",
         },
         {
           title: "IMEI",
@@ -157,23 +157,23 @@ export const MobilesTable = React.memo(() => {
         },
         {
           title: "USERNAME",
-          field: "UserName",
+          field: "USERNAME",
         },
         {
           title: "DEPARTMENT",
-          field: "Department",
+          field: "DEPARTMENT",
         },
         {
           title: "COLOR",
-          field: "Color",
+          field: "COLOR",
         },
         {
           title: "SPECS",
-          field: "Specs",
+          field: "SPECS",
         },
         {
           title: "TEL NUMBER",
-          field: "TelNumber",
+          field: "TEL_NUMBER",
         },
       ]}
       data={data}
