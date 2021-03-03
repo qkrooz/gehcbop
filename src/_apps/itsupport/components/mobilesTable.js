@@ -1,4 +1,4 @@
-import React, { useState, useContext, useCallback, useEffect } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { ItSupportContext } from "../resources/ItSupportContext";
 import MaterialTable from "material-table";
 import { tableIcons } from "../resources/tableIcons";
@@ -68,20 +68,13 @@ const PrintPDF = (values) => {
   }
 };
 export const MobilesTable = React.memo(() => {
-  const { addDrawerVisibilityState } = useContext(ItSupportContext);
-  const [
-    addDrawerVisibility,
-    setAddDrawerVisibility,
-  ] = addDrawerVisibilityState;
-  const [genericLoader, setGenericLoader] = useState(false);
-  const [tableColumns, setTableColumns] = useState([]);
+  const { addDrawerVisibilityState, heightState } = useContext(
+    ItSupportContext
+  );
+  const [, setAddDrawerVisibility] = addDrawerVisibilityState;
+  const [, setGenericLoader] = useState(false);
   const [data, setData] = useState([]);
-  const [height, setHeight] = useState(null);
-  const heightdiv = useCallback((node) => {
-    if (node !== null) {
-      setHeight(node.getBoundingClientRect().height);
-    }
-  }, []);
+  const [height] = heightState;
   const SERVER_IP2 = "http://USELPUTIL02";
   const API_ROUTE2 = "/webServices";
   const USELPUTIL02 = SERVER_IP2 + API_ROUTE2;
@@ -98,7 +91,8 @@ export const MobilesTable = React.memo(() => {
     fetchData();
     setData([]);
     setGenericLoader(true);
-  }, ["mobiles"]);
+    // eslint-disable-next-line
+  }, []);
   return (
     <MaterialTable
       icons={tableIcons}

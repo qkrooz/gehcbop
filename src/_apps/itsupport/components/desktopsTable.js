@@ -1,4 +1,4 @@
-import React, { useState, useContext, useCallback, useEffect } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { ItSupportContext } from "../resources/ItSupportContext";
 import MaterialTable from "material-table";
 import { tableIcons } from "../resources/tableIcons";
@@ -28,20 +28,13 @@ const DeleteItem = (values) => {
 };
 
 const DesktopsTable = React.memo(() => {
-  const { addDrawerVisibilityState } = useContext(ItSupportContext);
-  const [
-    addDrawerVisibility,
-    setAddDrawerVisibility,
-  ] = addDrawerVisibilityState;
-  const [genericLoader, setGenericLoader] = useState(false);
+  const { addDrawerVisibilityState, heightState } = useContext(
+    ItSupportContext
+  );
+  const [height] = heightState;
+  const [, setAddDrawerVisibility] = addDrawerVisibilityState;
+  const [, setGenericLoader] = useState(false);
   const [data, setData] = useState([]);
-  const [height, setHeight] = useState(null);
-  const heightdiv = useCallback((node) => {
-    if (node !== null) {
-      setHeight(node.getBoundingClientRect().height);
-    }
-  }, []);
-
   const fetchData = () => {
     axios
       .post(`${USELPUTIL02}/itsupport/fetchDesktops.php`)
@@ -55,7 +48,8 @@ const DesktopsTable = React.memo(() => {
     fetchData();
     setData([]);
     setGenericLoader(true);
-  }, ["desktops"]);
+    // eslint-disable-next-line
+  }, []);
   return (
     <MaterialTable
       icons={tableIcons}

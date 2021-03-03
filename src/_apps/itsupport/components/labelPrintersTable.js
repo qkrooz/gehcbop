@@ -1,4 +1,4 @@
-import React, { useState, useContext, useCallback, useEffect } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { ItSupportContext } from "../resources/ItSupportContext";
 import MaterialTable from "material-table";
 import { tableIcons } from "../resources/tableIcons";
@@ -26,61 +26,14 @@ const DeleteItem = (values) => {
     .then((response) => console.log(response.data))
     .catch((error) => console.log(error));
 };
-
-const PrintPDF = (values) => {
-  if (values.section === "laptop") {
-    axios
-      .post(`${USELPUTIL02}/itsupport/pdf/pdf_laptop.php`, values, {
-        responseType: "arraybuffer",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/pdf",
-        },
-      })
-      .then((response) => {
-        const url = window.URL.createObjectURL(new Blob([response.data]));
-        const link = document.createElement("a");
-        link.href = url;
-        link.setAttribute("download", `${values.SSO}-${values.section}.pdf`); //or any other extension
-        document.body.appendChild(link);
-        link.click();
-      })
-      .catch((error) => console.log(error));
-  } else {
-    axios
-      .post(`${USELPUTIL02}/itsupport/pdf/pdf_mobile.php`, values, {
-        responseType: "arraybuffer",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/pdf",
-        },
-      })
-      .then((response) => {
-        const url = window.URL.createObjectURL(new Blob([response.data]));
-        const link = document.createElement("a");
-        link.href = url;
-        link.setAttribute("download", `${values.SSO}-${values.section}.pdf`); //or any other extension
-        document.body.appendChild(link);
-        link.click();
-      })
-      .catch((error) => console.log(error));
-  }
-};
 const LabelPrintersTable = React.memo(() => {
-  const { addDrawerVisibilityState } = useContext(ItSupportContext);
-  const [
-    addDrawerVisibility,
-    setAddDrawerVisibility,
-  ] = addDrawerVisibilityState;
-  const [genericLoader, setGenericLoader] = useState(false);
-  const [tableColumns, setTableColumns] = useState([]);
+  const { addDrawerVisibilityState, heightState } = useContext(
+    ItSupportContext
+  );
+  const [, setAddDrawerVisibility] = addDrawerVisibilityState;
+  const [, setGenericLoader] = useState(false);
   const [data, setData] = useState([]);
-  const [height, setHeight] = useState(null);
-  const heightdiv = useCallback((node) => {
-    if (node !== null) {
-      setHeight(node.getBoundingClientRect().height);
-    }
-  }, []);
+  const [height] = heightState;
   const SERVER_IP2 = "http://USELPUTIL02";
   const API_ROUTE2 = "/webServices";
   const USELPUTIL02 = SERVER_IP2 + API_ROUTE2;
@@ -97,7 +50,8 @@ const LabelPrintersTable = React.memo(() => {
     fetchData();
     setData([]);
     setGenericLoader(true);
-  }, ["labelPrinters"]);
+    // eslint-disable-next-line
+  }, []);
   return (
     <MaterialTable
       icons={tableIcons}

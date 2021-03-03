@@ -28,7 +28,7 @@ import ReservedIpsTable from "../components/reservedIpsTable";
 const Inventory = React.memo(() => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [section, setSection] = useState("desktops");
-  const { addDrawerVisibilityState } = useContext(ItSupportContext);
+  const { addDrawerVisibilityState, heightdiv } = useContext(ItSupportContext);
   const [
     addDrawerVisibility,
     setAddDrawerVisibility,
@@ -126,7 +126,7 @@ const Inventory = React.memo(() => {
             </MenuItem>
           </Menu>
         </div>
-        <div className="tableContainer">
+        <div className="tableContainer" ref={heightdiv}>
           <Switch>
             <Route component={DesktopsTable} path="/" exact />
             <Route component={LaptopsTable} path="/laptops" />

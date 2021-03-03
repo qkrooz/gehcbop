@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import { Context } from "../../_context/MainContext";
 import { ItSupportContext } from "./resources/ItSupportContext";
@@ -14,6 +14,7 @@ import Inventory from "./screens/Inventory";
 import Miscellaneous from "./screens/Miscellaneous";
 const ItSupportIndex = React.memo(() => {
   //states
+  const [height, setHeight] = useState(null);
   const [inventoryFormData, setInventoryFormData] = useState({});
   const [data, setData] = useState([]);
   const [genericLoader, setGenericLoader] = useState(false);
@@ -24,6 +25,12 @@ const ItSupportIndex = React.memo(() => {
   const { USELPUTIL02, currentApplicationState } = useContext(Context);
   const [currentApplication] = currentApplicationState;
   //progress
+  // refs
+  const heightdiv = useCallback((node) => {
+    if (node !== null) {
+      setHeight(node.getBoundingClientRect().height);
+    }
+  }, []);
   //functions
   const AddItem = (values) => {
     console.log(`${USELPUTIL02}/${currentApplication}/addItem.php`, values);
@@ -92,11 +99,15 @@ const ItSupportIndex = React.memo(() => {
     <Router>
       <ItSupportContext.Provider
         value={{
+          // states
+          heightState: [height, setHeight],
           addDrawerVisibilityState: [
             addDrawerVisibility,
             setAddDrawerVisibility,
           ],
           inventoryFormDataState: [inventoryFormData, setInventoryFormData],
+          // refs
+          heightdiv: heightdiv,
           //  functiones
           AddItem: AddItem,
           EditItem: EditItem,
