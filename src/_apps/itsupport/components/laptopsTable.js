@@ -6,79 +6,76 @@ import { PictureAsPdf } from "@material-ui/icons";
 import LibraryAddIcon from "@material-ui/icons/LibraryAdd";
 import VisibilityIcon from "@material-ui/icons/Visibility";
 import axios from "axios";
-const SERVER_IP2 = "http://USELPUTIL02";
-const API_ROUTE2 = "/webServices";
-const USELPUTIL02 = SERVER_IP2 + API_ROUTE2;
-const AddItem = (values) => {
-  axios
-    .post(`${USELPUTIL02}/itsupport/addItem.php`, values)
-    .then((response) => console.log(response.data))
-    .catch((error) => console.log(error));
-};
-const EditItem = (values) => {
-  axios
-    .post(`${USELPUTIL02}/itsupport/editItem.php`, values)
-    .then((response) => console.log(response.data))
-    .catch((error) => console.log(error));
-};
-const DeleteItem = (values) => {
-  axios
-    .post(`${USELPUTIL02}/itsupport/deleteItem.php`, values)
-    .then((response) => console.log(response.data))
-    .catch((error) => console.log(error));
-};
-
-const PrintPDF = (values) => {
-  if (values.section === "laptop") {
-    axios
-      .post(`${USELPUTIL02}/itsupport/pdf/pdf_laptop.php`, values, {
-        responseType: "arraybuffer",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/pdf",
-        },
-      })
-      .then((response) => {
-        const url = window.URL.createObjectURL(new Blob([response.data]));
-        const link = document.createElement("a");
-        link.href = url;
-        link.setAttribute("download", `${values.SSO}-${values.section}.pdf`); //or any other extension
-        document.body.appendChild(link);
-        link.click();
-      })
-      .catch((error) => console.log(error));
-  } else {
-    axios
-      .post(`${USELPUTIL02}/itsupport/pdf/pdf_mobile.php`, values, {
-        responseType: "arraybuffer",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/pdf",
-        },
-      })
-      .then((response) => {
-        const url = window.URL.createObjectURL(new Blob([response.data]));
-        const link = document.createElement("a");
-        link.href = url;
-        link.setAttribute("download", `${values.SSO}-${values.section}.pdf`); //or any other extension
-        document.body.appendChild(link);
-        link.click();
-      })
-      .catch((error) => console.log(error));
-  }
-};
-
+import { USELPUTIL02 } from "../../../_resources/serverRoutes";
 const LaptopsTable = React.memo(() => {
+  // states
+  const [genericLoader, setGenericLoader] = useState(false);
+  const [data, setData] = useState([]);
+  // context
   const { addDrawerVisibilityState, heightState } = useContext(
     ItSupportContext
   );
   const [, setAddDrawerVisibility] = addDrawerVisibilityState;
-  const [, setGenericLoader] = useState(false);
-  const [data, setData] = useState([]);
   const [height] = heightState;
-  const SERVER_IP2 = "http://USELPUTIL02";
-  const API_ROUTE2 = "/webServices";
-  const USELPUTIL02 = SERVER_IP2 + API_ROUTE2;
+  // functions
+  const AddItem = (values) => {
+    axios
+      .post(`${USELPUTIL02}/itsupport/addItem.php`, values)
+      .then((response) => console.log(response.data))
+      .catch((error) => console.log(error));
+  };
+  const EditItem = (values) => {
+    axios
+      .post(`${USELPUTIL02}/itsupport/editItem.php`, values)
+      .then((response) => console.log(response.data))
+      .catch((error) => console.log(error));
+  };
+  const DeleteItem = (values) => {
+    axios
+      .post(`${USELPUTIL02}/itsupport/deleteItem.php`, values)
+      .then((response) => console.log(response.data))
+      .catch((error) => console.log(error));
+  };
+
+  const PrintPDF = (values) => {
+    if (values.section === "laptop") {
+      axios
+        .post(`${USELPUTIL02}/itsupport/pdf/pdf_laptop.php`, values, {
+          responseType: "arraybuffer",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/pdf",
+          },
+        })
+        .then((response) => {
+          const url = window.URL.createObjectURL(new Blob([response.data]));
+          const link = document.createElement("a");
+          link.href = url;
+          link.setAttribute("download", `${values.SSO}-${values.section}.pdf`); //or any other extension
+          document.body.appendChild(link);
+          link.click();
+        })
+        .catch((error) => console.log(error));
+    } else {
+      axios
+        .post(`${USELPUTIL02}/itsupport/pdf/pdf_mobile.php`, values, {
+          responseType: "arraybuffer",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/pdf",
+          },
+        })
+        .then((response) => {
+          const url = window.URL.createObjectURL(new Blob([response.data]));
+          const link = document.createElement("a");
+          link.href = url;
+          link.setAttribute("download", `${values.SSO}-${values.section}.pdf`); //or any other extension
+          document.body.appendChild(link);
+          link.click();
+        })
+        .catch((error) => console.log(error));
+    }
+  };
   const fetchData = () => {
     axios
       .post(`${USELPUTIL02}/itsupport/fetchLaptops.php`)
@@ -96,6 +93,7 @@ const LaptopsTable = React.memo(() => {
   }, []);
   return (
     <MaterialTable
+      isLoading={genericLoader}
       icons={tableIcons}
       title="Laptops"
       options={{
