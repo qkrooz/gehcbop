@@ -3,8 +3,6 @@ import { InstallCartContext } from "../resources/InstallCartContext";
 import { Context } from "../../../_context/MainContext";
 import {
   Menu,
-  Button,
-  Tooltip,
   Progress,
   Dropdown,
   Descriptions,
@@ -27,10 +25,22 @@ import {
   MinusCircleOutlined,
   PlusOutlined,
 } from "@ant-design/icons";
+import {
+  Paper,
+  InputBase,
+  Button,
+  Tooltip,
+  IconButton,
+} from "@material-ui/core";
+// icons
+import MoreVertIcon from "@material-ui/icons/MoreVert";
+import SearchIcon from "@material-ui/icons/Search";
+import ExpandLessIcon from "@material-ui/icons/ExpandLess";
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import { Add } from "@material-ui/icons";
 import moment from "moment";
 import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
-import SearchIcon from "@material-ui/icons/Search";
 import Switch from "@material-ui/core/Switch";
 import Collapse from "react-collapse";
 import MaterialButton from "@material-ui/core/Button";
@@ -68,83 +78,82 @@ const Orders = React.memo(() => {
   const [workingOrder] = workingOrderState;
   const [searchText_temp, setSearchText_temp] = useState("");
   const [, setAddDialogVisibility] = addDialogVisibilityState;
-  useEffect(() => {
-    console.log(workingOrder);
-  }, [workingOrder]);
   return (
     <div className="ordersMainContainer">
       <div className="ordersContainer">
         <div className="ordersList">
-          <div className="ordersControls">
-            <div>
-              <Grid container spacing={1} alignItems="flex-end">
-                <Grid item>
-                  <SearchIcon />
-                </Grid>
-                <Grid item>
-                  <TextField
-                    id="input-with-icon-grid"
-                    label="Search orders"
-                    size="small"
-                    onChange={(event) => {
-                      SearchOrders(event);
-                      setSearchText_temp(event.target.value);
-                    }}
-                  />
-                </Grid>
-              </Grid>
-            </div>
-            <MaterialButton className="filterButton" startIcon={<SortIcon />}>
-              Filters
-            </MaterialButton>
-            <div className="switchContainer">
-              <div className="inner">
-                <span>Show complete</span>
-                <Switch
-                  size="small"
-                  disabled={ordersCheckbox}
-                  checked={ordersSwitch}
-                  onChange={(event) => {
-                    SwitchOrders(event, searchText_temp);
-                  }}
-                  color="primary"
-                  name="checkedB"
-                  inputProps={{ "aria-label": "primary checkbox" }}
-                />
-              </div>
-              <div className="inner">
-                <span>Only completed</span>
-                <Switch
-                  size="small"
-                  disabled={ordersSwitch}
-                  checked={ordersCheckbox}
-                  onChange={(event) => ToggleComplete(event.target.checked)}
-                  color="primary"
-                  inputProps={{ "aria-label": "secondary checkbox" }}
-                />
-              </div>
-            </div>
-            <MaterialButton
-              variant="contained"
-              color="primary"
-              disableElevation
-              startIcon={<AddIcon />}
-              onClick={() => {
-                setAddDialogVisibility(true);
-              }}
-            >
-              Add Order
-            </MaterialButton>
-          </div>
           {Object.values(orders).map((order, i) => (
             <OrderElement data={order} key={i} />
           ))}
         </div>
-      </div>
-      <div className="chartsContainer">
-        <OrdersChart />
-        <CartsChart style={{ marginBottom: "1em" }} />
-        <OrdersTotalChart />
+        <div className="ordersControls">
+          <Button
+            variant="contained"
+            color="primary"
+            disableElevation
+            startIcon={<AddIcon />}
+            onClick={() => {
+              setAddDialogVisibility(true);
+            }}
+            style={{ marginBottom: "1em" }}
+          >
+            Add New Order
+          </Button>
+          <div
+            style={{
+              width: "100%",
+              borderBottom: "1PX solid #e2e2e2",
+              marginBottom: "1em",
+            }}
+          ></div>
+          <Paper
+            elevation={2}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              width: "100%",
+              padding: 6,
+              marginBottom: "1em",
+            }}
+          >
+            <InputBase
+              placeholder="Search orders"
+              inputProps={{ "aria-label": "search google maps" }}
+              onChange={(event) => {
+                SearchOrders(event);
+                setSearchText_temp(event.target.value);
+              }}
+            />
+            <span style={{ marginLeft: "auto" }}>
+              <SearchIcon style={{ color: "gray" }} />
+            </span>
+          </Paper>
+          <div className="switchContainer">
+            <div className="inner">
+              <span>Show complete</span>
+              <Switch
+                disabled={ordersCheckbox}
+                checked={ordersSwitch}
+                onChange={(event) => {
+                  SwitchOrders(event, searchText_temp);
+                }}
+                color="primary"
+                name="checkedB"
+                inputProps={{ "aria-label": "primary checkbox" }}
+              />
+            </div>
+            <div className="inner">
+              <span>Only completed</span>
+              <Switch
+                disabled={ordersSwitch}
+                checked={ordersCheckbox}
+                onChange={(event) => ToggleComplete(event.target.checked)}
+                color="primary"
+                inputProps={{ "aria-label": "secondary checkbox" }}
+              />
+            </div>
+          </div>
+        </div>
       </div>
       <AddDialog />
       <DeleteConfirmDialog />
@@ -153,6 +162,33 @@ const Orders = React.memo(() => {
   );
 });
 const OrderElement = React.memo(({ data }) => {
+  // variable declaration:
+  let FW_LOB = data.FW_LOB;
+  let FW_SLOT = data.FW_SLOT;
+  let MONTH = data.MONTH;
+  let DEVICE_COUNT = data.DEVICE_COUNT;
+  let CREATED_DATE = data.CREATED_DATE ? data.CREATED_DATE.date : null;
+  let START_DATE = data.START_DATE.date;
+  let SHIP_DATE = data.SHIP_DATE.date;
+  let ROSD = data.ROSD.date;
+  let CART_RETURN = data.CART_RETURN;
+  let GON = data.GON;
+  let PID = data.PID;
+  let PROJECT_DESCRIPTION = data.PROJECT_DESCRIPTION;
+  let STATUS = data.STATUS;
+  let ESTIMATED_CART_QTY = data.ESTIMATED_CART_QTY;
+  let PACKAGE = data.PACKAGE;
+  let FLAGGED_ON_CONFIG_APP = data.FLAGGED_ON_CONFIG_APP;
+  let NTP_SUBMITTED = data.NTP_SUBMITTED;
+  let PROJECT_MANAGER_CONTACT = data.PROJECT_MANAGER_CONTACT;
+  let FE = data.FE;
+  let OWNER = data.OWNER;
+  let CONFIGURATION_INFORMATION = data.CONFIGURATION_INFORMATION;
+  // states
+  const [detailsCollapse, setDetailsCollapse] = useState(false);
+  const [coninfCollapse, setConinfCollapse] = useState(false);
+  const [statusProgress, setStatusProgress] = useState(0);
+  // context
   const {
     ordersState,
     statusListState,
@@ -164,18 +200,16 @@ const OrderElement = React.memo(({ data }) => {
   const [, setDeleteDialogVisibility] = deleteDialogVisibilityState;
   const [, setWorkingOrder] = workingOrderState;
   const [statusList] = statusListState;
-  const [detailsCollapse, setDetailsCollapse] = useState(false);
-  const [coninfCollapse, setConinfCollapse] = useState(false);
-  const [statusProgress, setStatusProgress] = useState(0);
   const [, setEditDialogVisibility] = editDialogVisibilityState;
+  // effects
   useEffect(() => {
-    const progressPerSegment = (100 / statusList.length).toFixed(2);
+    const progressPerSegment = (100 / statusList.length).toFixed(0);
     statusList.forEach((item, i) => {
-      if (data.STATUS === "order completed") {
+      if (STATUS === "order complete") {
         setStatusProgress(100);
       } else {
         switch (item) {
-          case data.STATUS:
+          case STATUS:
             setStatusProgress(progressPerSegment * (i + 1));
             break;
           default:
@@ -216,36 +250,46 @@ const OrderElement = React.memo(({ data }) => {
   return (
     <div className="order-container-outter ">
       <div className="order-container-inner">
-        <Button style={{ marginRight: "1.5em" }} shape="circle" size="large">
-          <FileTextOutlined />
-        </Button>
         <div className="primary-data-container">
-          <Tooltip title="Project name" placement="right">
-            <span className="projName-label">{data.PROJECT_NAME}</span>
+          <Tooltip title="GON" placement="right">
+            <span className="gon-label">{`#${GON}`}</span>
           </Tooltip>
-          <Tooltip title="General order number" placement="right">
-            <span className="gon-inner-label">GON#</span>
-            <span className="gon-label">{data.GON}</span>
-          </Tooltip>
+          <span className="projName-label">{PROJECT_DESCRIPTION}</span>
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <img
+              // src={`https://supportcentral.gecdn.com/images/person/temp/${userData.SSO}.jpg`}
+              src={`https://supportcentral.gecdn.com/images/person/temp/212774780.jpg`}
+              alt="user-img"
+              style={{
+                width: "2em",
+                height: "2em",
+                borderRadius: "50%",
+                objectFit: "cover",
+                marginRight: "0.5em",
+              }}
+            />
+            <div style={{ display: "flex", flexDirection: "column" }}>
+              <span>{"Ibarra, Cesar"}</span>
+              <span style={{ fontSize: "0.8em" }}>
+                {CREATED_DATE
+                  ? moment(CREATED_DATE).format("MM/DD/YYYY")
+                  : "31, marzo"}
+              </span>
+            </div>
+          </div>
         </div>
         <div className="fw-container">
           <span className="desc">Fiscal Week</span>
-          <span className="fw-label">{data.FW}</span>
+          <span className="fw-label">{FW_SLOT}</span>
         </div>
         <div className="dates-container">
           <span className="desc">Ship Date</span>
-          <span className="date">{data.SHIP_DATE}</span>
-          <span className="desc">Requested On-Site Date</span>
-          <span className="date">{data.ROSD}</span>
-        </div>
-        <div className="extra-info-container">
-          <span className="desc">Created Date</span>
-          <span className="date">{data.CREATED_DATE}</span>
-          <span className="desc">Owner</span>
-          <span className="date">{data.OWNER}</span>
+          <span className="date">{moment(SHIP_DATE).format("MM/DD/YYYY")}</span>
+          <span className="desc">ROSD</span>
+          <span className="date">{moment(ROSD).format("MM/DD/YYYY")}</span>
         </div>
         <div className="captions">
-          {!data.STATUS ? (
+          {!STATUS ? (
             <div className="caption-container">
               <ExclamationCircleTwoTone
                 twoToneColor="#faca0f"
@@ -254,7 +298,7 @@ const OrderElement = React.memo(({ data }) => {
               <span className="caption-desc">Status missing</span>
             </div>
           ) : null}
-          {!data.CONFIGURATION_INFORMATION ? (
+          {!CONFIGURATION_INFORMATION ? (
             <div className="caption-container">
               <ExclamationCircleTwoTone
                 twoToneColor="#faca0f"
@@ -265,7 +309,7 @@ const OrderElement = React.memo(({ data }) => {
               </span>
             </div>
           ) : null}
-          {!data.WRD ? (
+          {/* {!WRD ? (
             <div className="caption-container">
               <ExclamationCircleTwoTone
                 twoToneColor="#faca0f"
@@ -275,8 +319,8 @@ const OrderElement = React.memo(({ data }) => {
                 Warehouse Requested Date missing
               </span>
             </div>
-          ) : null}
-          {!data.PROJECT_MANAGER ? (
+          ) : null} */}
+          {!PROJECT_MANAGER_CONTACT ? (
             <div className="caption-container">
               <ExclamationCircleTwoTone
                 twoToneColor="#faca0f"
@@ -288,223 +332,45 @@ const OrderElement = React.memo(({ data }) => {
         </div>
         <div className="progress">
           <Progress
-            status={data.STATUS === "cancelled" ? "exception" : null}
+            status={STATUS === "cancelled" ? "exception" : null}
             type="dashboard"
             width={70}
             strokeLinecap="square"
             style={{ marginBottom: 10 }}
-            percent={data.STAUTS === "order completed" ? 100 : statusProgress}
+            percent={STATUS === "order complete" ? 100 : statusProgress}
           />
-          {data.STATUS ? (
+          {STATUS ? (
             <Tooltip title="Status" placement="right">
               <span className="status-label">{data.STATUS}</span>
             </Tooltip>
           ) : null}
         </div>
         <div className="controls">
-          {data.STATUS === "order completed" ? null : (
+          {data.STATUS === "order complete" ? null : (
             <Dropdown trigger={["click"]} overlay={ellipsisMenu}>
-              <Button type="text" className="order-icon">
-                <EllipsisOutlined className="button-icon" />
-              </Button>
+              <IconButton type="text">
+                <MoreVertIcon fontSize="small" />
+              </IconButton>
             </Dropdown>
           )}
-          <Button
+          <IconButton
             type="text"
             className="order-icon"
             style={
-              data.STATUS === "order completed" ? { marginTop: "auto" } : null
+              data.STATUS === "order complete" ? { marginTop: "auto" } : null
             }
             onClick={() => {
               setDetailsCollapse(!detailsCollapse);
             }}
           >
-            {detailsCollapse ? <CaretUpOutlined /> : <CaretDownOutlined />}
-          </Button>
+            {detailsCollapse ? (
+              <ExpandLessIcon fontSize="small" />
+            ) : (
+              <ExpandMoreIcon fontSize="small" />
+            )}
+          </IconButton>
         </div>
       </div>
-      <Collapse isOpened={detailsCollapse}>
-        <div className="order-description">
-          <Descriptions
-            bordered
-            style={{ marginRight: "1em", marginBottom: "1em" }}
-          >
-            <Descriptions.Item span={3} label="Project Name">
-              {data.PROJECT_NAME}
-            </Descriptions.Item>
-            <Descriptions.Item span={3} label="General Order Number">
-              {data.GON}
-            </Descriptions.Item>
-            <Descriptions.Item span={3} label="Owner">
-              {data.OWNER}
-            </Descriptions.Item>
-            <Descriptions.Item span={3} label="Project Manager">
-              {data.PROJECT_MANAGER !== "" ? (
-                data.PROJECT_MANAGER
-              ) : (
-                <span style={{ display: "flex", alignItems: "center" }}>
-                  <ExclamationCircleTwoTone
-                    twoToneColor="#faca0f"
-                    style={{ fontSize: "18px", marginRight: "8px" }}
-                  />
-                  Missing
-                </span>
-              )}
-            </Descriptions.Item>
-            <Descriptions.Item span={3} label="Fiscal Week">
-              {data.FW}
-            </Descriptions.Item>
-            <Descriptions.Item span={3} label="Created Date">
-              {data.CREATED_DATE}
-            </Descriptions.Item>
-            <Descriptions.Item span={3} label="Ship Date">
-              {data.SHIP_DATE}
-            </Descriptions.Item>
-            <Descriptions.Item span={3} label="Requested On-Site Date">
-              {data.ROSD}
-            </Descriptions.Item>
-            <Descriptions.Item span={3} label="Warehouse Requested Date">
-              {data.WRD !== "" ? (
-                data.WRD
-              ) : (
-                <span style={{ display: "flex", alignItems: "center" }}>
-                  <ExclamationCircleTwoTone
-                    twoToneColor="#faca0f"
-                    style={{ fontSize: "18px", marginRight: "8px" }}
-                  />
-                  Missing
-                </span>
-              )}
-            </Descriptions.Item>
-          </Descriptions>
-          <div className="seccond-desc-container">
-            <Descriptions bordered column={4} style={{ marginBottom: "1em" }}>
-              <Descriptions.Item
-                span={2}
-                label="Status"
-                style={{ textTransform: "capitalize" }}
-              >
-                {data.STATUS !== "" ? (
-                  data.STATUS
-                ) : (
-                  <span style={{ display: "flex", alignItems: "center" }}>
-                    <ExclamationCircleTwoTone
-                      twoToneColor="#faca0f"
-                      style={{ fontSize: "18px", marginRight: "8px" }}
-                    />
-                    Missing
-                  </span>
-                )}
-              </Descriptions.Item>
-              <Descriptions.Item span={2} label="Cart Usage">
-                {/* {cartUsage[0].cartUsage} */}
-              </Descriptions.Item>
-            </Descriptions>
-            <Descriptions bordered column={4}>
-              <Descriptions.Item
-                span={4}
-                label="Device Count"
-                style={{ padding: 0 }}
-              >
-                {/* <Table
-                    pagination={false}
-                    size="small"
-                    dataSource={deviceCountData}
-                    columns={deviceCountColumns}
-                  /> */}
-              </Descriptions.Item>
-              <Descriptions.Item
-                span={4}
-                label="Recommended Build"
-                style={{ padding: 0 }}
-              >
-                {/* <Table
-                    pagination={false}
-                    size="small"
-                    columns={recommendedCartBuildColumns}
-                    dataSource={recomendedCartBuildData}
-                  /> */}
-              </Descriptions.Item>
-              <Descriptions.Item
-                span={4}
-                label="Configuration Information"
-                style={{ whiteSpace: "pre-wrap" }}
-              >
-                {data.CONFIGURATION_INFORMATION === "" ? (
-                  <span style={{ display: "flex", alignItems: "center" }}>
-                    <ExclamationCircleTwoTone
-                      twoToneColor="#faca0f"
-                      style={{ fontSize: "18px", marginRight: "8px" }}
-                    />
-                    Missing
-                  </span>
-                ) : data.CONFIGURATION_INFORMATION.length > 200 ? (
-                  <>
-                    {!coninfCollapse ? (
-                      <div className="large-coninf-retro">
-                        <div className="retro-style"></div>
-                        <span className="coninf-content">
-                          {data.CONFIGURATION_INFORMATION.substring(0, 100) +
-                            ". . ."}
-                        </span>
-                      </div>
-                    ) : null}
-                    <Collapse
-                      isOpened={coninfCollapse}
-                      className="coninf-collapse"
-                    >
-                      <span className="coninf-content">
-                        {data.CONFIGURATION_INFORMATION}
-                      </span>
-                    </Collapse>
-                    <Button
-                      type="link"
-                      style={{ width: "100%" }}
-                      onClick={() => {
-                        setConinfCollapse(!coninfCollapse);
-                      }}
-                    >
-                      {!coninfCollapse ? (
-                        <CaretDownOutlined />
-                      ) : (
-                        <CaretUpOutlined />
-                      )}
-                    </Button>
-                  </>
-                ) : (
-                  <span className="coninf-content">
-                    {data.CONFIGURATION_INFORMATION}
-                  </span>
-                )}
-              </Descriptions.Item>
-            </Descriptions>
-          </div>
-        </div>
-        <div className="order-trace">
-          <Steps
-            progressDot
-            current={statusList.findIndex((item) => item === data.STATUS)}
-            direction="vertical"
-            size="small"
-            status={
-              data.STATUS === "cancelled"
-                ? "error"
-                : data.STATUS === "order completed"
-                ? "finish"
-                : "process"
-            }
-          >
-            {Object.values(statusList).map((key, i) => (
-              <Step
-                key={i}
-                title={key.replace(/\w\S*/g, (w) =>
-                  w.replace(/^\w/, (c) => c.toUpperCase())
-                )}
-              />
-            ))}
-          </Steps>
-        </div>
-      </Collapse>
     </div>
   );
 });
@@ -833,7 +699,7 @@ const EditDialog = React.memo(() => {
   ] = editDialogVisibilityState;
   editForm.setFieldsValue({
     gon: parseInt(workingOrder.GON),
-    projectName: workingOrder.PROJECT_NAME,
+    projectName: workingOrder.PROJECT_DESCRIPTION,
     shipDate: workingOrder.SHIP_DATE
       ? moment(workingOrder.SHIP_DATE, dateFormat)
       : null,

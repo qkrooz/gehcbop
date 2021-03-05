@@ -14,13 +14,7 @@ import Dashboard from "./screens/Dashboard";
 import Orders from "./screens/Orders";
 import Inventory from "./screens/Inventory";
 const InstallCartIndex = React.memo(() => {
-  const {
-    mainProgressState,
-    USELPUTIL02,
-    currentApplicationState,
-  } = useContext(Context);
   // states
-  const [currentApplication] = currentApplicationState;
   const [completeOrders, setCompleteOrders] = useState([]);
   const [orders, setOrders] = useState([]);
   const [workingOrder, setWorkingOrder] = useState({});
@@ -31,6 +25,13 @@ const InstallCartIndex = React.memo(() => {
   const [ordersCheckbox, setOrdersCheckbox] = useState(false);
   const [carts, setCarts] = useState([]);
   const [inserts, setInserts] = useState([]);
+  // context
+  const {
+    mainProgressState,
+    USELPUTIL02,
+    currentApplicationState,
+  } = useContext(Context);
+  const [currentApplication] = currentApplicationState;
   // progress
   const [, setMainProgress] = mainProgressState;
   const [genericLoader, setGenericLoader] = useState(false);
@@ -77,12 +78,12 @@ const InstallCartIndex = React.memo(() => {
         setOrders(
           results[2].data.orders.filter(
             (item) =>
-              item.STATUS !== "order completed" && item.STATUS !== "cancelled"
+              item.STATUS !== "order complete" && item.STATUS !== "cancelled"
           )
         );
         setFilteredOrders(
           results[2].data.orders.filter(
-            (item) => item.STATUS !== "order completed"
+            (item) => item.STATUS !== "order complete"
           )
         );
         setCarts(results[3].data);
@@ -194,11 +195,12 @@ const InstallCartIndex = React.memo(() => {
       setOrders(
         completeOrders.filter(
           (element) =>
-            element.PROJECT_NAME.toLowerCase().includes(searchText) ||
-            element.GON.toLowerCase().includes(searchText) ||
-            element.FW.toString().toLowerCase().includes(searchText) ||
-            element.OWNER.toLowerCase().includes(searchText) ||
-            element.PROJECT_MANAGER.toLowerCase().includes(searchText) ||
+            element.PROJECT_DESCRIPTION.toLowerCase().includes(searchText) ||
+            element.GON.toString().includes(searchText) ||
+            element.FW_SLOT.toString().toLowerCase().includes(searchText) ||
+            element.PROJECT_MANAGER_CONTACT.toLowerCase().includes(
+              searchText
+            ) ||
             element.STATUS.toLowerCase().includes(searchText)
         )
       );
@@ -245,7 +247,7 @@ const InstallCartIndex = React.memo(() => {
     setOrdersCheckbox(event);
     if (event) {
       setOrders(
-        completeOrders.filter((item) => item.STATUS === "order completed")
+        completeOrders.filter((item) => item.STATUS === "order complete")
       );
     } else {
       if (ordersSwitch) {

@@ -5,6 +5,8 @@ import { Switch, Route, Link, Redirect } from "react-router-dom";
 import { Layout, Menu, Dropdown, Button, Tooltip, Input } from "antd";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import LinearProgress from "@material-ui/core/LinearProgress";
+import WbIncandescentIcon from "@material-ui/icons/WbIncandescent";
+import PersonIcon from "@material-ui/icons/Person";
 import {
   SearchOutlined,
   PoweroffOutlined,
@@ -107,6 +109,7 @@ const SiderBar = React.memo(() => {
   const appIcons = {
     installcart: <FileDoneOutlined />,
     itsupport: <DesktopOutlined />,
+    qatest: <WbIncandescentIcon />,
   };
   const {
     currentPageState,
@@ -128,6 +131,7 @@ const SiderBar = React.memo(() => {
   );
   const [, setAboutModalVisibility] = useState(false);
   const [onofftootlipvisibility, setonofftootlipvisibility] = useState(false);
+  const [hasGEImage, setHasGEImage] = useState(true);
   const powerMenu = (
     <Menu>
       <Menu.Item>
@@ -315,10 +319,30 @@ const SiderBar = React.memo(() => {
             arrow
           >
             <div className="user-img">
-              <img
-                src={`https://supportcentral.gecdn.com/images/person/temp/${userData.SSO}.jpg`}
-                alt="user-img"
-              />
+              {hasGEImage ? (
+                <img
+                  src={`https://supportcentral.gecdn.com/images/person/temp/${userData.SSO}.jpg`}
+                  alt="user-img"
+                  onError={() => {
+                    setHasGEImage(false);
+                  }}
+                />
+              ) : (
+                <div
+                  style={{
+                    backgroundColor: "#f2f2f2",
+                    width: "3.5em",
+                    height: "3.5em",
+                    borderRadius: "50%",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <PersonIcon style={{ fontSize: "3em", color: "gray" }} />
+                </div>
+              )}
+
               <div className={"status-" + userStatus}></div>
             </div>
           </Dropdown>

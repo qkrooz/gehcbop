@@ -1,35 +1,32 @@
 .ordersMainContainer {
+  flex-grow: 1;
+  height: 0;
+}
+.ordersContainer {
   display: flex;
   height: 100%;
   width: 100%;
-  position: relative;
-  overflow-y: auto;
 }
-.ordersContainer {
-  padding: 0.5em 0em 1em 1em;
-  display: flex;
-  flex-direction: column;
-  width: calc(100% - 24.5em) !important;
-}
-.chartsContainer {
-  min-width: 23.5em;
-  max-width: 23.5em;
-  padding: 0.5em 0.5em 1em 0.5em;
-  margin-right: 1em;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
+.ordersList {
+  flex-grow: 1;
   overflow-y: auto;
-  position: fixed;
-  right: 0;
-  height: 95%;
+  overflow-x: hidden;
+  padding-left: 1em;
+  padding-right: 1em;
+  padding-top: 1em;
 }
 .ordersControls {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  padding-bottom: 0.5em;
+  background-color: white;
+  width: 15%;
+  min-width: 250px;
+  height: 100%;
+  padding: 1em;
 }
 .switchContainer {
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: flex-end;
@@ -40,24 +37,19 @@
   margin-right: 1em !important;
   text-transform: capitalize !important;
 }
-.switchContainer > span {
-  font-size: 0.8em;
-}
 .inner {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  height: 1.6em;
 }
 .switchContainer > .inner > span {
-  font-size: 0.8em;
-}
-.inner {
-  height: 1.5em;
+  font-size: 1em;
 }
 .order-container-outter {
   background-color: white;
   margin-bottom: 1.5em;
-  /* border-radius: 3px; */
+  border-radius: 5px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
 }
 .order-container-inner {
@@ -65,14 +57,15 @@
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  padding: 1em 0em 1em 2em;
+  padding: 0.5em 0.5em 0.5em 1em;
 }
 .primary-data-container {
   display: flex;
   flex-direction: column;
+  justify-content: start;
   align-items: flex-start;
-  width: 20%;
   min-width: 200px;
+  width: 25%;
   margin-right: 1em;
 }
 .projName-label {
@@ -88,10 +81,10 @@
 }
 .gon-label {
   /* padding-left: 1em; */
-  color: #3a97d1;
+  color: #363636;
   font-weight: bold;
   font-weight: 1.3em;
-  font-size: 1.4em !important;
+  font-size: 1.2em !important;
 }
 .status-label {
   padding: 0.5em 1.5em;
@@ -151,12 +144,10 @@
   margin-right: 1em;
 }
 .controls {
-  padding: 0 !important;
-  align-self: stretch;
   display: flex;
-  justify-content: space-between;
   flex-direction: column;
-  margin-right: 0.5em;
+  justify-content: space-between;
+  align-self: stretch;
 }
 .ReactCollapse--collapse {
   transition: height 100ms;
