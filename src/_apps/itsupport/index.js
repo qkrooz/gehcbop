@@ -19,6 +19,7 @@ const ItSupportIndex = React.memo(() => {
   const [data, setData] = useState([]);
   const [genericLoader, setGenericLoader] = useState(false);
   const [addDrawerVisibility, setAddDrawerVisibility] = useState(false);
+  const [auditModalVisibility, setAuditModalVisibility] = useState(false);
   const [its_inventory_section, set_its_inventory_section] = useState(
     "desktops"
   );
@@ -104,6 +105,10 @@ const ItSupportIndex = React.memo(() => {
           addDrawerVisibilityState: [
             addDrawerVisibility,
             setAddDrawerVisibility,
+          ],
+          auditModalVisibilityState: [
+            auditModalVisibility,
+            setAuditModalVisibility,
           ],
           inventoryFormDataState: [inventoryFormData, setInventoryFormData],
           // refs

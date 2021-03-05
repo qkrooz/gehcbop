@@ -5,6 +5,7 @@ import { Button, Menu, MenuItem } from "@material-ui/core";
 import MenuIcon from "@material-ui/icons/Menu";
 import { sectionTitles } from "../resources/sectionTitles";
 import { index } from "../components/addForms";
+import { indexAudit } from "../components/auditItems";
 import {
   Drawer,
   DrawerBody,
@@ -13,6 +14,13 @@ import {
   DrawerOverlay,
   DrawerContent,
   DrawerCloseButton,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
 } from "@chakra-ui/react";
 import "../styles/inventory.css";
 import "../styles/addForm.css";
@@ -28,11 +36,19 @@ import ReservedIpsTable from "../components/reservedIpsTable";
 const Inventory = React.memo(() => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [section, setSection] = useState("desktops");
-  const { addDrawerVisibilityState, heightdiv } = useContext(ItSupportContext);
+  const {
+    addDrawerVisibilityState,
+    heightdiv,
+    auditModalVisibilityState,
+  } = useContext(ItSupportContext);
   const [
     addDrawerVisibility,
     setAddDrawerVisibility,
   ] = addDrawerVisibilityState;
+  const [
+    auditModalVisibility,
+    setAuditModalVisibility,
+  ] = auditModalVisibilityState;
   return (
     <Router>
       <div className="inventoryMainContainer" style={{ flexGrow: 1 }}>
@@ -168,6 +184,38 @@ const Inventory = React.memo(() => {
             </DrawerContent>
           </DrawerOverlay>
         </Drawer>
+        <Modal
+          isOpen={auditModalVisibility}
+          onClose={() => {
+            setAuditModalVisibility(!auditModalVisibility);
+          }}
+          onOverlayClick={() => {
+            setAuditModalVisibility(!auditModalVisibility);
+          }}
+          size="5xl"
+          scrollBehavior="inside"
+        >
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>Audit {sectionTitles[section]}</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>{indexAudit[section]}</ModalBody>
+            <ModalFooter>
+              <Button
+                variant="ghost"
+                mr={3}
+                onClick={() => {
+                  setAuditModalVisibility(!auditModalVisibility);
+                }}
+              >
+                Close
+              </Button>
+              <Button variant="contained" color="primary">
+                Finish
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
       </div>
     </Router>
   );
