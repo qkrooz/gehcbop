@@ -6,9 +6,10 @@
   transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 .wallpaper {
-  height: 120%;
-  width: 120%;
+  height: 120vh;
+  width: 120vw;
   position: absolute;
+  left: 10vw;
   object-fit: cover;
   filter: blur(4px);
   -webkit-transform: translate(-10%, -10%);
