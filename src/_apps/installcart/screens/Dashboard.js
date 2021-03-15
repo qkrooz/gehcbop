@@ -1,6 +1,5 @@
 import React, { useLayoutEffect, useContext, useState } from "react";
 import { InstallCartContext } from "../resources/InstallCartContext";
-
 import * as am4core from "@amcharts/amcharts4/core";
 import * as am4charts from "@amcharts/amcharts4/charts";
 import am4themes_animated from "@amcharts/amcharts4/themes/animated";
@@ -8,6 +7,7 @@ import "../styles/dashboard.css";
 import CartsChart from "../components/CartsChart";
 import OrdersChart from "../components/OrdersChart";
 import ArrowUpwardIcon from "@material-ui/icons/ArrowUpward";
+import moment from "moment";
 const Dashboard = React.memo(() => {
   return (
     <div className="dashboardMainContainer">
@@ -47,16 +47,12 @@ const Dash1 = React.memo(() => {
       // data generation
       let dash2Data = [];
       let tempCompleteOrders = completeOrders.filter(
-        (item) => item.STATUS === "order completed"
+        (item) => item.STATUS === "order complete"
       );
-
       tempCompleteOrders.forEach((item) => {
-        if (item.DEVICE_COUNT !== "") {
-          let date = item.SHIP_DATE.trim();
-          let value = JSON.parse(item.DEVICE_COUNT).reduce(
-            (accum, item) => accum + parseInt(item.quantity),
-            0
-          );
+        if (item.DEVICE_COUNT) {
+          let date = moment(item.SHIP_DATE.date).format("MM/dd/yyyy");
+          let value = parseInt(item.DEVICE_COUNT);
           dash2Data.push({ date: date, value: value });
         }
       });
@@ -119,7 +115,7 @@ const Dash1 = React.memo(() => {
     </div>
   );
 });
-const Dash2 = () => {
+const Dash2 = React.memo(() => {
   const { completeOrdersState } = useContext(InstallCartContext);
   const [completeOrders] = completeOrdersState;
   return (
@@ -129,13 +125,13 @@ const Dash2 = () => {
       </span>
       <span style={{ fontSize: "3em" }}>
         {
-          completeOrders.filter((item) => item.STATUS === "order completed")
+          completeOrders.filter((item) => item.STATUS === "order complete")
             .length
         }
       </span>
     </div>
   );
-};
+});
 const Dash3 = React.memo(() => {
   const { completeOrdersState } = useContext(InstallCartContext);
   const [completeOrders] = completeOrdersState;
@@ -144,14 +140,11 @@ const Dash3 = React.memo(() => {
     if (completeOrders.length !== 0) {
       let tempValue = 0;
       let temporalCompleteOrders = completeOrders.filter(
-        (item) => item.STATUS === "order completed"
+        (item) => item.STATUS === "order complete"
       );
       temporalCompleteOrders.forEach((item) => {
         if (item.DEVICE_COUNT !== "") {
-          let value = JSON.parse(item.DEVICE_COUNT).reduce(
-            (accum, item) => accum + parseInt(item.quantity),
-            0
-          );
+          let value = parseInt(item.DEVICE_COUNT);
           tempValue += value;
         }
       });
@@ -179,7 +172,7 @@ const Dash4 = React.memo(() => {
         {
           completeOrders.filter(
             (item) =>
-              item.STATUS !== "order completed" && item.STAUTS !== "cancelled"
+              item.STATUS !== "order complete" && item.STAUTS !== "cancelled"
           ).length
         }
       </span>
@@ -197,7 +190,7 @@ const Dash6 = React.memo(() => {
       <div>
         <span style={{ fontSize: "3em", color: "green" }}>
           {(
-            (completeOrders.filter((item) => item.STATUS === "order completed")
+            (completeOrders.filter((item) => item.STATUS === "order complete")
               .length *
               100) /
             completeOrders.filter((item) => item.STATUS !== "cancelled").length

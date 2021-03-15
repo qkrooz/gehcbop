@@ -1,7 +1,10 @@
 import React, { useContext, useState } from "react";
 import { InstallCartContext } from "../resources/InstallCartContext";
 import { Context } from "../../../_context/MainContext";
-import { Steps, Input, DatePicker, Select, Form, Space, Checkbox } from "antd";
+import { Formik, Field, Form } from "formik";
+import * as Yup from "yup";
+import { Steps, Input, DatePicker, Select, Space, Checkbox } from "antd";
+import DateFnsUtils from "@date-io/date-fns";
 import {
   EditOutlined,
   DeleteOutlined,
@@ -17,7 +20,13 @@ import {
   IconButton,
   Menu,
   MenuItem,
+  TextField,
 } from "@material-ui/core";
+import {
+  MuiPickersUtilsProvider,
+  KeyboardTimePicker,
+  KeyboardDatePicker,
+} from "@material-ui/pickers";
 // icons
 import PersonIcon from "@material-ui/icons/Person";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
@@ -134,7 +143,7 @@ const Orders = React.memo(() => {
       </div>
       <AddDialog />
       <DeleteConfirmDialog />
-      <EditDialog />
+      {/* <EditDialog /> */}
     </div>
   );
 });
@@ -863,35 +872,12 @@ const AddDialog = React.memo(() => {
   ] = addDialogVisibilityState;
   const [statusList] = statusListState;
   const [devicesList] = devicesListState;
-  const [addForm] = Form.useForm();
-  addForm.resetFields();
-  const dateFormat = "MM/DD/YYYY";
-  const onFinish = (values) => {
-    values.rosd = moment(values.rosd).format(dateFormat);
-    values.shipDate = moment(values.shipDate).format(dateFormat);
-    if (!values.recommendedBuild) {
-      values.recommendedBuild = false;
-    } else {
-      values.recommendedBuild = true;
-    }
-    if (!values.projectManager) {
-      values.projectManager = "";
-    }
-    values.wrd
-      ? (values.wrd = moment(values.wrd).format(dateFormat))
-      : (values.wrd = "");
-    if (!values.configurationInformation) {
-      values.configurationInformation = "";
-    }
-    if (!values.status) {
-      values.status = "";
-    }
-    if (!values.devices) {
-      values.devices = [];
-    }
-    values["owner"] = userData.USER_NAME;
-    AddOrder(values);
-  };
+  const ValidationSchema = Yup.object().shape({
+    START_DATE: Yup.string().required("Required"),
+    SHIP_DATE: Yup.string().required("Required"),
+    ROSD: Yup.string().required("Required"),
+    GON: Yup.string().required(),
+  });
   return (
     <Dialog
       open={addDialogVisibility}
@@ -902,188 +888,113 @@ const AddDialog = React.memo(() => {
       style={{ zIndex: 2 }}
     >
       <DialogTitle id="simple-dialog-title">Add new order</DialogTitle>
-      <DialogContent dividers className="addFormContainer">
-        <Form
-          form={addForm}
-          name="dynamic_form_nest_item"
-          autoComplete="off"
-          onFinish={onFinish}
-        >
-          <div className="formRow">
-            <div className="formItem">
-              <span>General Order Number:</span>
-              <Form.Item
-                name="gon"
-                noStyle
-                rules={[{ required: true, message: "Please fill this field" }]}
+      <DialogContent dividers>
+        <MuiPickersUtilsProvider utils={DateFnsUtils}>
+          <Formik
+            initialValues={{
+              START_DATE: "",
+            }}
+            validationSchema={ValidationSchema}
+            onSubmit={(values) => console.log(values)}
+          >
+            {({ errors, submitForm, values }) => (
+              <Form
+                id="addForm"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  submitForm();
+                }}
               >
-                <Input type="number" allowClear />
-              </Form.Item>
-            </div>
-            <div className="formItem">
-              <span>Project Name:</span>
-              <Form.Item
-                name="projectName"
-                noStyle
-                rules={[{ required: true, message: "Please fill this field" }]}
-              >
-                <Input allowClear />
-              </Form.Item>
-            </div>
-          </div>
-          <div className="formRow">
-            <div className="formItem">
-              <span>Ship Date:</span>
-              <Form.Item
-                name="shipDate"
-                noStyle
-                rules={[{ required: true, message: "Please fill this field" }]}
-              >
-                <DatePicker format={dateFormat} />
-              </Form.Item>
-            </div>
-            <div className="formItem">
-              <span>Requested On-Site Date:</span>
-              <Form.Item
-                noStyle
-                name="rosd"
-                rules={[{ required: true, message: "Please fill this field" }]}
-              >
-                <DatePicker format={dateFormat} />
-              </Form.Item>
-            </div>
-          </div>
-          <div className="formRow">
-            <div className="formItem">
-              <span>Project Manager:</span>
-              <Form.Item noStyle name="projectManager">
-                <Input allowClear />
-              </Form.Item>
-            </div>
-            <div className="formItem">
-              <span>Warehouse Requested Date:</span>
-              <Form.Item name="wrd" noStyle>
-                <DatePicker allowClear format={dateFormat} />
-              </Form.Item>
-            </div>
-          </div>
-          <div className="formRow">
-            <div className="formItem" style={{ width: "100%", marginRight: 0 }}>
-              <span>Device Count:</span>
-              <Form.List name="devices">
-                {(fields, { add, remove }) => (
-                  <>
-                    {fields.map((field) => (
-                      <Space key={field.key} align="baseline">
-                        <Form.Item
-                          noStyle
-                          shouldUpdate={(prevValues, curValues) =>
-                            prevValues.devices !== curValues.devices
-                          }
-                        >
-                          {() => (
-                            <Form.Item
-                              {...field}
-                              label="Device"
-                              name={[field.name, "device"]}
-                              fieldKey={[field.fieldKey, "device"]}
-                              rules={[
-                                { required: true, message: "Missing device" },
-                              ]}
-                            >
-                              <Select style={{ width: 130 }}>
-                                {devicesList.map((item) => (
-                                  <Option key={item} value={item}>
-                                    {item}
-                                  </Option>
-                                ))}
-                              </Select>
-                            </Form.Item>
-                          )}
-                        </Form.Item>
-                        <Form.Item
-                          {...field}
-                          label="Qty"
-                          name={[field.name, "quantity"]}
-                          fieldKey={[field.fieldKey, "quantity"]}
-                          rules={[
-                            { required: true, message: "Missing Quantity" },
-                          ]}
-                        >
-                          <Input />
-                        </Form.Item>
-                        <MinusCircleOutlined
-                          onClick={() => remove(field.name)}
-                        />
-                      </Space>
-                    ))}
-                    <Form.Item noStyle>
-                      <Button
-                        type="dashed"
-                        onClick={() => add()}
-                        block
-                        icon={<PlusOutlined />}
-                      >
-                        Add product
-                      </Button>
-                    </Form.Item>
-                  </>
-                )}
-              </Form.List>
-            </div>
-          </div>
-          <div className="formRow">
-            <div className="formItem" style={{ width: "100%", marginRight: 0 }}>
-              <span>Configuration Information:</span>
-              <Form.Item noStyle name="configurationInformation">
-                <TextArea rows={3} allowClear />
-              </Form.Item>
-            </div>
-          </div>
-          <div className="formRow">
-            <div className="formItem" style={{ width: "100%", marginRight: 0 }}>
-              <span>Status:</span>
-              <Form.Item name="status" noStyle>
-                <Select>
-                  {statusList.map((key, i) => {
-                    return (
-                      <Option key={i} value={key}>
-                        {key.charAt(0).toUpperCase() + key.slice(1)}
-                      </Option>
-                    );
-                  })}
-                </Select>
-              </Form.Item>
-            </div>
-          </div>
-          <div className="formRow">
-            <Form.Item name="recommendedBuild" valuePropName="checked" noStyle>
-              <Checkbox defaultChecked>Want a recommended build?</Checkbox>
-            </Form.Item>
-          </div>
-        </Form>
+                {console.log(errors)}
+                <div style={{ display: "flex" }}>
+                  <KeyboardDatePicker
+                    disableToolbar
+                    variant="inline"
+                    format="MM/dd/yyyy"
+                    margin="normal"
+                    label="Start Date"
+                    name="START_DATE"
+                    KeyboardButtonProps={{
+                      "aria-label": "change date",
+                    }}
+                    onChange={(e) => {
+                      values[e.target.name] = e.target.value;
+                    }}
+                    style={{ marginRight: "1em" }}
+                  />
+                  <KeyboardDatePicker
+                    disableToolbar
+                    variant="inline"
+                    format="MM/dd/yyyy"
+                    margin="normal"
+                    label="Ship Date"
+                    name="SHIP_DATE"
+                    KeyboardButtonProps={{
+                      "aria-label": "change date",
+                    }}
+                    onChange={(e) => {
+                      values[e.target.name] = e.target.value;
+                    }}
+                    style={{ marginRight: "1em" }}
+                  />
+                  <KeyboardDatePicker
+                    disableToolbar
+                    variant="inline"
+                    format="MM/dd/yyyy"
+                    margin="normal"
+                    label="Requested On-Site Date"
+                    name="ROSD"
+                    KeyboardButtonProps={{
+                      "aria-label": "change date",
+                    }}
+                    onChange={() => {}}
+                  />
+                </div>
+                <div style={{ display: "flex", alignItems: "baseline" }}>
+                  <KeyboardDatePicker
+                    disableToolbar
+                    variant="inline"
+                    format="MM/dd/yyyy"
+                    margin="normal"
+                    label="Cart Return"
+                    name="CART_RETURN"
+                    KeyboardButtonProps={{
+                      "aria-label": "change date",
+                    }}
+                    onChange={() => {}}
+                    style={{ marginRight: "1em", width: "32%" }}
+                  />
+                  <TextField
+                    label="General Order Number"
+                    name="GON"
+                    error={Boolean(errors.GON)}
+                    helperText={errors.GON ? "Required" : null}
+                    type="number"
+                    style={{ marginRight: "1em" }}
+                  />
+                  <TextField label="PID" name="PID" type="number" />
+                </div>
+              </Form>
+            )}
+          </Formik>
+        </MuiPickersUtilsProvider>
       </DialogContent>
       <DialogActions>
         <MaterialButton
-          autoFocus
-          variant="contained"
+          color="primary"
           onClick={() => {
             setAddDialogVisibility(false);
           }}
         >
-          CANCEL
+          Cancel
         </MaterialButton>
         <MaterialButton
-          startIcon={
-            genericLoader ? (
-              <CircularProgress size={15} color="inherit" />
-            ) : null
-          }
-          color="primary"
           variant="contained"
-          onClick={addForm.submit}
+          color="primary"
+          type="submit"
+          form="addForm"
         >
-          CONFIRM
+          Add
         </MaterialButton>
       </DialogActions>
     </Dialog>
@@ -1151,178 +1062,178 @@ const DeleteConfirmDialog = React.memo(() => {
     </Dialog>
   );
 });
-const EditDialog = React.memo(() => {
-  const {
-    EditOrder,
-    editDialogVisibilityState,
-    statusListState,
-    workingOrderState,
-    // devicesListState,
-  } = useContext(InstallCartContext);
-  // const [devicesList] = devicesListState;
-  const [workingOrder, setWorkingOrder] = workingOrderState;
-  const [editForm] = Form.useForm();
-  editForm.resetFields();
-  const dateFormat = "MM/DD/YYYY";
-  const [statusList] = statusListState;
-  const [
-    editDialogVisibility,
-    setEditDialogVisibility,
-  ] = editDialogVisibilityState;
-  editForm.setFieldsValue({
-    gon: parseInt(workingOrder.GON),
-    projectName: workingOrder.PROJECT_DESCRIPTION,
-    shipDate: workingOrder.SHIP_DATE
-      ? moment(workingOrder.SHIP_DATE, dateFormat)
-      : null,
-    rosd: workingOrder.ROSD ? moment(workingOrder.ROSD, dateFormat) : null,
-    projectManager: workingOrder.PROJECT_MANAGER,
-    wrd: workingOrder.WRD ? moment(workingOrder.WRD, dateFormat) : null,
-    configurationInformation: workingOrder.CONFIGURATION_INFORMATION,
-    status: workingOrder.STATUS,
-  });
-  const onFinish = (values) => {
-    if (!values.rosd) {
-      values.rosd = moment(values.rosd).format(dateFormat);
-    } else {
-      values.rosd = "";
-    }
-    if (!values.shipDate) {
-      values.shipDate = moment(values.shipDate).format(dateFormat);
-    } else {
-      values.shipDate = "";
-    }
-    if (!values.recommendedBuild) {
-      values.recommendedBuild = false;
-    } else {
-      values.recommendedBuild = true;
-    }
-    if (!values.projectManager) {
-      values.projectManager = "";
-    }
-    values.wrd
-      ? (values.wrd = moment(values.wrd).format(dateFormat))
-      : (values.wrd = "");
-    if (!values.configurationInformation) {
-      values.configurationInformation = "";
-    }
-    if (!values.status) {
-      values.status = "";
-    }
-    if (!values.devices) {
-      values.devices = [];
-    }
-    values["id"] = workingOrder.ID;
-    EditOrder(values);
-  };
-  return (
-    <Dialog
-      open={editDialogVisibility}
-      scroll="body"
-      onClose={() => {
-        setEditDialogVisibility(false);
-        setWorkingOrder({});
-      }}
-      style={{ zIndex: 2 }}
-    >
-      <DialogTitle>Edit Item</DialogTitle>
-      <DialogContent>
-        <Form form={editForm} onFinish={onFinish}>
-          <div className="formRow">
-            <div className="formItem">
-              <span>General Order Number:</span>
-              <Form.Item name="gon" noStyle>
-                <Input type="number" allowClear />
-              </Form.Item>
-            </div>
-            <div className="formItem">
-              <span>Project Name:</span>
-              <Form.Item name="projectName" noStyle>
-                <Input allowClear />
-              </Form.Item>
-            </div>
-          </div>
-          <div className="formRow">
-            <div className="formItem">
-              <span>Ship Date:</span>
-              <Form.Item name="shipDate" noStyle>
-                <DatePicker allowClear format={dateFormat} />
-              </Form.Item>
-            </div>
-            <div className="formItem">
-              <span>Requested On-Site Date:</span>
-              <Form.Item name="rosd" noStyle>
-                <DatePicker allowClear format={dateFormat} />
-              </Form.Item>
-            </div>
-          </div>
-          <div className="formRow">
-            <div className="formItem">
-              <span>Project Manager:</span>
-              <Form.Item name="projectManager" noStyle>
-                <Input allowClear />
-              </Form.Item>
-            </div>
-            <div className="formItem">
-              <span>Warehouse Requested Date:</span>
-              <Form.Item name="wrd" noStyle>
-                <DatePicker allowClear format={dateFormat} />
-              </Form.Item>
-            </div>
-          </div>
-          <div className="formRow">
-            <div className="formItem" style={{ width: "100%", marginRight: 0 }}>
-              <span>Configuration information:</span>
-              <Form.Item name="configurationInformation" noStyle>
-                <TextArea rows={3} allowClear />
-              </Form.Item>
-            </div>
-          </div>
-          <div className="formRow">
-            <div className="formItem" style={{ marginRight: 0, width: "100%" }}>
-              <span>Status:</span>
-              <Form.Item name="status" noStyle>
-                <Select>
-                  {statusList.map((key, i) => {
-                    return (
-                      <Option key={i} value={key}>
-                        {key.charAt(0).toUpperCase() + key.slice(1)}
-                      </Option>
-                    );
-                  })}
-                </Select>
-              </Form.Item>
-            </div>
-          </div>
-          <div className="formRow">
-            <Form.Item name="recommendedBuild" valuePropName="checked" noStyle>
-              <Checkbox defaultChecked>Want a recommended build?</Checkbox>
-            </Form.Item>
-          </div>
-        </Form>
-      </DialogContent>
-      <DialogActions>
-        <MaterialButton
-          variant="contained"
-          color="default"
-          onClick={() => {
-            setEditDialogVisibility(false);
-            setWorkingOrder({});
-          }}
-        >
-          Cancel
-        </MaterialButton>
-        <MaterialButton
-          variant="contained"
-          color="primary"
-          onClick={() => {
-            editForm.submit();
-          }}
-        >
-          Update
-        </MaterialButton>
-      </DialogActions>
-    </Dialog>
-  );
-});
+// const EditDialog = React.memo(() => {
+//   const {
+//     EditOrder,
+//     editDialogVisibilityState,
+//     statusListState,
+//     workingOrderState,
+//     // devicesListState,
+//   } = useContext(InstallCartContext);
+//   // const [devicesList] = devicesListState;
+//   const [workingOrder, setWorkingOrder] = workingOrderState;
+//   const [editForm] = Form.useForm();
+//   editForm.resetFields();
+//   const dateFormat = "MM/DD/YYYY";
+//   const [statusList] = statusListState;
+//   const [
+//     editDialogVisibility,
+//     setEditDialogVisibility,
+//   ] = editDialogVisibilityState;
+//   editForm.setFieldsValue({
+//     gon: parseInt(workingOrder.GON),
+//     projectName: workingOrder.PROJECT_DESCRIPTION,
+//     shipDate: workingOrder.SHIP_DATE
+//       ? moment(workingOrder.SHIP_DATE, dateFormat)
+//       : null,
+//     rosd: workingOrder.ROSD ? moment(workingOrder.ROSD, dateFormat) : null,
+//     projectManager: workingOrder.PROJECT_MANAGER,
+//     wrd: workingOrder.WRD ? moment(workingOrder.WRD, dateFormat) : null,
+//     configurationInformation: workingOrder.CONFIGURATION_INFORMATION,
+//     status: workingOrder.STATUS,
+//   });
+//   const onFinish = (values) => {
+//     if (!values.rosd) {
+//       values.rosd = moment(values.rosd).format(dateFormat);
+//     } else {
+//       values.rosd = "";
+//     }
+//     if (!values.shipDate) {
+//       values.shipDate = moment(values.shipDate).format(dateFormat);
+//     } else {
+//       values.shipDate = "";
+//     }
+//     if (!values.recommendedBuild) {
+//       values.recommendedBuild = false;
+//     } else {
+//       values.recommendedBuild = true;
+//     }
+//     if (!values.projectManager) {
+//       values.projectManager = "";
+//     }
+//     values.wrd
+//       ? (values.wrd = moment(values.wrd).format(dateFormat))
+//       : (values.wrd = "");
+//     if (!values.configurationInformation) {
+//       values.configurationInformation = "";
+//     }
+//     if (!values.status) {
+//       values.status = "";
+//     }
+//     if (!values.devices) {
+//       values.devices = [];
+//     }
+//     values["id"] = workingOrder.ID;
+//     EditOrder(values);
+//   };
+//   return (
+//     <Dialog
+//       open={editDialogVisibility}
+//       scroll="body"
+//       onClose={() => {
+//         setEditDialogVisibility(false);
+//         setWorkingOrder({});
+//       }}
+//       style={{ zIndex: 2 }}
+//     >
+//       <DialogTitle>Edit Item</DialogTitle>
+//       <DialogContent>
+//         <Form form={editForm} onFinish={onFinish}>
+//           <div className="formRow">
+//             <div className="formItem">
+//               <span>General Order Number:</span>
+//               <Form.Item name="gon" noStyle>
+//                 <Input type="number" allowClear />
+//               </Form.Item>
+//             </div>
+//             <div className="formItem">
+//               <span>Project Name:</span>
+//               <Form.Item name="projectName" noStyle>
+//                 <Input allowClear />
+//               </Form.Item>
+//             </div>
+//           </div>
+//           <div className="formRow">
+//             <div className="formItem">
+//               <span>Ship Date:</span>
+//               <Form.Item name="shipDate" noStyle>
+//                 <DatePicker allowClear format={dateFormat} />
+//               </Form.Item>
+//             </div>
+//             <div className="formItem">
+//               <span>Requested On-Site Date:</span>
+//               <Form.Item name="rosd" noStyle>
+//                 <DatePicker allowClear format={dateFormat} />
+//               </Form.Item>
+//             </div>
+//           </div>
+//           <div className="formRow">
+//             <div className="formItem">
+//               <span>Project Manager:</span>
+//               <Form.Item name="projectManager" noStyle>
+//                 <Input allowClear />
+//               </Form.Item>
+//             </div>
+//             <div className="formItem">
+//               <span>Warehouse Requested Date:</span>
+//               <Form.Item name="wrd" noStyle>
+//                 <DatePicker allowClear format={dateFormat} />
+//               </Form.Item>
+//             </div>
+//           </div>
+//           <div className="formRow">
+//             <div className="formItem" style={{ width: "100%", marginRight: 0 }}>
+//               <span>Configuration information:</span>
+//               <Form.Item name="configurationInformation" noStyle>
+//                 <TextArea rows={3} allowClear />
+//               </Form.Item>
+//             </div>
+//           </div>
+//           <div className="formRow">
+//             <div className="formItem" style={{ marginRight: 0, width: "100%" }}>
+//               <span>Status:</span>
+//               <Form.Item name="status" noStyle>
+//                 <Select>
+//                   {statusList.map((key, i) => {
+//                     return (
+//                       <Option key={i} value={key}>
+//                         {key.charAt(0).toUpperCase() + key.slice(1)}
+//                       </Option>
+//                     );
+//                   })}
+//                 </Select>
+//               </Form.Item>
+//             </div>
+//           </div>
+//           <div className="formRow">
+//             <Form.Item name="recommendedBuild" valuePropName="checked" noStyle>
+//               <Checkbox defaultChecked>Want a recommended build?</Checkbox>
+//             </Form.Item>
+//           </div>
+//         </Form>
+//       </DialogContent>
+//       <DialogActions>
+//         <MaterialButton
+//           variant="contained"
+//           color="default"
+//           onClick={() => {
+//             setEditDialogVisibility(false);
+//             setWorkingOrder({});
+//           }}
+//         >
+//           Cancel
+//         </MaterialButton>
+//         <MaterialButton
+//           variant="contained"
+//           color="primary"
+//           onClick={() => {
+//             editForm.submit();
+//           }}
+//         >
+//           Update
+//         </MaterialButton>
+//       </DialogActions>
+//     </Dialog>
+//   );
+// });
 export default Orders;

@@ -31,7 +31,7 @@ const CartsChart = React.memo((props) => {
     var categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
     categoryAxis.dataFields.category = "cartType";
     categoryAxis.renderer.grid.template.location = 0;
-    categoryAxis.renderer.minGridDistance = 30;
+    categoryAxis.renderer.minGridDistance = 20;
 
     categoryAxis.renderer.labels.template.adapter.add(
       "dy",
@@ -61,18 +61,7 @@ const CartsChart = React.memo((props) => {
   }, [carts]);
   return (
     <div className="cartsChartContainer" {...props}>
-      <div
-        className="deco-fix"
-        style={{
-          width: "25%",
-          height: "2.2em",
-          position: "absolute",
-          backgroundColor: "white",
-          bottom: 0,
-          zIndex: 2,
-        }}
-      ></div>
-      <div id="chartdiv2" style={{ width: "100%", height: "250px" }}></div>
+      <div id="chartdiv2" style={{ width: "90%", height: "250px" }}></div>
     </div>
   );
 });

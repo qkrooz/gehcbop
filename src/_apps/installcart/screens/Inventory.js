@@ -7,10 +7,15 @@ import Button from "@material-ui/core/Button";
 import ButtonGroup from "@material-ui/core/ButtonGroup";
 import "../styles/inventory.css";
 import { tableIcons } from "../../itsupport/resources/tableIcons";
+import moment from "moment";
+import { ExclamationCircleTwoTone } from "@ant-design/icons";
 import AddCircleIcon from "@material-ui/icons/AddCircle";
 import Chip from "@material-ui/core/Chip";
 import ErrorOutlineIcon from "@material-ui/icons/ErrorOutline";
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
+import FlagIcon from "@material-ui/icons/Flag";
+import CheckIcon from "@material-ui/icons/Check";
+import ClearIcon from "@material-ui/icons/Clear";
 const Inventory = React.memo(() => {
   const { completeOrdersState, cartsState, insertsState } = useContext(
     InstallCartContext
@@ -30,298 +35,165 @@ const Inventory = React.memo(() => {
     "ic_inventory_section",
     "orders"
   );
+  const RetroMissing = () => {
+    return (
+      <div style={{ display: "flex", alignItems: "center" }}>
+        <ExclamationCircleTwoTone
+          twoToneColor="#faca0f"
+          style={{ fontSize: "15px", marginRight: "8px" }}
+        />
+        <span style={{ fontSize: "0.8em" }}>Missing</span>
+      </div>
+    );
+  };
   const ordersColumns = [
+    // {
+    //   title: "ID",
+    //   field: "ID",
+    // },
     {
-      title: "ID",
-      field: "ID",
-      cellStyle: {
-        textAlign: "center",
-      },
+      title: "FW LOB",
+      field: "FW_LOB",
     },
     {
-      title: "CREATED DATE",
-      field: "CREATED_DATE",
-      cellStyle: {
-        textAlign: "center",
-      },
+      title: "FW SLOT",
+      field: "FW_SLOT",
     },
     {
-      title: "GON",
-      field: "GON",
-      cellStyle: {
-        textAlign: "center",
-      },
-    },
-    {
-      title: "PROJECT NAME",
-      field: "PROJECT_NAME",
-      cellStyle: {
-        textAlign: "left",
-      },
-    },
-    {
-      title: "FW",
-      field: "FW",
-      cellStyle: {
-        textAlign: "center",
-      },
-    },
-    {
-      title: "ROSD",
-      field: "ROSD",
-      cellStyle: {
-        textAlign: "center",
-      },
-    },
-    {
-      title: "SHIP DATE",
-      field: "SHIP_DATE",
-      cellStyle: {
-        textAlign: "center",
-      },
+      title: "MONTH",
+      field: "MONTH",
     },
     {
       title: "DEVICE COUNT",
       field: "DEVICE_COUNT",
-      cellStyle: {
-        textAlign: "center",
-      },
-      render: (rowData) => {
-        if (
-          rowData.DEVICE_COUNT === null ||
-          rowData.DEVICE_COUNT === "" ||
-          rowData.DEVICE_COUNT === undefined ||
-          !rowData.DEVICE_COUNT ||
-          rowData.DEVICE_COUNT === "[]"
-        ) {
-          return (
-            <Chip
-              icon={<ErrorOutlineIcon style={{ color: "#f44336" }} />}
-              label={<span>Missing</span>}
-            />
-          );
-        } else {
-          const deviceCountMenu = (
-            <Menu>
-              {JSON.parse(rowData.DEVICE_COUNT).map((key, i) => {
-                return (
-                  <Menu.Item key={i}>
-                    <div style={{ display: "flex" }}>
-                      <span
-                        style={{ fontWeight: "bold", marginRight: "0.5em" }}
-                      >
-                        {key.device + ":"}
-                      </span>
-                      <span>{key.quantity}</span>
-                    </div>
-                  </Menu.Item>
-                );
-              })}
-            </Menu>
-          );
-          return (
-            <Dropdown
-              overlay={deviceCountMenu}
-              trigger={["click"]}
-              placement={"topRight"}
-            >
-              <Button onClick={(e) => e.preventDefault()}>
-                <AddCircleIcon color="primary" />
-              </Button>
-            </Dropdown>
-          );
-        }
-      },
+      render: (rowData) =>
+        rowData.DEVICE_COUNT ? rowData.DEVICE_COUNT : <RetroMissing />,
     },
     {
-      title: "PROJECT NANAGER",
-      field: "PROJECT_NANAGER",
-      cellStyle: {
-        textAlign: "center",
-      },
-      render: (rowData) => {
-        if (rowData.PROJECT_MANAGER) {
-          return <span>{rowData.PROJECT_MANAGER}</span>;
-        } else {
-          return (
-            <Chip
-              icon={<ErrorOutlineIcon style={{ color: "#f44336" }} />}
-              label={<span>Missing</span>}
-            />
-          );
-        }
-      },
+      title: "START DATE",
+      field: "START_DATE",
+      render: (rowData) =>
+        rowData.START_DATE ? (
+          moment(rowData.START_DATE.date).format("MM/DD/YYYY")
+        ) : (
+          <RetroMissing />
+        ),
     },
     {
-      title: "WRD",
-      field: "WRD",
-      cellStyle: {
-        textAlign: "center",
-      },
-      render: (rowData) => {
-        if (rowData.WRD) {
-          return <span>{rowData.WRD}</span>;
-        } else {
-          return (
-            <Chip
-              icon={<ErrorOutlineIcon style={{ color: "#f44336" }} />}
-              label={<span>Missing</span>}
-            />
-          );
-        }
-      },
+      title: "SHIP DATE",
+      field: "SHIP_DATE",
+      render: (rowData) =>
+        rowData.SHIP_DATE ? (
+          moment(rowData.SHIP_DATE.date).format("MM/DD/YYYY")
+        ) : (
+          <RetroMissing />
+        ),
     },
     {
-      title: "CONFIGURATION INFORMATION",
-      field: "CONFIGURATION_INFORMATION",
-      cellStyle: {
-        textAlign: "center",
-      },
-      render: (rowData) => {
-        if (rowData.CONFIGURATION_INFORMATION) {
-          const menu = (
-            <Menu>
-              <Menu.Item>
-                <span style={{ whiteSpace: "pre-wrap" }}>
-                  {rowData.CONFIGURATION_INFORMATION
-                    ? rowData.CONFIGURATION_INFORMATION
-                    : null}
-                </span>
-              </Menu.Item>
-            </Menu>
-          );
-          return (
-            <Dropdown trigger={["click"]} overlay={menu}>
-              <span style={{ cursor: "pointer" }}>
-                {rowData.CONFIGURATION_INFORMATION
-                  ? rowData.CONFIGURATION_INFORMATION.substring(0, 30) + "...."
-                  : null}
-              </span>
-            </Dropdown>
-          );
-        } else {
-          return (
-            <Chip
-              icon={<ErrorOutlineIcon style={{ color: "#f44336" }} />}
-              label={<span>Missing</span>}
-            />
-          );
-        }
-      },
+      title: "ROSD",
+      field: "ROSD",
+      render: (rowData) =>
+        rowData.ROSD ? (
+          moment(rowData.ROSD.date).format("MM/DD/YYYY")
+        ) : (
+          <RetroMissing />
+        ),
     },
     {
-      title: "OWNER",
-      field: "OWNER",
-      cellStyle: {
-        textAlign: "center",
-      },
-      render: (rowData) => (
-        <Chip icon={<AccountCircleIcon />} label={rowData.OWNER} />
-      ),
+      title: "CART RETURN",
+      field: "CART_RETURN",
+      render: (rowData) =>
+        rowData.CART_RETURN ? (
+          moment(rowData.CART_RETURN.date).format("MM/DD/YYYY")
+        ) : (
+          <RetroMissing />
+        ),
+    },
+    {
+      title: "GON",
+      field: "GON",
+      render: (rowData) => (rowData.GON === 0 ? "Missing" : rowData.GON),
+    },
+    {
+      title: "PID",
+      field: "PID",
+      render: (rowData) => (rowData.PID ? rowData.PID : <RetroMissing />),
+    },
+    {
+      title: "PROJECT DESCRIPTION",
+      field: "PROJECT_DESCRIPTION",
     },
     {
       title: "STATUS",
       field: "STATUS",
-      cellStyle: {
-        textAlign: "center",
-      },
+      render: (rowData) => (
+        <Chip
+          label={
+            rowData.STATUS.charAt(0).toUpperCase() + rowData.STATUS.slice(1)
+          }
+        />
+      ),
+    },
+    {
+      title: "ESTIMATED CART QTY",
+      field: "ESTIMATED_CART_QTY",
+      render: (rowData) => rowData.ESTIMATED_CART_QTY.toFixed(2),
+    },
+    {
+      title: "PACKAGE",
+      field: "PACKAGE",
+    },
+    {
+      title: "FLAGGED ON CONFIG APP",
+      field: "FLAGGED_ON_CONFIG_APP",
       render: (rowData) =>
-        rowData.STATUS ? (
-          <Chip
-            label={
-              rowData.STATUS.charAt(0).toUpperCase() + rowData.STATUS.slice(1)
-            }
-            style={
-              rowData.STATUS === "cancelled"
-                ? { backgroundColor: "#f44336", color: "white" }
-                : rowData.STATUS === "order completed"
-                ? { backgroundColor: "#4caf50" }
-                : { backgroundColor: "#2196f3", color: "white" }
-            }
-          />
+        Boolean(rowData.FLAGGED_ON_CONFIG_APP) ? <FlagIcon /> : null,
+    },
+    {
+      title: "NTP SUBMITTED",
+      field: "NTP_SUBMITTED",
+      render: (rowData) =>
+        Boolean(rowData.NTP_SUBMITTED) ? <CheckIcon /> : null,
+    },
+    {
+      title: "PROJECT MANAGER CONTACT",
+      field: "PROJECT_MANAGER_CONTACT",
+      render: (rowData) =>
+        rowData.PROJECT_MANAGER_CONTACT ? (
+          rowData.PROJECT_MANAGER_CONTACT
         ) : (
-          <Chip
-            icon={<ErrorOutlineIcon style={{ color: "#f44336" }} />}
-            label={<span>Missing</span>}
-          />
+          <RetroMissing />
         ),
     },
     {
-      title: "CART USAGE",
-      field: "CART_USAGE",
-      cellStyle: {
-        textAlign: "center",
-      },
-      render: (rowData) => {
-        if (
-          rowData.CART_USAGE === null ||
-          rowData.CART_USAGE === "" ||
-          rowData.CART_USAGE === undefined ||
-          !rowData.CART_USAGE ||
-          rowData.CART_USAGE === " "
-        ) {
-          return (
-            <Chip
-              icon={<ErrorOutlineIcon style={{ color: "#f44336" }} />}
-              label={<span>Missing</span>}
-            />
-          );
-        } else {
-          const menu34 = (
-            <Menu>
-              {JSON.parse(rowData.CART_USAGE).map((key, i) => {
-                return (
-                  <Menu.Item key={i}>
-                    <div style={{ display: "flex" }}>
-                      <span
-                        style={{ fontWeight: "bold", marginRight: "0.5em" }}
-                      >
-                        {"Cart Usage: "}
-                      </span>
-                      <span>{key.cartUsage}</span>
-                    </div>
-                    <div style={{ display: "flex" }}>
-                      <span
-                        style={{ fontWeight: "bold", marginRight: "0.5em" }}
-                      >
-                        Total Slots:
-                      </span>
-                      <span>{key.totalSlots}</span>
-                    </div>
-                    <div style={{ display: "flex" }}>
-                      <span
-                        style={{ fontWeight: "bold", marginRight: "0.5em" }}
-                      >
-                        Tall:
-                      </span>
-                      <span>{key.tall}</span>
-                    </div>
-                    <div style={{ display: "flex" }}>
-                      <span
-                        style={{ fontWeight: "bold", marginRight: "0.5em" }}
-                      >
-                        Short:
-                      </span>
-                      <span>{key.short}</span>
-                    </div>
-                  </Menu.Item>
-                );
-              })}
-            </Menu>
-          );
-          return (
-            <Dropdown
-              overlay={menu34}
-              trigger={["click"]}
-              placement={"topRight"}
-            >
-              <Button onClick={(e) => e.preventDefault()}>
-                <AddCircleIcon color="primary" />
-              </Button>
-            </Dropdown>
-          );
-        }
-      },
+      title: "FE",
+      field: "FE",
+      render: (rowData) => (rowData.FE ? rowData.FE : <RetroMissing />),
+    },
+    {
+      title: "OWNER",
+      field: "OWNER",
+      render: (rowData) => JSON.parse(rowData.OWNER).NAME,
+    },
+    {
+      title: "CONFIGURATION INFORMATION",
+      field: "CONFIGURATION_INFORMATION",
+      render: (rowData) =>
+        rowData.CONFIGURATION_INFORMATION ? (
+          `${rowData.CONFIGURATION_INFORMATION.substring(0, 10)}...`
+        ) : (
+          <RetroMissing />
+        ),
+    },
+    {
+      title: "CREATED DATE",
+      field: "CREATED_DATE",
+      render: (rowData) =>
+        rowData.CREATED_DATE ? (
+          moment(rowData.CREATED_DATE.date).format("MM/DD/YYYY")
+        ) : (
+          <RetroMissing />
+        ),
     },
   ];
   const cartsColumns = [

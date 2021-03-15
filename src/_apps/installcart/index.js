@@ -98,33 +98,34 @@ const InstallCartIndex = React.memo(() => {
   };
   const AddOrder = (values) => {
     setGenericLoader(true);
-    axios
-      .post(`${USELPUTIL02}/${currentApplication}/addNewOrder.php`, values)
-      .then((response) => {
-        if (response.data.code === 200) {
-          let temporalAddedItem = response.data.lastItem[0];
-          if (temporalAddedItem.STATUS === "order completed") {
-            setFilteredOrders((filteredOrders) => [
-              temporalAddedItem,
-              ...filteredOrders,
-            ]);
-          }
-          setOrders((orders) => [temporalAddedItem, ...orders]);
-          setCompleteOrders((completeOrders) => [
-            temporalAddedItem,
-            ...completeOrders,
-          ]);
-          setTimeout(() => {
-            setGenericLoader(false);
-            setAddDialogVisibility(false);
-          }, 1000);
-        } else {
-          setGenericLoader(false);
-        }
-      })
-      .catch((error) => {
-        setGenericLoader(false);
-      });
+    console.log(values);
+    // axios
+    //   .post(`${USELPUTIL02}/${currentApplication}/addNewOrder.php`, values)
+    //   .then((response) => {
+    //     if (response.data.code === 200) {
+    //       let temporalAddedItem = response.data.lastItem[0];
+    //       if (temporalAddedItem.STATUS === "order completed") {
+    //         setFilteredOrders((filteredOrders) => [
+    //           temporalAddedItem,
+    //           ...filteredOrders,
+    //         ]);
+    //       }
+    //       setOrders((orders) => [temporalAddedItem, ...orders]);
+    //       setCompleteOrders((completeOrders) => [
+    //         temporalAddedItem,
+    //         ...completeOrders,
+    //       ]);
+    //       setTimeout(() => {
+    //         setGenericLoader(false);
+    //         setAddDialogVisibility(false);
+    //       }, 1000);
+    //     } else {
+    //       setGenericLoader(false);
+    //     }
+    //   })
+    //   .catch((error) => {
+    //     setGenericLoader(false);
+    //   });
   };
   const EditOrder = (values) => {
     console.log(values);
