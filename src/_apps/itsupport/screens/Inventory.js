@@ -6,6 +6,7 @@ import MenuIcon from "@material-ui/icons/Menu";
 import { sectionTitles } from "../resources/sectionTitles";
 import { index } from "../components/addForms";
 import { indexAudit } from "../components/auditItems";
+import { indexComments } from "../components/commentsForm";
 import {
   Drawer,
   DrawerBody,
@@ -24,6 +25,8 @@ import {
 } from "@chakra-ui/react";
 import "../styles/inventory.css";
 import "../styles/addForm.css";
+import axios from "axios";
+import { USELPUTIL02 } from "../../../_resources/serverRoutes";
 // tables
 import DesktopsTable from "../components/desktopsTable";
 import LaptopsTable from "../components/laptopsTable";
@@ -32,7 +35,12 @@ import LabelPrintersTable from "../components/labelPrintersTable";
 import LaserPrintersTable from "../components/laserPrintersTable";
 import ReservedIpsTable from "../components/reservedIpsTable";
 // add forms
-
+const auditItems = (values) => {
+  axios
+    .post(`${USELPUTIL02}/itsupport/auditItem.php`, values)
+    .then((response) => console.log(response.data))
+    .catch((error) => console.log(error));
+};
 const Inventory = React.memo(() => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [section, setSection] = useState("desktops");
@@ -40,6 +48,9 @@ const Inventory = React.memo(() => {
     addDrawerVisibilityState,
     heightdiv,
     auditModalVisibilityState,
+    inventoryAuditDataState,
+    commentsDrawerVisibilityState,
+    inventoryCommentsDataState,
   } = useContext(ItSupportContext);
   const [
     addDrawerVisibility,
@@ -49,6 +60,29 @@ const Inventory = React.memo(() => {
     auditModalVisibility,
     setAuditModalVisibility,
   ] = auditModalVisibilityState;
+  const [
+    commentsDrawerVisibility,
+    setCommentsDrawerVisibility,
+  ] = commentsDrawerVisibilityState;
+
+  const [inventoryAuditData, setInventoryAuditData] = inventoryAuditDataState;
+  const [
+    inventoryCommentsData,
+    setInventoryCommentsData,
+  ] = inventoryCommentsDataState;
+
+  const initialAuditValues = [
+    { status: "good", comments: "" },
+    { status: "good", comments: "" },
+    { status: "good", comments: "" },
+    { status: "good", comments: "" },
+    { status: "good", comments: "" },
+    { status: "good", comments: "" },
+    { status: "good", comments: "" },
+    { status: "good", comments: "" },
+    { status: "good", comments: "" },
+    { status: "good", comments: "" },
+  ];
   return (
     <Router>
       <div className="inventoryMainContainer" style={{ flexGrow: 1 }}>
@@ -188,9 +222,11 @@ const Inventory = React.memo(() => {
           isOpen={auditModalVisibility}
           onClose={() => {
             setAuditModalVisibility(!auditModalVisibility);
+            setInventoryAuditData(initialAuditValues);
           }}
           onOverlayClick={() => {
             setAuditModalVisibility(!auditModalVisibility);
+            setInventoryAuditData(initialAuditValues);
           }}
           size="5xl"
           scrollBehavior="inside"
@@ -202,20 +238,71 @@ const Inventory = React.memo(() => {
             <ModalBody>{indexAudit[section]}</ModalBody>
             <ModalFooter>
               <Button
-                variant="ghost"
                 mr={3}
                 onClick={() => {
                   setAuditModalVisibility(!auditModalVisibility);
                 }}
               >
-                Close
+                Cancel
               </Button>
-              <Button variant="contained" color="primary">
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => {
+                  // console.log(inventoryAuditData);
+                  inventoryAuditData.forEach((data) => {
+                    let auditResult = { auditString: "", sn: "", section: "" };
+                    auditResult.auditString = `{"status": "${data.status}","comments":"${data.comments}"}`;
+                    auditResult.sn = data.serialnumber;
+                    auditResult.section = section;
+                    console.log(auditResult);
+                    auditItems(auditResult);
+                  });
+                  setTimeout(() => {
+                    setInventoryAuditData(initialAuditValues);
+                  }, 1000);
+                  setAuditModalVisibility(!auditModalVisibility);
+                }}
+              >
                 Finish
               </Button>
             </ModalFooter>
           </ModalContent>
         </Modal>
+        <Drawer
+          size="sm"
+          isOpen={commentsDrawerVisibility}
+          placement="right"
+          onClose={() => {
+            setCommentsDrawerVisibility(!commentsDrawerVisibility);
+          }}
+          onOverlayClick={() => {
+            setCommentsDrawerVisibility(false);
+          }}
+        >
+          <DrawerOverlay>
+            <DrawerContent>
+              <DrawerCloseButton />
+              <DrawerHeader>
+                Add Comment | {sectionTitles[section]}{" "}
+              </DrawerHeader>
+              <DrawerBody>{indexComments[section]}</DrawerBody>
+              <DrawerFooter>
+                <Button
+                  mr={3}
+                  onClick={() => {
+                    setCommentsDrawerVisibility(!commentsDrawerVisibility);
+                  }}
+                >
+                  Cancel
+                </Button>
+                <Button variant="contained" color="primary">
+                  Add
+                </Button>
+              </DrawerFooter>
+            </DrawerContent>
+          </DrawerOverlay>
+        </Drawer>
       </div>
     </Router>
   );

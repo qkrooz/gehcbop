@@ -11,11 +11,16 @@ const LabelPrintersTable = React.memo(() => {
   const [genericLoader, setGenericLoader] = useState(false);
   const [data, setData] = useState([]);
   // context
-  const { addDrawerVisibilityState, heightState } = useContext(
-    ItSupportContext
-  );
+  const {
+    addDrawerVisibilityState,
+    heightState,
+    auditModalVisibilityState,
+    inventoryAuditDataState,
+  } = useContext(ItSupportContext);
+  const [inventoryAuditData, setInventoryAuditData] = inventoryAuditDataState;
   const [, setAddDrawerVisibility] = addDrawerVisibilityState;
   const [height] = heightState;
+  const [, setAuditModalVisibility] = auditModalVisibilityState;
   // functions
   const AddItem = (values) => {
     axios
@@ -88,6 +93,10 @@ const LabelPrintersTable = React.memo(() => {
           icon: VisibilityIcon,
           tooltip: "Audit",
           isFreeAction: "true",
+          onClick: () => {
+            setAuditModalVisibility(true);
+            console.log(inventoryAuditData);
+          },
         },
       ]}
       columns={[

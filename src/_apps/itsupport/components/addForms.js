@@ -530,7 +530,7 @@ export const index = {
   desktops: <AddDesktopsForm />,
   laptops: <AddLaptopsForm />,
   mobiles: <AddMobilesForm />,
-  laserPrinters: <AddLabelPrintersForm />,
-  labelPrinters: <AddLaserPrintersForm />,
-  reservedIps: <AddReservedIpsForm />,
+  laser_printers: <AddLabelPrintersForm />,
+  label_printers: <AddLaserPrintersForm />,
+  reserved_ips: <AddReservedIpsForm />,
 };

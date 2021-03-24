@@ -4,6 +4,8 @@ import MaterialTable from "material-table";
 import { tableIcons } from "../resources/tableIcons";
 import LibraryAddIcon from "@material-ui/icons/LibraryAdd";
 import VisibilityIcon from "@material-ui/icons/Visibility";
+import { Grid, GridItem, Text, IconButton } from "@chakra-ui/react";
+import { CheckIcon, CloseIcon, EditIcon } from "@chakra-ui/icons";
 import axios from "axios";
 import { USELPUTIL02 } from "../../../_resources/serverRoutes";
 const DesktopsTable = React.memo(() => {
@@ -15,15 +17,54 @@ const DesktopsTable = React.memo(() => {
     addDrawerVisibilityState,
     heightState,
     auditModalVisibilityState,
+    inventoryAuditDataState,
+    commentsDrawerVisibilityState,
+    inventoryCommentsDataState,
   } = useContext(ItSupportContext);
+
+  const [inventoryAuditData, setInventoryAuditData] = inventoryAuditDataState;
   const [height] = heightState;
   const [, setAddDrawerVisibility] = addDrawerVisibilityState;
   const [, setAuditModalVisibility] = auditModalVisibilityState;
+  const [, setCommentsDrawerVisibility] = commentsDrawerVisibilityState;
+  const [
+    inventoryCommentsData,
+    setInventoryCommentsData,
+  ] = inventoryCommentsDataState;
   // functions
+  let jsonSpecs = [];
+  function isJSON(item) {
+    item = typeof item !== "string" ? JSON.stringify(item) : item;
+
+    try {
+      item = JSON.parse(item);
+    } catch (e) {
+      return false;
+    }
+
+    if (typeof item === "object" && item !== null) {
+      return true;
+    }
+
+    return false;
+  }
   const fetchData = () => {
     axios
       .post(`${USELPUTIL02}/itsupport/fetchDesktops.php`)
       .then((response) => {
+        response.data.forEach((data, i) => {
+          jsonSpecs[i] = data.SPECS;
+          let specs = isJSON(data.SPECS);
+          if (specs == true) {
+            data.SPECS =
+              JSON.parse(data.SPECS).hdd +
+              "/" +
+              JSON.parse(data.SPECS).ram +
+              "/" +
+              JSON.parse(data.SPECS).processor;
+          }
+        });
+        console.log(jsonSpecs);
         setData(response.data);
         setGenericLoader(false);
       })
@@ -54,6 +95,7 @@ const DesktopsTable = React.memo(() => {
     setGenericLoader(true);
     // eslint-disable-next-line
   }, []);
+
   return (
     <MaterialTable
       isLoading={genericLoader}
@@ -93,6 +135,7 @@ const DesktopsTable = React.memo(() => {
           isFreeAction: "true",
           onClick: () => {
             setAuditModalVisibility(true);
+            console.log(inventoryAuditData);
           },
         },
       ]}
@@ -124,6 +167,7 @@ const DesktopsTable = React.memo(() => {
         {
           title: "SPECS",
           field: "SPECS",
+          editPlaceholder: "HDD/RAM/PROCESSOR",
         },
         {
           title: "HOSTNAME",
@@ -146,8 +190,19 @@ const DesktopsTable = React.memo(() => {
             setTimeout(() => {
               newData.section = "desktops";
               newData.count = 1;
-              newData.Hostname = "G" + newData.ServiceTag + "E";
+              newData.HOSTNAME = "G" + newData.SERVICE_TAG + "E";
+              var date = new Date().toJSON().slice(0, 10).replace(/-/g, "/");
+              newData.ADDED = date;
+              newData.AUDITED = `{"status":"", "comments":""}`;
+              let specsSplit = newData.SPECS.replace(/\s/g, "")
+                .replace(/-|\\|\|/g, "/")
+                .split(`/`);
+              console.log(specsSplit);
+              newData.SPECS = `{"hdd":"${specsSplit[0]}", "ram":"${specsSplit[1]}", "processor":"${specsSplit[2]}", "screenSize":""}`;
+              console.log(newData.SPECS);
               AddItem(newData);
+
+              newData.SPECS = `${specsSplit[0]}/${specsSplit[1]}/${specsSplit[2]}`;
               setData([newData, ...data]);
               resolve();
             }, 1000);
@@ -158,8 +213,17 @@ const DesktopsTable = React.memo(() => {
               const dataUpdate = [...data];
               const index = oldData.tableData.id;
               newData.section = "desktops";
-              dataUpdate[index] = newData;
+              var date = new Date().toJSON().slice(0, 10).replace(/-/g, "/");
+              let specsSplit = newData.SPECS.replace(/\s/g, "")
+                .replace(/-|\\|\|/g, "/")
+                .split(`/`);
+              console.log(specsSplit);
+              newData.SPECS = `{"hdd":"${specsSplit[0]}", "ram":"${specsSplit[1]}", "processor":"${specsSplit[2]}", "screenSize":""}`;
+              newData.LAST_MODIFICATION = date;
+              console.log(newData);
               EditItem(newData);
+              dataUpdate[index] = newData;
+              newData.SPECS = `${specsSplit[0]}/${specsSplit[1]}/${specsSplit[2]}`;
               setData(dataUpdate);
               resolve();
             }, 1000);
@@ -176,6 +240,207 @@ const DesktopsTable = React.memo(() => {
               resolve();
             }, 1000);
           }),
+      }}
+      detailPanel={(rowData) => {
+        return (
+          <Grid
+            h="90px"
+            templateRows="repeat(3, 1fr)"
+            templateColumns="repeat(6, 1fr)"
+            gap={0}
+          >
+            <GridItem colSpan={1} border="1px" borderColor="lightgray">
+              <Text
+                width="100%"
+                height="100%"
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+                fontSize="sm"
+              >
+                Date Added:
+              </Text>
+            </GridItem>
+            <GridItem colSpan={1} border="1px" borderColor="lightgray">
+              <Text
+                width="100%"
+                height="100%"
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+                fontSize="sm"
+              >
+                {rowData.ADDED}
+              </Text>
+            </GridItem>
+            <GridItem colSpan={1} border="1px" borderColor="lightgray">
+              <Text
+                width="100%"
+                height="100%"
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+                fontSize="sm"
+              >
+                Comments:
+              </Text>
+            </GridItem>
+            <GridItem colSpan={3} border="1px" borderColor="lightgray">
+              <div style={{ display: "flex", flexDirection: "row" }}>
+                <Text
+                  width="100%"
+                  height="80%"
+                  display="flex"
+                  justifyContent="center"
+                  alignItems="center"
+                  fontSize="sm"
+                >
+                  {rowData.COMMENTS}
+                </Text>
+                <IconButton
+                  size="sm"
+                  icon={<EditIcon />}
+                  onClick={() => {
+                    setCommentsDrawerVisibility(true);
+                    setInventoryCommentsData(rowData.COMMENTS);
+                  }}
+                />
+              </div>
+            </GridItem>
+            <GridItem colSpan={1} border="1px" borderColor="lightgray">
+              <Text
+                width="100%"
+                height="100%"
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+                fontSize="sm"
+              >
+                Date Modified:
+              </Text>
+            </GridItem>
+            <GridItem colSpan={1} border="1px" borderColor="lightgray">
+              <Text
+                width="100%"
+                height="100%"
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+                fontSize="sm"
+              >
+                {rowData.LAST_MODIFICATION}
+              </Text>
+            </GridItem>
+            <GridItem colSpan={1} border="1px" borderColor="lightgray">
+              <Text
+                width="100%"
+                height="100%"
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+                fontSize="sm"
+              >
+                Audit Results:
+              </Text>
+            </GridItem>
+            <GridItem colSpan={1} border="1px" borderColor="lightgray">
+              <Text
+                width="100%"
+                height="100%"
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+                fontSize="sm"
+              >
+                {JSON.parse(rowData.AUDITED).status}
+              </Text>
+            </GridItem>
+            <GridItem colSpan={2} border="1px" borderColor="lightgray">
+              <Text
+                width="100%"
+                height="100%"
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+                fontSize="sm"
+              >
+                {JSON.parse(rowData.AUDITED).comments}
+              </Text>
+            </GridItem>
+            <GridItem colSpan={1} border="1px" borderColor="lightgray">
+              <Text
+                width="100%"
+                height="100%"
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+                fontSize="sm"
+              >
+                HDD:
+              </Text>
+            </GridItem>
+            <GridItem colSpan={1} border="1px" borderColor="lightgray">
+              <Text
+                width="100%"
+                height="100%"
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+                fontSize="sm"
+              >
+                {rowData.SPECS.split("/")[0]}
+              </Text>
+            </GridItem>
+            <GridItem colSpan={1} border="1px" borderColor="lightgray">
+              <Text
+                width="100%"
+                height="100%"
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+                fontSize="sm"
+              >
+                RAM:
+              </Text>
+            </GridItem>
+            <GridItem colSpan={1} border="1px" borderColor="lightgray">
+              <Text
+                width="100%"
+                height="100%"
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+                fontSize="sm"
+              >
+                {rowData.SPECS.split("/")[1]}
+              </Text>
+            </GridItem>
+            <GridItem colSpan={1} border="1px" borderColor="lightgray">
+              <Text
+                width="100%"
+                height="100%"
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+                fontSize="sm"
+              >
+                PROCESSOR:
+              </Text>
+            </GridItem>
+            <GridItem colSpan={1} border="1px" borderColor="lightgray">
+              <Text
+                width="100%"
+                height="100%"
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+                fontSize="sm"
+              >
+                {rowData.SPECS.split("/")[2]}
+              </Text>
+            </GridItem>
+          </Grid>
+        );
       }}
     ></MaterialTable>
   );
