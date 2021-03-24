@@ -1,16 +1,14 @@
 import React, { useContext, useState } from "react";
 import { InstallCartContext } from "../resources/InstallCartContext";
 import { Context } from "../../../_context/MainContext";
-import { Formik, Field, Form } from "formik";
+import { Formik, useFormik, Form } from "formik";
 import * as Yup from "yup";
-import { Steps, Input, DatePicker, Select, Space, Checkbox } from "antd";
+import { Steps } from "antd";
 import DateFnsUtils from "@date-io/date-fns";
 import {
   EditOutlined,
   DeleteOutlined,
   ExclamationCircleTwoTone,
-  MinusCircleOutlined,
-  PlusOutlined,
 } from "@ant-design/icons";
 import {
   Paper,
@@ -24,7 +22,6 @@ import {
 } from "@material-ui/core";
 import {
   MuiPickersUtilsProvider,
-  KeyboardTimePicker,
   KeyboardDatePicker,
 } from "@material-ui/pickers";
 // icons
@@ -47,8 +44,6 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import "../styles/orders.css";
 import "../styles/addForm.css";
 const { Step } = Steps;
-const { TextArea } = Input;
-const { Option } = Select;
 const Orders = React.memo(() => {
   const {
     ordersState,
@@ -879,33 +874,31 @@ const AddDialog = React.memo(() => {
     GON: Yup.string().required(),
   });
   return (
-    <Dialog
-      open={addDialogVisibility}
-      scroll="body"
-      onClose={() => {
-        setAddDialogVisibility(false);
+    <Formik
+      initialValues={{
+        START_DATE: new Date(),
+        PID: "",
+        GON: "",
+        CART_RETURN: "",
+        ROSD: "",
+        SHIP_DATE: "",
       }}
-      style={{ zIndex: 2 }}
+      // validationSchema={ValidationSchema}
+      onSubmit={(values) => console.log(values)}
     >
-      <DialogTitle id="simple-dialog-title">Add new order</DialogTitle>
-      <DialogContent dividers>
-        <MuiPickersUtilsProvider utils={DateFnsUtils}>
-          <Formik
-            initialValues={{
-              START_DATE: "",
-            }}
-            validationSchema={ValidationSchema}
-            onSubmit={(values) => console.log(values)}
-          >
-            {({ errors, submitForm, values }) => (
-              <Form
-                id="addForm"
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  submitForm();
-                }}
-              >
-                {console.log(errors)}
+      {({ errors, values, handleChange }) => (
+        <Dialog
+          open={addDialogVisibility}
+          scroll="body"
+          onClose={() => {
+            setAddDialogVisibility(false);
+          }}
+          style={{ zIndex: 2 }}
+        >
+          <DialogTitle id="simple-dialog-title">Add new order</DialogTitle>
+          <DialogContent dividers>
+            <MuiPickersUtilsProvider utils={DateFnsUtils}>
+              <Form id="addForm">
                 <div style={{ display: "flex" }}>
                   <KeyboardDatePicker
                     disableToolbar
@@ -917,9 +910,8 @@ const AddDialog = React.memo(() => {
                     KeyboardButtonProps={{
                       "aria-label": "change date",
                     }}
-                    onChange={(e) => {
-                      values[e.target.name] = e.target.value;
-                    }}
+                    value={values.START_DATE}
+                    onChange={handleChange}
                     style={{ marginRight: "1em" }}
                   />
                   <KeyboardDatePicker
@@ -975,29 +967,29 @@ const AddDialog = React.memo(() => {
                   <TextField label="PID" name="PID" type="number" />
                 </div>
               </Form>
-            )}
-          </Formik>
-        </MuiPickersUtilsProvider>
-      </DialogContent>
-      <DialogActions>
-        <MaterialButton
-          color="primary"
-          onClick={() => {
-            setAddDialogVisibility(false);
-          }}
-        >
-          Cancel
-        </MaterialButton>
-        <MaterialButton
-          variant="contained"
-          color="primary"
-          type="submit"
-          form="addForm"
-        >
-          Add
-        </MaterialButton>
-      </DialogActions>
-    </Dialog>
+            </MuiPickersUtilsProvider>
+          </DialogContent>
+          <DialogActions>
+            <MaterialButton
+              color="primary"
+              onClick={() => {
+                setAddDialogVisibility(false);
+              }}
+            >
+              Cancel
+            </MaterialButton>
+            <MaterialButton
+              variant="contained"
+              color="primary"
+              type="submit"
+              form="addForm"
+            >
+              Add
+            </MaterialButton>
+          </DialogActions>
+        </Dialog>
+      )}
+    </Formik>
   );
 });
 const DeleteConfirmDialog = React.memo(() => {
