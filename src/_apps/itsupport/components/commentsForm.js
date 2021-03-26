@@ -24,9 +24,10 @@ const CommentsDesktopsForm = React.memo(() => {
       </span>
       <div style={{ display: "flex", marginBottom: "1em" }}>
         <Textarea
-          defaultValue={inventoryCommentsData}
+          defaultValue={inventoryCommentsData.comment}
           onChange={(e) => {
-            setInventoryCommentsData(e.target.value);
+            inventoryCommentsData.comment = e.target.value;
+            setInventoryCommentsData(inventoryCommentsData);
           }}
         ></Textarea>
       </div>
@@ -36,9 +37,9 @@ const CommentsDesktopsForm = React.memo(() => {
 
 export const indexComments = {
   desktops: <CommentsDesktopsForm />,
-  // laptops: <AddLaptopsForm />,
-  // mobiles: <AddMobilesForm />,
-  // laser_printers: <AddLabelPrintersForm />,
-  // label_printers: <AddLaserPrintersForm />,
-  // reserved_ips: <AddReservedIpsForm />,
+  // laptops: <CommentsLaptopsForm />,
+  // mobiles: <CommentsMobilesForm />,
+  // laser_printers: <CommentsLabelPrintersForm />,
+  // label_printers: <CommentsLaserPrintersForm />,
+  // reserved_ips: <CommentsReservedIpsForm />,
 };

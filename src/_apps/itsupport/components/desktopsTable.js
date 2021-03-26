@@ -135,7 +135,6 @@ const DesktopsTable = React.memo(() => {
           isFreeAction: "true",
           onClick: () => {
             setAuditModalVisibility(true);
-            console.log(inventoryAuditData);
           },
         },
       ]}
@@ -302,7 +301,11 @@ const DesktopsTable = React.memo(() => {
                   icon={<EditIcon />}
                   onClick={() => {
                     setCommentsDrawerVisibility(true);
-                    setInventoryCommentsData(rowData.COMMENTS);
+                    setInventoryCommentsData({
+                      comment: rowData.COMMENTS,
+                      serialnumber: rowData.SERVICE_TAG,
+                    });
+                    console.log(inventoryCommentsData);
                   }}
                 />
               </div>

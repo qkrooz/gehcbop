@@ -41,6 +41,34 @@ const auditItems = (values) => {
     .then((response) => console.log(response.data))
     .catch((error) => console.log(error));
 };
+const commentItems = (values) => {
+  axios
+    .post(`${USELPUTIL02}/itsupport/addComment.php`, values)
+    .then((response) => console.log(response.data))
+    .catch((error) => console.log(error));
+};
+const addMultiple = (values) => {
+  axios
+    .post(`${USELPUTIL02}/itsupport/addMultipleItems.php`, values)
+    .then((response) => console.log(response.data))
+    .catch((error) => console.log(error));
+};
+const addMultipleItems = (values) => {
+  values.serviceTag = values.serviceTag
+    .toUpperCase()
+    .split("\n")
+    .filter(String);
+  let hostname = values.serviceTag.map((serviceTag) => "G" + serviceTag + "E");
+  values.specs = JSON.stringify(values.specs);
+  values.hostname = hostname;
+  var date = new Date().toJSON().slice(0, 10).replace(/-/g, "/");
+  values.ADDED = date;
+  values.AUDITED = `{"status":"", "comments":""}`;
+  const count = hostname.length;
+  values.count = count;
+  console.log(values);
+  addMultiple(values);
+};
 const Inventory = React.memo(() => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [section, setSection] = useState("desktops");
@@ -51,6 +79,7 @@ const Inventory = React.memo(() => {
     inventoryAuditDataState,
     commentsDrawerVisibilityState,
     inventoryCommentsDataState,
+    inventoryFormDataState,
   } = useContext(ItSupportContext);
   const [
     addDrawerVisibility,
@@ -65,6 +94,7 @@ const Inventory = React.memo(() => {
     setCommentsDrawerVisibility,
   ] = commentsDrawerVisibilityState;
 
+  const [inventoryFormData, setInventoryFormData] = inventoryFormDataState;
   const [inventoryAuditData, setInventoryAuditData] = inventoryAuditDataState;
   const [
     inventoryCommentsData,
@@ -211,7 +241,15 @@ const Inventory = React.memo(() => {
                 >
                   Cancel
                 </Button>
-                <Button variant="contained" color="primary">
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={() => {
+                    inventoryFormData.section = section;
+                    addMultipleItems(inventoryFormData);
+                    setAddDrawerVisibility(!addDrawerVisibility);
+                  }}
+                >
                   Add
                 </Button>
               </DrawerFooter>
@@ -296,7 +334,18 @@ const Inventory = React.memo(() => {
                 >
                   Cancel
                 </Button>
-                <Button variant="contained" color="primary">
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={() => {
+                    let commentsInfo = { comment: "", section: "", sn: "" };
+                    commentsInfo.comment = inventoryCommentsData.comment;
+                    commentsInfo.sn = inventoryCommentsData.serialnumber;
+                    commentsInfo.section = section;
+                    commentItems(commentsInfo);
+                    setCommentsDrawerVisibility(!commentsDrawerVisibility);
+                  }}
+                >
                   Add
                 </Button>
               </DrawerFooter>

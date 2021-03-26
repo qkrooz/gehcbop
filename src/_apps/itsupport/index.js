@@ -28,7 +28,10 @@ const ItSupportIndex = React.memo(() => {
     { status: "good", comments: "", serialnumber: "" },
     { status: "good", comments: "", serialnumber: "" },
   ]);
-  const [inventoryCommentsData, setInventoryCommentsData] = useState({});
+  const [inventoryCommentsData, setInventoryCommentsData] = useState({
+    comment: "",
+    serialnumber: "",
+  });
   const [data, setData] = useState([]);
   const [genericLoader, setGenericLoader] = useState(false);
   const [addDrawerVisibility, setAddDrawerVisibility] = useState(false);
