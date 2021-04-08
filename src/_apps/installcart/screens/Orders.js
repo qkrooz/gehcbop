@@ -1,5 +1,6 @@
 import React, { useContext, useState } from "react";
 import { InstallCartContext } from "../resources/InstallCartContext";
+import apiRoute from "../resources/apiRoute";
 import { Context } from "../../../_context/MainContext";
 import { Formik, useFormik, Form } from "formik";
 import * as Yup from "yup";
@@ -19,6 +20,8 @@ import {
   Menu,
   MenuItem,
   TextField,
+  FormControlLabel,
+  Checkbox,
 } from "@material-ui/core";
 import {
   MuiPickersUtilsProvider,
@@ -43,6 +46,8 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import "../styles/orders.css";
 import "../styles/addForm.css";
+import { CloudUpload } from "@material-ui/icons";
+import axios from "axios";
 const { Step } = Steps;
 const Orders = React.memo(() => {
   const {
@@ -851,6 +856,7 @@ const OrderElement = React.memo(({ data }) => {
   );
 });
 const AddDialog = React.memo(() => {
+  const [file, setFile] = useState();
   const { userDataState } = useContext(Context);
   const {
     AddOrder,
@@ -860,31 +866,61 @@ const AddDialog = React.memo(() => {
     genericLoaderState,
   } = useContext(InstallCartContext);
   const [userData] = userDataState;
-  const [genericLoader] = genericLoaderState;
+  const [, setGenericLoader] = genericLoaderState;
   const [
     addDialogVisibility,
     setAddDialogVisibility,
   ] = addDialogVisibilityState;
   const [statusList] = statusListState;
   const [devicesList] = devicesListState;
-  const ValidationSchema = Yup.object().shape({
-    START_DATE: Yup.string().required("Required"),
-    SHIP_DATE: Yup.string().required("Required"),
-    ROSD: Yup.string().required("Required"),
-    GON: Yup.string().required(),
+  const validationSchema = Yup.object().shape({
+    PROJECT_DESCRIPTION: Yup.string().required(),
+    STATUS: Yup.string().required(),
   });
   return (
     <Formik
+      validationSchema={validationSchema}
       initialValues={{
-        START_DATE: new Date(),
+        START_DATE: moment(new Date()).format("YYYY-MM-DD"),
         PID: "",
         GON: "",
-        CART_RETURN: "",
-        ROSD: "",
-        SHIP_DATE: "",
+        CART_RETURN: moment(new Date()).format("YYYY-MM-DD"),
+        ROSD: moment(new Date()).format("YYYY-MM-DD"),
+        SHIP_DATE: moment(new Date()).format("YYYY-MM-DD"),
+        PROJECT_DESCRIPTION: "",
+        DEVICE_COUNT: "",
+        ESTIMATED_CART_QTY: "",
+        PACKAGE: "",
+        FLAGGED_ON_CONFIG_APP: false,
+        NTP_SUBMITTED: false,
+        PROJECT_MANAGER_CONTACT: "",
+        FE: "",
+        STATUS: "",
+        CONFIGURATION_INFORMATION: "",
       }}
       // validationSchema={ValidationSchema}
-      onSubmit={(values) => console.log(values)}
+      onSubmit={(values) => {
+        setGenericLoader(true);
+        values.HAS_FILE = file ? true : false;
+        values.OWNER = { SSO: userData.SSO, NAME: userData.USER_NAME };
+        const formData = new FormData();
+        formData.append("data", JSON.stringify(values));
+        formData.append("file", file);
+        console.log(values);
+        axios
+          .post(`${apiRoute}/addNewOrder.php`, formData, {
+            headers: { "Content-type": "multipart/form-data" },
+          })
+          .then(({ data }) => {
+            console.log(data);
+            data.code === 200
+              ? AddOrder(data.lastItem)
+              : setGenericLoader(false);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }}
     >
       {({ errors, values, handleChange }) => (
         <Dialog
@@ -899,62 +935,52 @@ const AddDialog = React.memo(() => {
           <DialogContent dividers>
             <MuiPickersUtilsProvider utils={DateFnsUtils}>
               <Form id="addForm">
-                <div style={{ display: "flex" }}>
-                  <KeyboardDatePicker
-                    disableToolbar
-                    variant="inline"
-                    format="MM/dd/yyyy"
-                    margin="normal"
+                <div style={{ display: "flex", marginBottom: "1em" }}>
+                  <TextField
                     label="Start Date"
+                    type="date"
                     name="START_DATE"
-                    KeyboardButtonProps={{
-                      "aria-label": "change date",
-                    }}
-                    value={values.START_DATE}
+                    defaultValue={values.START_DATE}
                     onChange={handleChange}
+                    InputLabelProps={{
+                      shrink: true,
+                    }}
                     style={{ marginRight: "1em" }}
                   />
-                  <KeyboardDatePicker
-                    disableToolbar
-                    variant="inline"
-                    format="MM/dd/yyyy"
-                    margin="normal"
+                  <TextField
                     label="Ship Date"
+                    type="date"
                     name="SHIP_DATE"
-                    KeyboardButtonProps={{
-                      "aria-label": "change date",
-                    }}
-                    onChange={(e) => {
-                      values[e.target.name] = e.target.value;
+                    defaultValue={values.SHIP_DATE}
+                    onChange={handleChange}
+                    InputLabelProps={{
+                      shrink: true,
                     }}
                     style={{ marginRight: "1em" }}
                   />
-                  <KeyboardDatePicker
-                    disableToolbar
-                    variant="inline"
-                    format="MM/dd/yyyy"
-                    margin="normal"
-                    label="Requested On-Site Date"
+                  <TextField
+                    label="ROSD"
+                    type="date"
                     name="ROSD"
-                    KeyboardButtonProps={{
-                      "aria-label": "change date",
+                    defaultValue={values.ROSD}
+                    onChange={handleChange}
+                    InputLabelProps={{
+                      shrink: true,
                     }}
-                    onChange={() => {}}
                   />
                 </div>
                 <div style={{ display: "flex", alignItems: "baseline" }}>
-                  <KeyboardDatePicker
-                    disableToolbar
-                    variant="inline"
-                    format="MM/dd/yyyy"
-                    margin="normal"
+                  <TextField
                     label="Cart Return"
+                    type="date"
                     name="CART_RETURN"
-                    KeyboardButtonProps={{
-                      "aria-label": "change date",
+                    defaultValue={values.CART_RETURN}
+                    onChange={handleChange}
+                    InputLabelProps={{
+                      shrink: true,
                     }}
-                    onChange={() => {}}
-                    style={{ marginRight: "1em", width: "32%" }}
+                    error={errors.GON}
+                    style={{ marginRight: "1em", marginBottom: "1em" }}
                   />
                   <TextField
                     label="General Order Number"
@@ -962,9 +988,161 @@ const AddDialog = React.memo(() => {
                     error={Boolean(errors.GON)}
                     helperText={errors.GON ? "Required" : null}
                     type="number"
+                    style={{ marginRight: "1em", marginBottom: "1em" }}
+                    value={values.GON}
+                    onChange={handleChange}
+                  />
+                  <TextField
+                    label="PID"
+                    name="PID"
+                    type="number"
+                    value={values.PID}
+                    onChange={handleChange}
+                  />
+                </div>
+                <div style={{ display: "flex", marginBottom: "1em" }}>
+                  <TextField
+                    label="Project description"
+                    style={{ marginRight: "1em" }}
+                    name="PROJECT_DESCRIPTION"
+                    value={values.PROJECT_DESCRIPTION}
+                    onChange={handleChange}
+                    error={Boolean(errors.PROJECT_DESCRIPTION)}
+                  />
+                  <TextField
+                    label="Device Count"
+                    type="number"
+                    name="DEVICE_COUNT"
+                    value={values.DEVICE_COUNT}
+                    onChange={handleChange}
                     style={{ marginRight: "1em" }}
                   />
-                  <TextField label="PID" name="PID" type="number" />
+                  <TextField
+                    label="Estimated cart qty"
+                    name="ESTIMATED_CART_QTY"
+                    value={values.ESTIMATED_CART_QTY}
+                    onChange={handleChange}
+                  />
+                </div>
+                <div
+                  style={{
+                    display: "flex",
+                    marginBottom: "1em",
+                    alignItems: "center",
+                  }}
+                >
+                  <TextField
+                    select
+                    label="Package"
+                    onChange={handleChange}
+                    name="PACKAGE"
+                    value={values.PACKAGE}
+                    style={{ width: "12em", marginRight: "1em" }}
+                  >
+                    <MenuItem value="configuration">Configuration</MenuItem>
+                    <MenuItem value="standard">Standard</MenuItem>
+                    <MenuItem value="N/A">N/A</MenuItem>
+                  </TextField>
+                  <FormControlLabel
+                    label="Flagged on config app"
+                    control={
+                      <Checkbox
+                        checked={values.FLAGGED_ON_CONFIG_APP}
+                        onChange={handleChange}
+                        name="FLAGGED_ON_CONFIG_APP"
+                      />
+                    }
+                  />
+                  <FormControlLabel
+                    label="NTP Submitted"
+                    control={
+                      <Checkbox
+                        checked={values.NTP_SUBMITTED}
+                        onChange={handleChange}
+                        name="NTP_SUBMITTED"
+                      />
+                    }
+                  />
+                </div>
+                <div style={{ display: "flex", marginBottom: "1em" }}>
+                  <TextField
+                    name="PROJECT_MANAGER_CONTACT"
+                    value={values.PROJECT_MANAGER_CONTACT}
+                    onChange={handleChange}
+                    label="Project Manager"
+                    style={{ marginRight: "1em" }}
+                  />
+                  <TextField
+                    name="FE"
+                    value={values.FE}
+                    onChange={handleChange}
+                    label="FE"
+                    style={{ marginRight: "1em" }}
+                  />
+                  <TextField
+                    name="STATUS"
+                    value={values.STATUS}
+                    onChange={handleChange}
+                    label="Status"
+                    select
+                    style={{ flexGrow: 1 }}
+                    error={Boolean(errors.STATUS)}
+                  >
+                    <MenuItem value="none" disabled>
+                      Status
+                    </MenuItem>
+                    {statusList.map((key, i) => (
+                      <MenuItem
+                        style={{ textTransform: "capitalize" }}
+                        value={key}
+                        key={i}
+                      >
+                        {key}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </div>
+                <div style={{ marginBottom: "1em" }}>
+                  <TextField
+                    multiline
+                    variant="outlined"
+                    style={{ width: "100%" }}
+                    name="CONFIGURATION_INFORMATION"
+                    value={values.CONFIGURATION_INFORMATION}
+                    onChange={handleChange}
+                    placeholder="Configuration information"
+                    rows={4}
+                    rowsMax={6}
+                  />
+                </div>
+                <div>
+                  <Button
+                    variant="contained"
+                    disableElevation
+                    startIcon={<CloudUpload />}
+                    component="label"
+                    type="button"
+                  >
+                    Upload File
+                    <input
+                      hidden
+                      type="file"
+                      name="FILE"
+                      onChange={(e) => setFile(e.target.files[0])}
+                      onClick={(event) => {
+                        event.target.value = null;
+                      }}
+                    />
+                  </Button>
+                  <span
+                    style={{
+                      fontSize: "1.2em",
+                      fontWeight: "bold",
+                      marginLeft: "1em",
+                    }}
+                  >
+                    {file ? file.name : null}
+                  </span>
                 </div>
               </Form>
             </MuiPickersUtilsProvider>

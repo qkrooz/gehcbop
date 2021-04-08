@@ -92,6 +92,10 @@ const ReservedIpsTable = React.memo(() => {
       ]}
       columns={[
         {
+          title: "ID",
+          field: "ID",
+        },
+        {
           title: "IP ADDRESS",
           field: "IP",
         },

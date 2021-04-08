@@ -140,6 +140,10 @@ export const MobilesTable = React.memo(() => {
       ]}
       columns={[
         {
+          title: "ID",
+          field: "ID",
+        },
+        {
           title: "BRAND",
           field: "BRAND",
         },

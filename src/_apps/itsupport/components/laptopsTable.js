@@ -140,6 +140,10 @@ const LaptopsTable = React.memo(() => {
       ]}
       columns={[
         {
+          title: "ID",
+          field: "ID",
+        },
+        {
           title: "BRAND",
           field: "BRAND",
         },

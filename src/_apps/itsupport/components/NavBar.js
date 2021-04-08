@@ -47,6 +47,7 @@ const NavBar = React.memo(() => {
           borderRadius: 0,
           height: "3.5em",
         }}
+        disabled
       >
         <NavLink
           to="/itsupport/miscellaneous"

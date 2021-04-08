@@ -96,36 +96,16 @@ const InstallCartIndex = React.memo(() => {
       })
       .catch((error) => console.log(error));
   };
-  const AddOrder = (values) => {
-    setGenericLoader(true);
-    console.log(values);
-    // axios
-    //   .post(`${USELPUTIL02}/${currentApplication}/addNewOrder.php`, values)
-    //   .then((response) => {
-    //     if (response.data.code === 200) {
-    //       let temporalAddedItem = response.data.lastItem[0];
-    //       if (temporalAddedItem.STATUS === "order completed") {
-    //         setFilteredOrders((filteredOrders) => [
-    //           temporalAddedItem,
-    //           ...filteredOrders,
-    //         ]);
-    //       }
-    //       setOrders((orders) => [temporalAddedItem, ...orders]);
-    //       setCompleteOrders((completeOrders) => [
-    //         temporalAddedItem,
-    //         ...completeOrders,
-    //       ]);
-    //       setTimeout(() => {
-    //         setGenericLoader(false);
-    //         setAddDialogVisibility(false);
-    //       }, 1000);
-    //     } else {
-    //       setGenericLoader(false);
-    //     }
-    //   })
-    //   .catch((error) => {
-    //     setGenericLoader(false);
-    //   });
+  const AddOrder = (lastItem) => {
+    if (lastItem.STATUS === "order completed") {
+      setFilteredOrders((filteredOrders) => [lastItem, ...filteredOrders]);
+    }
+    setOrders((orders) => [lastItem, ...orders]);
+    setCompleteOrders((completeOrders) => [lastItem, ...completeOrders]);
+    setTimeout(() => {
+      setGenericLoader(false);
+      setAddDialogVisibility(false);
+    }, 1000);
   };
   const EditOrder = (values) => {
     console.log(values);
