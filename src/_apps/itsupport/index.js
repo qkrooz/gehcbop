@@ -16,10 +16,29 @@ const ItSupportIndex = React.memo(() => {
   //states
   const [height, setHeight] = useState(null);
   const [inventoryFormData, setInventoryFormData] = useState({});
+  const [inventoryAuditData, setInventoryAuditData] = useState([
+    { status: "good", comments: "", serialnumber: "" },
+    { status: "good", comments: "", serialnumber: "" },
+    { status: "good", comments: "", serialnumber: "" },
+    { status: "good", comments: "", serialnumber: "" },
+    { status: "good", comments: "", serialnumber: "" },
+    { status: "good", comments: "", serialnumber: "" },
+    { status: "good", comments: "", serialnumber: "" },
+    { status: "good", comments: "", serialnumber: "" },
+    { status: "good", comments: "", serialnumber: "" },
+    { status: "good", comments: "", serialnumber: "" },
+  ]);
+  const [inventoryCommentsData, setInventoryCommentsData] = useState({
+    comment: "",
+    serialnumber: "",
+  });
   const [data, setData] = useState([]);
   const [genericLoader, setGenericLoader] = useState(false);
   const [addDrawerVisibility, setAddDrawerVisibility] = useState(false);
   const [auditModalVisibility, setAuditModalVisibility] = useState(false);
+  const [commentsDrawerVisibility, setCommentsDrawerVisibility] = useState(
+    false
+  );
   const [its_inventory_section, set_its_inventory_section] = useState(
     "desktops"
   );
@@ -110,7 +129,17 @@ const ItSupportIndex = React.memo(() => {
             auditModalVisibility,
             setAuditModalVisibility,
           ],
+
+          commentsDrawerVisibilityState: [
+            commentsDrawerVisibility,
+            setCommentsDrawerVisibility,
+          ],
           inventoryFormDataState: [inventoryFormData, setInventoryFormData],
+          inventoryAuditDataState: [inventoryAuditData, setInventoryAuditData],
+          inventoryCommentsDataState: [
+            inventoryCommentsData,
+            setInventoryCommentsData,
+          ],
           // refs
           heightdiv: heightdiv,
           //  functiones

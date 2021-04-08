@@ -11,11 +11,16 @@ const ReservedIpsTable = React.memo(() => {
   const [genericLoader, setGenericLoader] = useState(false);
   const [data, setData] = useState([]);
   // context
-  const { addDrawerVisibilityState, heightState } = useContext(
-    ItSupportContext
-  );
+  const {
+    addDrawerVisibilityState,
+    heightState,
+    auditModalVisibilityState,
+    inventoryAuditDataState,
+  } = useContext(ItSupportContext);
+  const [inventoryAuditData, setInventoryAuditData] = inventoryAuditDataState;
   const [, setAddDrawerVisibility] = addDrawerVisibilityState;
   const [height] = heightState;
+  const [, setAuditModalVisibility] = auditModalVisibilityState;
   // functions
   const fetchData = () => {
     axios
@@ -88,6 +93,10 @@ const ReservedIpsTable = React.memo(() => {
           icon: VisibilityIcon,
           tooltip: "Audit",
           isFreeAction: "true",
+          onClick: () => {
+            setAuditModalVisibility(true);
+            console.log(inventoryAuditData);
+          },
         },
       ]}
       columns={[
@@ -97,19 +106,19 @@ const ReservedIpsTable = React.memo(() => {
         },
         {
           title: "IP ADDRESS",
-          field: "IP",
+          field: "IP_ADDRESS",
         },
         {
           title: "DEVICE",
-          field: "Device",
+          field: "DEVICE",
         },
         {
           title: "LOCATION",
-          field: "Location",
+          field: "LOCATION",
         },
         {
           title: "AREA",
-          field: "Area",
+          field: "AREA",
         },
       ]}
       data={data}

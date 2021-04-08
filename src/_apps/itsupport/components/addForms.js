@@ -107,20 +107,6 @@ const AddDesktopsForm = React.memo(() => {
       </div>
       <div style={{ display: "flex", marginBottom: "1em" }}>
         <TextField
-          value={inventoryFormData.hostname ? inventoryFormData.hostname : ""}
-          size="small"
-          label="Hostname"
-          variant="outlined"
-          style={{ width: "100%", marginRight: "1em" }}
-          name="hostname"
-          onChange={(e) =>
-            setInventoryFormData({
-              ...inventoryFormData,
-              [e.target.name]: e.target.value,
-            })
-          }
-        />
-        <TextField
           value={inventoryFormData.username ? inventoryFormData.username : ""}
           size="small"
           name="username"
@@ -252,20 +238,6 @@ const AddDesktopsForm = React.memo(() => {
           <MenuItem value="xeon">Xeon</MenuItem>
           <MenuItem value="other">Other</MenuItem>
         </TextField>
-        <TextField
-          size="small"
-          label="Screen size"
-          variant="outlined"
-          name="screenSize"
-          style={{ width: "100%" }}
-          onChange={(e) => {
-            let specs = { ...inventoryFormData.specs };
-            setInventoryFormData({
-              ...inventoryFormData,
-              specs: { ...specs, [e.target.name]: e.target.value },
-            });
-          }}
-        />
       </div>
     </div>
   );
@@ -530,7 +502,7 @@ export const index = {
   desktops: <AddDesktopsForm />,
   laptops: <AddLaptopsForm />,
   mobiles: <AddMobilesForm />,
-  laserPrinters: <AddLabelPrintersForm />,
-  labelPrinters: <AddLaserPrintersForm />,
-  reservedIps: <AddReservedIpsForm />,
+  laser_printers: <AddLabelPrintersForm />,
+  label_printers: <AddLaserPrintersForm />,
+  reserved_ips: <AddReservedIpsForm />,
 };
